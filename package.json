@@ -10,7 +10,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "format": "npx prettier . --write",
-    "create": "plop --plopfile generators/plopfile.js",
+    "create": "plop --plopfile generators/plopfile.mjs",
     "prepare": "husky install"
   },
   "dependencies": {
