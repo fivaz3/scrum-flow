@@ -1,0 +1,14 @@
+export interface {{pascalCase name}}Props {}
+
+export default function {{pascalCase name}}({}: {{pascalCase name}}Props) {
+    return (
+        <div className="h-screen w-full bg-purple-500 mt-20">{{pascalCase name}}</div>
+    );
+}
+
+export async function getServerSideProps() {
+    return {
+        props: {
+        },
+    };
+}
