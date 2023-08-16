@@ -1,0 +1,7 @@
+{
+	"**/*.{js,jsx,json,ts,tsx}":[
+      "npm run format",
+      "npm run lint . --fix",
+      "npx tsc --noEmit"
+	]
+}
