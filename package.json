@@ -10,6 +10,7 @@
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
+    "format": "npx prettier . --write",
     "create": "plop --plopfile generators/plopfile.js"
   },
   "dependencies": {
@@ -37,6 +38,7 @@
     "@storybook/testing-library": "^0.2.0",
     "eslint-plugin-storybook": "^0.6.13",
     "plop": "^3.1.2",
+    "prettier": "3.0.2",
     "storybook": "^7.3.1"
   }
 }
