@@ -1,7 +1,7 @@
 import './globals.css';
 
 import Nav from './nav';
-import Toast from './toast';
+
 import { ReactNode, Suspense } from 'react';
 
 export const metadata = {

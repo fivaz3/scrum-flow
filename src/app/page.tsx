@@ -1,11 +1,11 @@
 import { Card, Title, Text } from '@tremor/react';
 import Search from './search';
-import UsersTable from './table';
+import TasksTable from './table';
 
 export const dynamic = 'force-dynamic';
 
 export default async function IndexPage() {
-  const users = [
+  const tasks = [
     {
       id: 1,
       name: '',
@@ -26,7 +26,7 @@ export default async function IndexPage() {
       <Text>Fini le {end_at}</Text>
       <Search />
       <Card className="mt-6">
-        <UsersTable users={users} />
+        <TasksTable tasks={tasks} />
       </Card>
     </main>
   );
