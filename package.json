@@ -2,7 +2,6 @@
   "name": "scrumflow-front",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,7 +10,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "format": "npx prettier . --write",
-    "create": "plop --plopfile generators/plopfile.js"
+    "create": "plop --plopfile generators/plopfile.js",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@types/node": "20.5.0",
@@ -37,6 +37,7 @@
     "@storybook/react": "^7.3.1",
     "@storybook/testing-library": "^0.2.0",
     "eslint-plugin-storybook": "^0.6.13",
+    "husky": "^8.0.3",
     "lint-staged": "^14.0.0",
     "plop": "^3.1.2",
     "prettier": "3.0.2",
