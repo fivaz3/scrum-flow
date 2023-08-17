@@ -3,8 +3,11 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTransition } from 'react';
+export interface SearchProps {
+  disabled?: boolean;
+}
 
-export default function Search({ disabled }: { disabled?: boolean }) {
+export default function Search({ disabled }: SearchProps) {
   const { replace } = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
