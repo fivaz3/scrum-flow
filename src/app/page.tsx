@@ -1,7 +1,7 @@
 import { Card, Title, Text } from '@tremor/react';
-import IssueTable from './table';
 import { getIssues } from '@/lib/issue.service';
 import Search from '@/components/Search';
+import IssueTable from '@/components/IssueTable';
 
 export const dynamic = 'force-dynamic';
 

@@ -1,7 +1,12 @@
-import { Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell } from '@tremor/react';
-import { Issue } from '@/lib/issue.service';
+'use client';
 
-export default async function IssueTable({ issues }: { issues: Issue[] }) {
+import { Issue } from '@/lib/issue.service';
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from '@tremor/react';
+
+export interface IssueTableProps {
+  issues: Issue[];
+}
+export default function IssueTable({ issues }: IssueTableProps) {
   return (
     <Table>
       <TableHead>
