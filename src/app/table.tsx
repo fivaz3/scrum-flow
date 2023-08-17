@@ -1,21 +1,7 @@
-import {
-  Table,
-  TableHead,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-  Text,
-} from '@tremor/react';
+import { Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell } from '@tremor/react';
+import { Issue } from '@/lib/issue.service';
 
-interface User {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-}
-
-export default async function UsersTable({ users }: { users: User[] }) {
+export default async function IssueTable({ issues }: { issues: Issue[] }) {
   return (
     <Table>
       <TableHead>
@@ -26,15 +12,15 @@ export default async function UsersTable({ users }: { users: User[] }) {
         </TableRow>
       </TableHead>
       <TableBody>
-        {users.map((user) => (
-          <TableRow key={user.id}>
-            <TableCell>{user.name}</TableCell>
-            <TableCell>
-              <Text>{user.username}</Text>
-            </TableCell>
-            <TableCell>
-              <Text>{user.email}</Text>
-            </TableCell>
+        {issues.map((issue) => (
+          <TableRow key={issue.id}>
+            <TableCell>{issue.name}</TableCell>
+            {/*<TableCell>*/}
+            {/*  <Text>{issue.username}</Text>*/}
+            {/*</TableCell>*/}
+            {/*<TableCell>*/}
+            {/*  <Text>{issue.email}</Text>*/}
+            {/*</TableCell>*/}
           </TableRow>
         ))}
       </TableBody>

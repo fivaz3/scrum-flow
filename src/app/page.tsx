@@ -1,18 +1,12 @@
 import { Card, Title, Text } from '@tremor/react';
 import Search from './search';
-import TasksTable from './table';
+import IssueTable from './table';
+import { getIssues } from '@/lib/issue.service';
 
 export const dynamic = 'force-dynamic';
 
 export default async function IndexPage() {
-  const tasks = [
-    {
-      id: 1,
-      name: '',
-      username: '',
-      email: '',
-    },
-  ];
+  const issues = getIssues();
 
   const start_at = new Date().toLocaleString('fr-FR');
   const date_end = new Date();
@@ -26,7 +20,7 @@ export default async function IndexPage() {
       <Text>Fini le {end_at}</Text>
       <Search />
       <Card className="mt-6">
-        <TasksTable tasks={tasks} />
+        <IssueTable issues={issues} />
       </Card>
     </main>
   );
