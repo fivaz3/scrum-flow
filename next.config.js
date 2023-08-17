@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['avatars.githubusercontent.com', 'avatar.vercel.sh'],
+    domains: ['avatar.vercel.sh', 'secure.gravatar.com'],
     remotePatterns: [
       {
         protocol: 'https',
