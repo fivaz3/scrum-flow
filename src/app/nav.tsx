@@ -4,7 +4,7 @@ import authOptions from '@/app/api/auth/[...nextauth]/auth-options';
 
 export default async function Nav() {
   const session = await getServerSession(authOptions);
-  console.log(session);
+  // console.log(session);
 
   return (
     <div>

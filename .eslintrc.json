@@ -13,7 +13,8 @@
     {
       "files": ["**/types/*"],
       "rules": {
-        "unused-imports/no-unused-imports": "off"
+        "unused-imports/no-unused-imports": "off",
+        "unused-imports/no-unused-vars": "off"
       }
     }
   ]
