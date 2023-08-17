@@ -1,11 +1,11 @@
 'use client';
-
-import { Fragment } from 'react';
 import { usePathname } from 'next/navigation';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { signIn, signOut } from 'next-auth/react';
 import Image from 'next/image';
+import { Fragment } from 'react';
+import { signIn, signOut } from 'next-auth/react';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Session } from 'next-auth';
 
 const navigation = [
   { name: 'Dashboard', href: '/' },
@@ -16,7 +16,11 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
-export default function Navbar({ user }: { user: any }) {
+export interface NavbarProps {
+  user?: Session['user'];
+}
+
+export default function Navbar({ user }: NavbarProps) {
   const pathname = usePathname();
 
   return (
@@ -152,7 +156,7 @@ export default function Navbar({ user }: { user: any }) {
                     <div className="flex-shrink-0">
                       <Image
                         className="h-8 w-8 rounded-full"
-                        src={user.image}
+                        src={user.image || 'https://avatar.vercel.sh/leerob'}
                         height={32}
                         width={32}
                         alt={`${user.name} avatar`}
