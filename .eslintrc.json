@@ -8,5 +8,13 @@
       "warn",
       { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/types/*"],
+      "rules": {
+        "unused-imports/no-unused-imports": "off"
+      }
+    }
+  ]
 }
