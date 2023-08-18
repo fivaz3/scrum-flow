@@ -12,7 +12,7 @@ export async function GET() {
     cache: 'no-store',
     headers: {
       Accept: 'application/json',
-      Authorization: 'Bearer ' + session.accessToken,
+      Authorization: 'Bearer ' + session.access_token,
       'Content-Type': 'application/json',
     },
   });

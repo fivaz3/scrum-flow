@@ -48,12 +48,12 @@ const data1 = [
 
 async function getAccessToken() {
   const session = await getServerSession(authOptions);
-  if (!session?.accessToken) {
+  if (!session?.access_token) {
     console.warn("Unauthorized access detected, you don't have an access token");
     redirect('/api/auth/signin');
   }
 
-  return session.accessToken;
+  return session.access_token;
 }
 
 async function fetchResources(accessToken: string) {
@@ -110,6 +110,7 @@ export default async function SprintPage() {
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
+      <Title>{cloudId}</Title>
       <Grid numItemsSm={2} numItemsLg={3} className="gap-6">
         {data1.map((item) => (
           <Card key={item.category}>
