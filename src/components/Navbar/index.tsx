@@ -8,8 +8,8 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Session } from 'next-auth';
 
 const navigation = [
-  { name: 'Dashboard', href: '/' },
-  { name: 'Playground', href: '/playground' },
+  { name: 'Home', href: '/' },
+  { name: 'Sprint', href: '/sprint' },
 ];
 
 function classNames(...classes: string[]) {
