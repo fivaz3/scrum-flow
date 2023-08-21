@@ -1,9 +1,7 @@
-import { Card, Flex, Grid, Metric, Text, Title } from '@tremor/react';
-import Chart from './chart';
-import { getServerSession } from 'next-auth/next';
-import authOptions from '@/app/api/auth/[...nextauth]/auth-options';
-import { z } from 'zod';
-import { redirect } from 'next/navigation';
+import { Card, Flex, Grid, Metric, Title, Text } from '@tremor/react';
+import IssueTable from '@/app/sprint/IssueTable';
+import { getActiveSprint } from '@/app/sprint/sprint-api';
+import { getAccessToken, getCloudId } from '@/app/sprint/jira-api';
 
 const website = [
   { name: '/home', value: 1230 },
@@ -46,71 +44,25 @@ const data1 = [
   },
 ];
 
-async function getAccessToken() {
-  const session = await getServerSession(authOptions);
-  if (!session?.access_token) {
-    console.warn("Unauthorized access detected, you don't have an access token");
-    redirect('/api/auth/signin');
-  }
-
-  return session.access_token;
-}
-
-async function fetchResources(accessToken: string) {
-  const res = await fetch('https://api.atlassian.com/oauth/token/accessible-resources', {
-    headers: {
-      Accept: 'application/json',
-      Authorization: 'Bearer ' + accessToken,
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!res.ok) {
-    console.error(`Failed to fetch data ${await res.text()}`);
-    return;
-  }
-
-  return validateResources(await res.json());
-}
-
-function validateResources(data: unknown) {
-  const ResourcesSchema = z.array(
-    z.object({
-      name: z.string(),
-    })
-  );
-
-  const result = ResourcesSchema.safeParse(data);
-  if (!result.success) {
-    console.log('parsing errors', result.error.errors);
-    console.log('raw data', data);
-    return;
-  }
-
-  return result.data;
-}
-
-async function getCloudId(accessToken: string) {
-  const resources = await fetchResources(accessToken);
-
-  if (!resources) {
-    return;
-  }
-
-  return resources[0].name;
-}
-
-export default async function SprintPage() {
+export default async function ActiveSprintPage() {
   const accessToken = await getAccessToken();
-  let cloudId = await getCloudId(accessToken);
-
-  if (!cloudId) {
-    return <Title>Error</Title>;
-  }
+  const cloudId = await getCloudId(accessToken);
+  const currentSprint = await getActiveSprint(accessToken, cloudId);
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
-      <Title>{cloudId}</Title>
+      {currentSprint ? (
+        <div>
+          <Title className="text-2xl">Sprint Actuel: {currentSprint.name}</Title>
+          <Text>Commence le :{currentSprint.startDate}</Text>
+          <Text>Fini le :{currentSprint.endDate}</Text>
+          <IssueTable issues={[]}></IssueTable>
+        </div>
+      ) : (
+        <div>
+          <Title>Il n&apos;y a pas encore de sprint actives</Title>
+        </div>
+      )}
       <Grid numItemsSm={2} numItemsLg={3} className="gap-6">
         {data1.map((item) => (
           <Card key={item.category}>
@@ -131,7 +83,7 @@ export default async function SprintPage() {
           </Card>
         ))}
       </Grid>
-      <Chart />
+      {/*<Chart />*/}
     </main>
   );
 }

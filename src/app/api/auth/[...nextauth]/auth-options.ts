@@ -52,7 +52,31 @@ export default {
       clientSecret: process.env.ATLASSIAN_CLIENT_SECRET as string,
       authorization: {
         params: {
-          scope: 'write:jira-work read:jira-work read:jira-user offline_access read:me',
+          scope:
+            'write:board-scope.admin:jira-software ' +
+            'read:board-scope.admin:jira-software ' +
+            'delete:board-scope.admin:jira-software ' +
+            'write:board-scope:jira-software ' +
+            'read:board-scope:jira-software ' +
+            'read:epic:jira-software ' +
+            'write:epic:jira-software ' +
+            'read:issue:jira-software ' +
+            'write:issue:jira-software ' +
+            'read:sprint:jira-software ' +
+            'write:sprint:jira-software ' +
+            'delete:sprint:jira-software ' +
+            'read:source-code:jira-software ' +
+            'write:source-code:jira-software ' +
+            'read:feature-flag:jira-software ' +
+            'write:feature-flag:jira-software ' +
+            'read:deployment:jira-software ' +
+            'write:deployment:jira-software ' +
+            'read:build:jira-software ' +
+            'write:build:jira-software ' +
+            'read:remote-link:jira-software ' +
+            'write:remote-link:jira-software ' +
+            'read:issue-details:jira ' +
+            'read:jira-work manage:jira-project manage:jira-configuration read:jira-user write:jira-work manage:jira-webhook manage:jira-data-provider offline_access read:me',
         },
       },
     }),
@@ -74,11 +98,11 @@ export default {
         }
 
         if (Date.now() < token.expires_at * 1000) {
-          console.log(
-            `token is still valid for:${
-              (token.expires_at * 1000 - Date.now()) / (60 * 1000)
-            } minutes`
-          );
+          // console.log(
+          //   `token is still valid for:${
+          //     (token.expires_at * 1000 - Date.now()) / (60 * 1000)
+          //   } minutes`
+          // );
           return token;
         }
 

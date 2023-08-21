@@ -4,11 +4,10 @@ import authOptions from '@/app/api/auth/[...nextauth]/auth-options';
 
 export default async function Nav() {
   const session = await getServerSession(authOptions);
-  // console.log(session);
 
+  // TODO add a forceful sign in when refresh token fails
   return (
     <div>
-      <pre>{JSON.stringify(session, null, 2)}</pre>
       <Navbar user={session?.user} />
     </div>
   );
