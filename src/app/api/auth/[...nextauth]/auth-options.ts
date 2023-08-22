@@ -1,11 +1,30 @@
 import { AuthOptions } from 'next-auth';
-import AtlassianProvider from 'next-auth/providers/atlassian';
 import { JWT } from 'next-auth/jwt';
 import { z } from 'zod';
+import { atlassianProvider } from '@/app/api/auth/[...nextauth]/atlassian-provider';
 
 const ATLASSIAN_REFRESH_TOKEN_URL = 'https://auth.atlassian.com/oauth/token';
+
+function validateToken(data: unknown) {
+  const RefreshTokenSchema = z.object({
+    access_token: z.string(),
+    refresh_token: z.string(),
+    expires_in: z.number(),
+  });
+
+  const result = RefreshTokenSchema.safeParse(data);
+
+  if (!result.success) {
+    throw new Error("fetched token doesn't match zod schema", { cause: result.error.errors });
+  }
+
+  console.log('new access_token: ', result.data.access_token);
+
+  return result.data;
+}
+
 async function refreshAccessToken(token: JWT) {
-  console.log("token isn't valid anymore refreshing it");
+  console.warn("token isn't valid anymore refreshing it");
 
   const response = await fetch(ATLASSIAN_REFRESH_TOKEN_URL, {
     method: 'POST',
@@ -24,68 +43,26 @@ async function refreshAccessToken(token: JWT) {
     throw new Error('Error refreshing access token', { cause: await response.text() });
   }
 
-  const RefreshTokenSchema = z.object({
-    access_token: z.string(),
-    refresh_token: z.string(),
-    expires_in: z.number(),
-  });
-
-  const result = RefreshTokenSchema.safeParse(await response.json());
-
-  if (!result.success) {
-    throw new Error("fetched token doesn't match zod schema", { cause: result.error.errors });
-  }
+  const { access_token, expires_in, refresh_token } = validateToken(await response.json());
 
   return {
     ...token, // Keep the previous token properties
-    access_token: result.data.access_token,
-    expires_at: Math.floor(Date.now() / 1000 + result.data.expires_in),
-    refresh_token: result.data.refresh_token,
+    access_token,
+    refresh_token,
+    expires_at: Math.floor(Date.now() / 1000 + expires_in),
   };
 }
 
 export default {
   secret: process.env.NEXTAUTH_SECRET,
-  providers: [
-    AtlassianProvider({
-      clientId: process.env.ATLASSIAN_CLIENT_ID as string,
-      clientSecret: process.env.ATLASSIAN_CLIENT_SECRET as string,
-      authorization: {
-        params: {
-          scope:
-            'write:board-scope.admin:jira-software ' +
-            'read:board-scope.admin:jira-software ' +
-            'delete:board-scope.admin:jira-software ' +
-            'write:board-scope:jira-software ' +
-            'read:board-scope:jira-software ' +
-            'read:epic:jira-software ' +
-            'write:epic:jira-software ' +
-            'read:issue:jira-software ' +
-            'write:issue:jira-software ' +
-            'read:sprint:jira-software ' +
-            'write:sprint:jira-software ' +
-            'delete:sprint:jira-software ' +
-            'read:source-code:jira-software ' +
-            'write:source-code:jira-software ' +
-            'read:feature-flag:jira-software ' +
-            'write:feature-flag:jira-software ' +
-            'read:deployment:jira-software ' +
-            'write:deployment:jira-software ' +
-            'read:build:jira-software ' +
-            'write:build:jira-software ' +
-            'read:remote-link:jira-software ' +
-            'write:remote-link:jira-software ' +
-            'read:issue-details:jira ' +
-            'read:jira-work manage:jira-project manage:jira-configuration read:jira-user write:jira-work manage:jira-webhook manage:jira-data-provider offline_access read:me',
-        },
-      },
-    }),
-  ],
+  providers: [atlassianProvider],
   callbacks: {
     async jwt({ token, account }) {
       try {
-        // Persist the OAuth access_token to the token right after signin
+        // Persist the OAuth access_token to the token right after sign in
         if (account) {
+          console.log('new access_token: ', account.access_token);
+
           token.access_token = account.access_token;
           token.expires_at = account.expires_at;
           token.refresh_token = account.refresh_token;
@@ -115,10 +92,12 @@ export default {
         return { ...token, error: 'RefreshAccessTokenError' as const };
       }
     },
-    async session(args) {
+    async session({ session, token }) {
       // Send properties to the client, like an access_token from a provider.
-      args.session.access_token = args.token.access_token;
-      return args.session;
+
+      // console.log('access_token', token.access_token);
+      session.access_token = token.access_token;
+      return session;
     },
   },
 } satisfies AuthOptions;

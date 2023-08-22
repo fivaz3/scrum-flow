@@ -19,11 +19,33 @@ export const Primary: Story = {
     issues: [
       {
         id: '1',
-        name: 'issue1',
+        fields: {
+          summary: 'issue 1',
+          status: {
+            id: '1',
+            name: 'Done',
+          },
+        },
       },
       {
         id: '2',
-        name: 'issue2',
+        fields: {
+          summary: 'issue 2',
+          status: {
+            id: '1',
+            name: 'To Do',
+          },
+        },
+      },
+      {
+        id: '3',
+        fields: {
+          summary: 'issue 3',
+          status: {
+            id: '1',
+            name: 'To Doing',
+          },
+        },
       },
     ],
   },

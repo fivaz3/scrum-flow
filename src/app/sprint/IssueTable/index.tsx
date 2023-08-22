@@ -26,7 +26,7 @@ export default function IssueTable({ issues }: IssueTableProps) {
         {issues.map((issue) => (
           <TableRow key={issue.id}>
             <TableCell>
-              <Text>{issue.name}</Text>
+              <Text>{issue.fields.summary}</Text>
             </TableCell>
           </TableRow>
         ))}
