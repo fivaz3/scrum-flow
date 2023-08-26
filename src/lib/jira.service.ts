@@ -3,12 +3,12 @@ import authOptions from '@/app/api/auth/[...nextauth]/auth-options';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
-export function validateAPIResponse<T>(zodSchema: z.ZodType<T>, data: unknown) {
+export function validateData<T>(zodSchema: z.ZodType<T>, data: unknown) {
   const result = zodSchema.safeParse(data);
 
   if (!result.success) {
     console.error(result.error.issues);
-    throw Error("This response doesn't match its type");
+    throw Error("This data doesn't match its type");
   }
 
   return result.data;
@@ -50,7 +50,7 @@ async function getCloudId(accessToken: string) {
     throw Error("You haven't created your profile yet");
   }
 
-  const validatedResources = validateAPIResponse(
+  const validatedResources = validateData(
     z.array(
       z.object({
         id: z.string(),

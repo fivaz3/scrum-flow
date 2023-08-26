@@ -15,11 +15,14 @@ const USER_IDENTITY_API_CLASSIC_SCOPES = 'read:me ';
 const SCOPE_FOR_REFRESH_TOKEN = 'offline_access ';
 
 const NECESSARY_GRANULAR_SCOPES =
-  'read:issue-details:jira ' + 'read:jql:jira ' + 'read:sprint:jira-software ';
+  'read:issue-details:jira ' +
+  'read:jql:jira ' +
+  'read:sprint:jira-software ' +
+  'read:board-scope.admin:jira-software ' +
+  'read:project:jira ';
 
 const SCOPES_THAT_I_MIGHT_NEED =
   'write:board-scope.admin:jira-software ' +
-  'read:board-scope.admin:jira-software ' +
   'delete:board-scope.admin:jira-software ' +
   'write:board-scope:jira-software ' +
   'read:board-scope:jira-software ' +

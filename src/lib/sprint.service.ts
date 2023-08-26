@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { callApi, validateAPIResponse } from '@/lib/jira.service';
+import { callApi, validateData } from '@/lib/jira.service';
 
 export const SprintSchema = z.object({
   id: z.number(),
@@ -12,7 +12,7 @@ export const SprintSchema = z.object({
 
 export type Sprint = z.infer<typeof SprintSchema>;
 
-export async function getActiveSprint(boardId: number) {
+export async function getActiveSprint(boardId: number): Promise<Sprint | undefined> {
   const response = await callApi(`/rest/agile/1.0/board/${boardId}/sprint?state=active`);
 
   const JiraResponseSchema = z.object({
@@ -22,7 +22,7 @@ export async function getActiveSprint(boardId: number) {
     values: z.array(SprintSchema),
   });
 
-  const validatedResponse = validateAPIResponse(JiraResponseSchema, response);
+  const validatedResponse = validateData(JiraResponseSchema, response);
 
   return validatedResponse.values[0];
 }

@@ -21,6 +21,7 @@ export const Primary: Story = {
         id: '1',
         fields: {
           summary: 'issue 1',
+          estimation: 5,
           status: {
             id: '1',
             name: 'Done',
@@ -31,6 +32,7 @@ export const Primary: Story = {
         id: '2',
         fields: {
           summary: 'issue 2',
+          estimation: 3,
           status: {
             id: '1',
             name: 'To Do',
@@ -41,6 +43,7 @@ export const Primary: Story = {
         id: '3',
         fields: {
           summary: 'issue 3',
+          estimation: 8,
           status: {
             id: '1',
             name: 'To Doing',
