@@ -5,6 +5,8 @@ import { atlassianProvider } from '@/app/api/auth/[...nextauth]/atlassian-provid
 
 const ATLASSIAN_REFRESH_TOKEN_URL = 'https://auth.atlassian.com/oauth/token';
 
+// TODO check if I should add a zod validation for these data
+
 function validateToken(data: unknown) {
   const RefreshTokenSchema = z.object({
     access_token: z.string(),
@@ -15,7 +17,7 @@ function validateToken(data: unknown) {
   const result = RefreshTokenSchema.safeParse(data);
 
   if (!result.success) {
-    throw new Error("fetched token doesn't match zod schema", { cause: result.error.errors });
+    throw new Error("fetched token doesn't match zod schema", { cause: result.error.issues });
   }
 
   console.log('new access_token: ', result.data.access_token);
@@ -24,7 +26,7 @@ function validateToken(data: unknown) {
 }
 
 async function refreshAccessToken(token: JWT) {
-  console.warn("token isn't valid anymore refreshing it");
+  console.log("token isn't valid anymore refreshing it");
 
   const response = await fetch(ATLASSIAN_REFRESH_TOKEN_URL, {
     method: 'POST',
@@ -69,7 +71,7 @@ export default {
         }
 
         if (!token.expires_at) {
-          throw new Error("Something went wrong with token, it doesn't have expires_at", {
+          throw new Error("Something went wrong with the token, it doesn't have expires_at", {
             cause: token,
           });
         }
@@ -89,7 +91,7 @@ export default {
           console.log(error.message, error.cause);
         }
         // The error property will be used client-side to handle the refresh token error
-        return { ...token, error: 'RefreshAccessTokenError' as const };
+        return { ...token, error: 'RefreshAccessTokenError' };
       }
     },
     async session({ session, token }) {
@@ -97,6 +99,9 @@ export default {
 
       // console.log('access_token', token.access_token);
       session.access_token = token.access_token;
+      if (token.error) {
+        session.error = token.error;
+      }
       return session;
     },
   },
