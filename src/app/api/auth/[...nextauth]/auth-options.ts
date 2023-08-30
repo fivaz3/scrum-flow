@@ -2,11 +2,33 @@ import { AuthOptions } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import { z } from 'zod';
 import { atlassianProvider } from '@/app/api/auth/[...nextauth]/atlassian-provider';
+import fs from 'fs';
 
 const ATLASSIAN_REFRESH_TOKEN_URL = 'https://auth.atlassian.com/oauth/token';
 
-// TODO check if I should add a zod validation for these data
+function saveInsomniaConfig(access_token: string) {
+  const pathToFile = 'insomnia-config.json';
+  fs.readFile(pathToFile, 'utf8', function (err, configString) {
+    if (err) {
+      return;
+    }
 
+    // Parse the JSON data
+    const config = JSON.parse(configString);
+
+    // Modify the data
+    config.access_token = access_token;
+
+    // Write the modified data back to the file
+    fs.writeFile(pathToFile, JSON.stringify(config, null, 2), function (err) {
+      if (err) {
+        return;
+      }
+    });
+  });
+}
+
+// TODO check if I should add a zod validation for these data
 function validateToken(data: unknown) {
   const RefreshTokenSchema = z.object({
     access_token: z.string(),
@@ -20,7 +42,7 @@ function validateToken(data: unknown) {
     throw new Error("fetched token doesn't match zod schema", { cause: result.error.issues });
   }
 
-  console.log('new access_token: ', result.data.access_token);
+  saveInsomniaConfig(result.data.access_token);
 
   return result.data;
 }
@@ -63,7 +85,7 @@ export default {
       try {
         // Persist the OAuth access_token to the token right after sign in
         if (account) {
-          console.log('new access_token: ', account.access_token);
+          saveInsomniaConfig(account.access_token);
 
           token.access_token = account.access_token;
           token.expires_at = account.expires_at;
@@ -95,9 +117,8 @@ export default {
       }
     },
     async session({ session, token }) {
+      saveInsomniaConfig(token.access_token);
       // Send properties to the client, like an access_token from a provider.
-
-      // console.log('access_token', token.access_token);
       session.access_token = token.access_token;
       if (token.error) {
         session.error = token.error;
