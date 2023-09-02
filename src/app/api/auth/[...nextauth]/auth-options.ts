@@ -10,21 +10,27 @@ function saveInsomniaConfig(access_token: string) {
   const pathToFile = 'insomnia-config.json';
   fs.readFile(pathToFile, 'utf8', function (err, configString) {
     if (err) {
+      console.log(err);
       return;
     }
 
-    // Parse the JSON data
-    const config = JSON.parse(configString);
+    try {
+      // Parse the JSON data
+      const config = JSON.parse(configString);
 
-    // Modify the data
-    config.access_token = access_token;
+      // Modify the data
+      config.access_token = access_token;
 
-    // Write the modified data back to the file
-    fs.writeFile(pathToFile, JSON.stringify(config, null, 2), function (err) {
-      if (err) {
-        return;
-      }
-    });
+      // Write the modified data back to the file
+      fs.writeFile(pathToFile, JSON.stringify(config, null, 2), function (err) {
+        if (err) {
+          console.log(err);
+          return;
+        }
+      });
+    } catch (error) {
+      console.log('configString-', configString, '-');
+    }
   });
 }
 

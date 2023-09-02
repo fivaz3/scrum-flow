@@ -1,7 +1,6 @@
 import { Card, Flex, Grid, Metric, Title, Text } from '@tremor/react';
-import IssueTable from '@/app/sprint/IssueTable';
-import { getIssuesFromSprint } from '@/lib/issue.service';
 import { getActiveSprint } from '@/lib/sprint.service';
+import { getIssuesFromSprintWithChangelog } from '@/lib/issue.service';
 
 const website = [
   { name: '/home', value: 1230 },
@@ -46,7 +45,12 @@ const data1 = [
 
 export default async function ActiveSprintPage() {
   // TODO create a way to get the board Id
-  const currentSprint = await getActiveSprint(2);
+  const boardId = 2;
+  const currentSprint = await getActiveSprint(boardId);
+
+  if (currentSprint) {
+    const issues = await getIssuesFromSprintWithChangelog(boardId, currentSprint.id);
+  }
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
@@ -55,7 +59,7 @@ export default async function ActiveSprintPage() {
           <Title className="text-2xl">Sprint Actuel: {currentSprint.name}</Title>
           <Text>Commence le :{currentSprint.startDate}</Text>
           <Text>Fini le :{currentSprint.endDate}</Text>
-          <IssueTable issues={await getIssuesFromSprint(2, currentSprint.id)}></IssueTable>
+          {/*<IssueTable doingIssues={doingIssues} toDoIssues={toDoIssues}></IssueTable>*/}
         </div>
       ) : (
         <div>

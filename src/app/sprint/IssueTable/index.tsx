@@ -1,40 +1,18 @@
 'use client';
 
-import { Issue } from '@/lib/issue.service';
-import {
-  Table,
-  Text,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
-} from '@tremor/react';
+import { Grid } from '@tremor/react';
 
 export interface IssueTableProps {
-  issues: Issue[];
+  // boardId: number;
+  // sprintId: number;
 }
-export default function IssueTable({ issues }: IssueTableProps) {
+
+export default function IssueTable({} // boardId, sprintId
+: IssueTableProps) {
   return (
-    <Table>
-      <TableHead>
-        <TableRow>
-          <TableHeaderCell>Name</TableHeaderCell>
-          <TableHeaderCell>Estimation</TableHeaderCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {issues.map((issue) => (
-          <TableRow key={issue.id}>
-            <TableCell>
-              <Text>{issue.fields.summary}</Text>
-            </TableCell>
-            <TableCell>
-              <Text>{issue.fields.estimation}</Text>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <Grid className="gap-6">
+      {/*<ToDoIssues issues={toDoIssues}></ToDoIssues>*/}
+      {/*<DoingIssues issues={doingIssues}></DoingIssues>*/}
+    </Grid>
   );
 }

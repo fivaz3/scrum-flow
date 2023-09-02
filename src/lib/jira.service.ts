@@ -3,7 +3,10 @@ import authOptions from '@/app/api/auth/[...nextauth]/auth-options';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
-export function validateData<T>(zodSchema: z.ZodType<T>, data: unknown) {
+// This type can be anything except a Promise or a Function
+type NotPromiseOrFunction<T extends unknown> = T extends Promise<unknown> | Function ? never : T;
+
+export function validateData<Z, T>(zodSchema: z.ZodType<Z>, data: NotPromiseOrFunction<T>) {
   const result = zodSchema.safeParse(data);
 
   if (!result.success) {
@@ -68,14 +71,14 @@ export async function getAuthData() {
   return { accessToken, cloudId };
 }
 
-export async function callApi(path: string) {
+export async function callApi(path: string, queryParams?: Record<string, string>) {
   const { accessToken, cloudId } = await getAuthData();
 
   const baseUrl = `https://api.atlassian.com/ex/jira/${cloudId}`;
 
   const url = `${baseUrl}${path}`;
 
-  const res = await fetch(url, {
+  const res = await fetch(`${url}?${new URLSearchParams(queryParams)}`, {
     headers: {
       Accept: 'application/json',
       Authorization: `Bearer ${accessToken}`,
