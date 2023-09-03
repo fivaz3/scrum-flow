@@ -1,23 +1,29 @@
 import { z } from 'zod';
-import { callApi, getAuthData, validateData } from '@/lib/jira.service';
+import { callApi, validateData } from '@/lib/jira.service';
 import { getBoardConfiguration, getInProgressStatuses } from '@/lib/board.service';
-import { intervalToDuration, parseISO, differenceInSeconds, formatDuration } from 'date-fns';
+import { differenceInSeconds, parseISO } from 'date-fns';
 
 const IssueSchema = z.object({
   id: z.string(),
   fields: z.object({
     summary: z.string(),
-    estimation: z.number().nullable(),
     status: z.object({
       id: z.string(),
       name: z.string(),
+      statusCategory: z.object({
+        id: z.number(),
+        name: z.string(),
+      }),
     }),
   }),
+  estimation: z.number().nullable(),
 });
 
 export type Issue = z.infer<typeof IssueSchema>;
 
-async function transformIssues(boardId: number, rawIssues: unknown) {
+export type IssueWithTimeSpent = Issue & { timeSpent: number };
+
+async function addEstimationToIssues(boardId: number, rawIssues: unknown) {
   const configuration = await getBoardConfiguration(boardId);
 
   const IssueSchemaTransformation = z.object({
@@ -40,17 +46,10 @@ async function transformIssues(boardId: number, rawIssues: unknown) {
 
   const { issues } = validateData(IssueSchemaTransformation, rawIssues);
 
-  const formattedIssues = issues.map((issue) => ({
+  return issues.map((issue) => ({
     ...issue,
-    fields: {
-      ...issue.fields,
-      estimation: issue.fields[configuration.estimation.field.fieldId],
-    },
+    estimation: issue.fields[configuration.estimation.field.fieldId],
   }));
-
-  const IssueSchemaWithOthers = z.object({ fields: z.object({}).passthrough() }).passthrough();
-
-  return validateData(z.array(IssueSchema.merge(IssueSchemaWithOthers)), formattedIssues);
 }
 
 // TODO add pagination
@@ -65,7 +64,7 @@ export async function getIssuesFromSprint(
     queryParams
   );
 
-  return await transformIssues(boardId, response);
+  return await addEstimationToIssues(boardId, response);
 }
 
 const IssueWithChangeLogSchema = IssueSchema.merge(
@@ -97,163 +96,92 @@ const IssueWithChangeLogSchema = IssueSchema.merge(
 export type IssueWithChangeLog = z.infer<typeof IssueWithChangeLogSchema>;
 
 export async function getIssuesFromSprintWithChangelog(boardId: number, sprintId: number) {
-  //Promise<{ toDoIssues: Issue[]; doingIssues: Issue[]; doneIssues: Issue[] }>
   const issues = await getIssuesFromSprint(boardId, sprintId, { expand: 'changelog' });
 
   const issuesWithChangelog = validateData(z.array(IssueWithChangeLogSchema), issues);
 
-  const issue = issuesWithChangelog.find((issue) => issue.id === '10012');
+  const issuesWithTimeSpent = await Promise.all(
+    issuesWithChangelog.map(async (issue) => ({
+      ...issue,
+      timeSpent: await getTimeInProgress(issue),
+    }))
+  );
 
-  if (issue) await getTimeInStatus(issue);
+  const toDoIssues = issuesWithTimeSpent.filter(
+    (issue) => issue.fields.status.statusCategory.name === 'To Do'
+  );
+
+  const doingIssues = issuesWithTimeSpent.filter(
+    (issue) => issue.fields.status.statusCategory.name === 'In Progress'
+  );
+
+  const doneIssues = issuesWithTimeSpent.filter(
+    (issue) => issue.fields.status.statusCategory.name === 'Done'
+  );
+
+  return {
+    toDoIssues,
+    doingIssues,
+    doneIssues,
+  };
 }
 
-async function callBackend(path: string, queryParams: Record<string, string>) {
-  const { accessToken, cloudId } = await getAuthData();
-  const url = `${process.env.BACKEND_URL as string}${path}?${new URLSearchParams(queryParams)}`;
-  const res = await fetch(url, {
-    headers: {
-      Accept: 'application/json',
-      'x-access-token': accessToken,
-      'x-cloud-id': cloudId,
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!res.ok) {
-    console.error(`failed fetch from ${url}`, await res.text());
-    throw Error(`Failed to fetch from ${url}`);
-  }
-
-  const result = await res.json();
-  return result;
-}
-
-// export async function getIssuesFromSprintWithChangeLog(boardId: number, sprintId: number) {
-//   const issues = getIssuesFromSprint(boardId, sprintId);
-//   getTimeInStatus(issues);
-//
-//   // console.log(boardId);
-//   // console.log('sprintId', sprintId);
-//   // const result = await callBackend('/playground/issues-with-changelog', {
-//   //   boardId: `${boardId}`,
-//   //   sprintId: `${sprintId}`,
-//   // });
-//   //
-//   // console.log('result', result);
-//
-//   // const JiraResponseSchema = z.object({
-//   //   maxResults: z.number(),
-//   //   startAt: z.number(),
-//   //   isLast: z.boolean(),
-//   //   values: z.array(SprintSchema),
-//   // });
-//   //
-//   // const validatedResponse = validateData(JiraResponseSchema, response);
-//   //
-//   // return validatedResponse.values[0];
-// }
-
-async function getTimeInStatus(issue: IssueWithChangeLog) {
-  // let movedFromToDoToInProgress = '';
-  // let movedFromInProgressToToDo = '';
-
+async function getTimeInProgress(issue: IssueWithChangeLog): Promise<number> {
   const inProgressColumns = await getInProgressStatuses();
-
-  // const durationsInProgress: Duration[] = [];
 
   let inProgressStart: Date | null = null;
   let totalTimeSpentInProgress = 0;
 
+  // sort histories by date
   issue.changelog.histories.sort(
     (a, b) => parseISO(a.created).valueOf() - parseISO(b.created).valueOf()
   );
 
-  for (const history of issue.changelog.histories) {
+  function hasMovedToInProgress(item: IssueWithChangeLog['changelog']['histories'][0]['items'][0]) {
+    return !!(
+      item.fromString &&
+      !inProgressColumns.includes(item.fromString) &&
+      item.toString &&
+      inProgressColumns.includes(item.toString)
+    );
+  }
+
+  function hasLeftInProgress(item: IssueWithChangeLog['changelog']['histories'][0]['items'][0]) {
+    return !!(
+      item.fromString &&
+      inProgressColumns.includes(item.fromString) &&
+      item.toString &&
+      !inProgressColumns.includes(item.toString)
+    );
+  }
+
+  // remove history that isn't about status
+  const historiesOfStatus = issue.changelog.histories.map((history) => {
+    history.items.filter((item) => item.fieldId === 'status');
+    return history;
+  });
+
+  for (const history of historiesOfStatus) {
     for (const item of history.items) {
-      if (item.fieldId === 'status') {
-        if (
-          !inProgressStart &&
-          item.fromString &&
-          !inProgressColumns.includes(item.fromString) &&
-          item.toString &&
-          inProgressColumns.includes(item.toString)
-        ) {
-          // Issue moved to "In Progress"
-          inProgressStart = parseISO(history.created);
-          console.log('first if', inProgressStart);
-        } else if (
-          item.fromString &&
-          inProgressColumns.includes(item.fromString) &&
-          item.toString &&
-          !inProgressColumns.includes(item.toString) &&
-          inProgressStart
-        ) {
-          // Issue moved out of "In Progress"
-          console.log('second if', parseISO(history.created));
-          const duration = differenceInSeconds(parseISO(history.created), inProgressStart);
-          console.log(
-            'duration in time: ',
-            formatDuration(intervalToDuration({ start: 0, end: duration * 1000 }))
-          );
-          console.log('duration', duration);
-          totalTimeSpentInProgress += duration;
-          inProgressStart = null;
-        }
+      if (!inProgressStart && hasMovedToInProgress(item)) {
+        // Issue moved to "In Progress"
+        inProgressStart = parseISO(history.created);
+      } else if (inProgressStart && hasLeftInProgress(item)) {
+        // Issue moved out of "In Progress"
+        const inProgressStopped = parseISO(history.created);
+        const durationInProgress = differenceInSeconds(inProgressStopped, inProgressStart);
+        totalTimeSpentInProgress += durationInProgress;
+        inProgressStart = null;
       }
     }
   }
 
-  console.log('inProgressStart', inProgressStart);
-  console.log('issue.fields.status.name', issue.fields.status.name);
-  if (inProgressStart && inProgressColumns.includes(issue.fields.status.name)) {
-    const currentDuration = differenceInSeconds(new Date(), inProgressStart);
-    console.log('currentDuration', currentDuration);
+  if (inProgressStart && issue.fields.status.statusCategory.name === 'In Progress') {
+    //if the issue is still ongoing get the time spent related to now
+    const now = new Date();
+    const currentDuration = differenceInSeconds(now, inProgressStart);
     totalTimeSpentInProgress += currentDuration;
   }
 
-  console.log(
-    'totalTimeSpentInProgress',
-    formatDuration(intervalToDuration({ start: 0, end: totalTimeSpentInProgress * 1000 }))
-  );
-
-  // issue.changelog.histories.forEach((history) => {
-  //   const statusHistory = history.items.find((item) => item.fieldId === 'status');
-  //   if (!statusHistory) {
-  //     return;
-  //   }
-  //   if (statusHistory.fromString) {
-  //     if (statusHistory.fromString === 'To Do') {
-  //       if (statusHistory.toString && inProgressColumns.includes(statusHistory.toString)) {
-  //         movedFromToDoToInProgress = history.created;
-  //       }
-  //     }
-  //     if (
-  //       inProgressColumns.includes(statusHistory.fromString) &&
-  //       statusHistory.toString === 'To Do'
-  //     ) {
-  //       movedFromInProgressToToDo = history.created;
-  //       if (movedFromToDoToInProgress) {
-  //         durationsInProgress.push(
-  //           getDurationBetweenDates(movedFromToDoToInProgress, movedFromInProgressToToDo)
-  //         );
-  //       }
-  //     }
-  //   }
-  // });
-
-  // const totalDurationInProgress = add(durationsInProgress[0], durationsInProgress[1]);
-
-  // const intervalInProgressString = formatDuration(intervalInProgress, {
-  //   locale: fr,
-  // });
-}
-
-function getDurationBetweenDates(start: string, end: string) {
-  const startDate = new Date(start);
-  const endDate = new Date(end);
-
-  return intervalToDuration({
-    start: startDate,
-    end: endDate,
-  });
+  return totalTimeSpentInProgress;
 }
