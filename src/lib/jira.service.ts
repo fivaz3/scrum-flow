@@ -7,14 +7,7 @@ import { z } from 'zod';
 type NotPromiseOrFunction<T extends unknown> = T extends Promise<unknown> | Function ? never : T;
 
 export function validateData<Z, T>(zodSchema: z.ZodType<Z>, data: NotPromiseOrFunction<T>) {
-  const result = zodSchema.safeParse(data);
-
-  if (!result.success) {
-    console.error(result.error.issues);
-    throw Error("This data doesn't match its type");
-  }
-
-  return result.data;
+  return zodSchema.parse(data);
 }
 
 async function getAccessToken() {

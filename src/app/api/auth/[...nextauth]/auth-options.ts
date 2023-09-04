@@ -29,7 +29,10 @@ function saveInsomniaConfig(access_token: string) {
         }
       });
     } catch (error) {
-      console.log('configString-', configString, '-');
+      // configString is sometimes an empty string which provokes SyntaxError when executing JSON.parse(configString)
+      if (!(error instanceof SyntaxError)) {
+        throw error;
+      }
     }
   });
 }

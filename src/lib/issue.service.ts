@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { callApi, validateData } from '@/lib/jira.service';
-import { getBoardConfiguration, getInProgressStatuses } from '@/lib/board.service';
+import { getBoardConfiguration } from '@/lib/board.service';
 import { differenceInSeconds, parseISO } from 'date-fns';
+import { getInProgressStatuses } from '@/lib/project.service';
 
 const IssueSchema = z.object({
   id: z.string(),
@@ -23,7 +24,7 @@ export type Issue = z.infer<typeof IssueSchema>;
 
 export type IssueWithTimeSpent = Issue & { timeSpent: number };
 
-async function addEstimationToIssues(boardId: number, rawIssues: unknown) {
+async function addEstimationToIssues(boardId: string | number, rawIssues: unknown) {
   const configuration = await getBoardConfiguration(boardId);
 
   const IssueSchemaTransformation = z.object({
@@ -55,7 +56,7 @@ async function addEstimationToIssues(boardId: number, rawIssues: unknown) {
 // TODO add pagination
 // TODO these issues have too many useless attributes, I should request only those I need
 export async function getIssuesFromSprint(
-  boardId: number,
+  boardId: string | number,
   sprintId: number,
   queryParams: Record<string, string>
 ) {
@@ -95,7 +96,7 @@ const IssueWithChangeLogSchema = IssueSchema.merge(
 
 export type IssueWithChangeLog = z.infer<typeof IssueWithChangeLogSchema>;
 
-export async function getIssuesFromSprintWithChangelog(boardId: number, sprintId: number) {
+export async function getIssuesFromSprintWithChangelog(boardId: string | number, sprintId: number) {
   const issues = await getIssuesFromSprint(boardId, sprintId, { expand: 'changelog' });
 
   const issuesWithChangelog = validateData(z.array(IssueWithChangeLogSchema), issues);

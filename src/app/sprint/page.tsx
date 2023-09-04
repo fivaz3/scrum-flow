@@ -1,53 +1,30 @@
-import { Grid, Title, Text } from '@tremor/react';
+import { Flex, Text, Grid, Title } from '@tremor/react';
+import { getBoards } from '@/lib/board.service';
 import { getActiveSprint } from '@/lib/sprint.service';
 import { getIssuesFromSprintWithChangelog } from '@/lib/issue.service';
 import IssueTable from '@/app/sprint/IssueTable';
 import { format, parseISO } from 'date-fns';
+import BoardSelector from '@/app/sprint/BoardSelector';
 
-const website = [
-  { name: '/home', value: 1230 },
-  { name: '/contact', value: 751 },
-  { name: '/gallery', value: 471 },
-  { name: '/august-discount-offer', value: 280 },
-  { name: '/case-studies', value: 78 },
-];
+interface ActiveSprintPageProps {
+  searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
+}
+export default async function ActiveSprintPage({ searchParams }: ActiveSprintPageProps) {
+  const boards = await getBoards();
 
-const shop = [
-  { name: '/home', value: 453 },
-  { name: '/imprint', value: 351 },
-  { name: '/shop', value: 271 },
-  { name: '/pricing', value: 191 },
-];
+  if (boards.length === 0) {
+    return (
+      <main className="p-4 md:p-10 mx-auto max-w-7xl">
+        <div>
+          <Title>Vous n&apos;avez pas encore créé un board de type Scrum</Title>
+        </div>
+      </main>
+    );
+  }
 
-const app = [
-  { name: '/shop', value: 789 },
-  { name: '/product-features', value: 676 },
-  { name: '/about', value: 564 },
-  { name: '/login', value: 234 },
-  { name: '/downloads', value: 191 },
-];
+  const boardId = searchParams.boardId || boards[0].id;
+  // const boardId = 2;
 
-const data1 = [
-  {
-    category: 'Website',
-    stat: '10,234',
-    data: website,
-  },
-  {
-    category: 'Online Shop',
-    stat: '12,543',
-    data: shop,
-  },
-  {
-    category: 'Mobile App',
-    stat: '2,543',
-    data: app,
-  },
-];
-
-export default async function ActiveSprintPage() {
-  // TODO create a way to get the board Id
-  const boardId = 2;
   const currentSprint = await getActiveSprint(boardId);
 
   if (!currentSprint) {
@@ -68,9 +45,16 @@ export default async function ActiveSprintPage() {
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
       <div>
-        <Title className="text-2xl">Sprint Actuel: {currentSprint.name}</Title>
-        <Text>Commence le : {format(parseISO(currentSprint.startDate), 'dd/MM/yyyy à HH:mm')}</Text>
-        <Text>Fini le : {format(parseISO(currentSprint.endDate), 'dd/MM/yyyy à HH:mm')}</Text>
+        <Flex className="content-start">
+          <div>
+            <Title className="text-2xl">Sprint Actuel: {currentSprint.name}</Title>
+            <Text>
+              Commence le : {format(parseISO(currentSprint.startDate), 'dd/MM/yyyy à HH:mm')}
+            </Text>
+            <Text>Fini le : {format(parseISO(currentSprint.endDate), 'dd/MM/yyyy à HH:mm')}</Text>
+          </div>
+          <BoardSelector boardId={`${boardId}`} boards={boards} />
+        </Flex>
         <Grid className="gap-6 mt-4">
           <IssueTable label="To Do" issues={toDoIssues}></IssueTable>
           <IssueTable label="Doing" issues={doingIssues}></IssueTable>

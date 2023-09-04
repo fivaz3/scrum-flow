@@ -1,5 +1,55 @@
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 import { callApi, validateData } from '@/lib/jira.service';
+
+const BoardSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  location: z.object({
+    projectId: z.number(),
+    avatarURI: z.string(),
+    name: z.string(),
+  }),
+});
+
+export type Board = z.infer<typeof BoardSchema>;
+
+const BoardListSchema = z.object({
+  maxResults: z.number(),
+  startAt: z.number(),
+  total: z.number(),
+  isLast: z.boolean(),
+  values: z.array(BoardSchema),
+});
+
+async function filterBoards(boards: Board[]): Promise<Board[]> {
+  const scrumBoards: Board[] = [];
+  for (const board of boards) {
+    if (await isBoardScrum(board.id)) {
+      scrumBoards.push(board);
+    }
+  }
+  return scrumBoards;
+}
+
+async function isBoardScrum(boardId: number): Promise<boolean> {
+  try {
+    await getBoardConfiguration(boardId);
+    return true;
+  } catch (error) {
+    if (!(error instanceof ZodError)) {
+      throw error;
+    }
+    return false;
+  }
+}
+
+export async function getBoards(): Promise<Board[]> {
+  const response = await callApi(`/rest/agile/1.0/board/`);
+
+  const { values } = validateData(BoardListSchema, response);
+
+  return filterBoards(values);
+}
 
 const BoardConfigurationSchema = z.object({
   estimation: z.object({
@@ -13,55 +63,8 @@ const BoardConfigurationSchema = z.object({
 
 type BoardConfiguration = z.infer<typeof BoardConfigurationSchema>;
 
-export async function getBoardConfiguration(boardId: number): Promise<BoardConfiguration> {
+export async function getBoardConfiguration(boardId: number | string): Promise<BoardConfiguration> {
   const response = await callApi(`/rest/agile/1.0/board/${boardId}/configuration`);
 
   return validateData(BoardConfigurationSchema, response);
-}
-
-export async function getInProgressStatuses(): Promise<string[]> {
-  // TODO make this variable available later
-  const projectId = '10001';
-  const response = await callApi(`/rest/api/2/project/${projectId}/statuses`);
-
-  const projectStatuses = validateData(
-    z.array(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-        statuses: z.array(
-          z.object({
-            id: z.string(),
-            name: z.string(),
-            statusCategory: z.object({
-              id: z.number(),
-              key: z.string(),
-              name: z.string(),
-            }),
-          })
-        ),
-      })
-    ),
-    response
-  );
-
-  const taskStatus = projectStatuses.find((projectStatus) => projectStatus.name === 'Task');
-
-  if (!taskStatus) {
-    throw Error(
-      'There is an error with your Jira application, you might have deleted your Task statuses'
-    );
-  }
-
-  const inProgressStatuses = taskStatus.statuses.filter(
-    (status) => status.statusCategory.name === 'In Progress'
-  );
-
-  if (inProgressStatuses.length === 0) {
-    throw Error(
-      'There is an error with your Jira application, you might have deleted your in Progress statuses'
-    );
-  }
-
-  return inProgressStatuses.map((inProgressStatus) => inProgressStatus.name);
 }
