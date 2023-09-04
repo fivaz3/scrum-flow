@@ -5,6 +5,10 @@ import { Board } from '@/lib/board.service';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 
+export function SearchBarFallback() {
+  return <>placeholder</>;
+}
+
 export interface BoardSelectorProps {
   boardId: string;
   boards: Board[];
@@ -28,8 +32,8 @@ export default function BoardSelector({ boards, boardId }: BoardSelectorProps) {
   createQueryString('boardId', boardId);
 
   return (
-    <div className="flex align-center gap-2">
-      <span>Board actuel: </span>
+    <div className="flex items-center gap-2">
+      <div>Board actuel: </div>
       <Select
         className="w-14"
         value={`${boardId}`}

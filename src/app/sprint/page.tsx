@@ -1,10 +1,12 @@
-import { Flex, Text, Grid, Title } from '@tremor/react';
+import { Flex, Title } from '@tremor/react';
 import { getBoards } from '@/lib/board.service';
 import { getActiveSprint } from '@/lib/sprint.service';
-import { getIssuesFromSprintWithChangelog } from '@/lib/issue.service';
-import IssueTable from '@/app/sprint/IssueTable';
-import { format, parseISO } from 'date-fns';
+import SprintPanel from '@/app/sprint/SprintPanel';
 import BoardSelector from '@/app/sprint/BoardSelector';
+import { Suspense } from 'react';
+import SprintPanelLoading from '@/app/sprint/SprintPanel/SprintPanelLoading';
+import IssuesList from '@/app/sprint/issues-list';
+import LoadingBar from '@/components/LoadingBar';
 
 interface ActiveSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
@@ -23,7 +25,6 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
   }
 
   const boardId = searchParams.boardId || boards[0].id;
-  // const boardId = 2;
 
   const currentSprint = await getActiveSprint(boardId);
 
@@ -37,30 +38,23 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
     );
   }
 
-  const { toDoIssues, doingIssues, doneIssues } = await getIssuesFromSprintWithChangelog(
-    boardId,
-    currentSprint.id
-  );
-
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
-      <div>
-        <Flex className="content-start">
-          <div>
-            <Title className="text-2xl">Sprint Actuel: {currentSprint.name}</Title>
-            <Text>
-              Commence le : {format(parseISO(currentSprint.startDate), 'dd/MM/yyyy à HH:mm')}
-            </Text>
-            <Text>Fini le : {format(parseISO(currentSprint.endDate), 'dd/MM/yyyy à HH:mm')}</Text>
-          </div>
+      <Flex className="content-start">
+        <Suspense fallback={<SprintPanelLoading />}>
+          <SprintPanel currentSprint={currentSprint} />
           <BoardSelector boardId={`${boardId}`} boards={boards} />
-        </Flex>
-        <Grid className="gap-6 mt-4">
-          <IssueTable label="To Do" issues={toDoIssues}></IssueTable>
-          <IssueTable label="Doing" issues={doingIssues}></IssueTable>
-          <IssueTable label="Done" issues={doneIssues}></IssueTable>
-        </Grid>
-      </div>
+        </Suspense>
+      </Flex>
+      <Suspense
+        fallback={
+          <div>
+            chargement des tickets...
+            <LoadingBar />
+          </div>
+        }>
+        <IssuesList boardId={boardId} currentSprintId={currentSprint.id} />
+      </Suspense>
     </main>
   );
 }
