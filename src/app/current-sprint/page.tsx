@@ -1,12 +1,12 @@
 import { Flex, Title } from '@tremor/react';
 import { getBoards } from '@/lib/board.service';
 import { getActiveSprint } from '@/lib/sprint.service';
-import SprintPanel from '@/app/sprint/SprintPanel';
-import BoardSelector from '@/app/sprint/BoardSelector';
 import { Suspense } from 'react';
-import SprintPanelLoading from '@/app/sprint/SprintPanel/SprintPanelLoading';
-import IssuesList from '@/app/sprint/issues-list';
+import IssuesList from '@/app/current-sprint/issues-list';
 import LoadingBar from '@/components/LoadingBar';
+import SprintPanelLoading from '@/app/current-sprint/sprint-panel/sprint-panel-loading';
+import SprintPanel from '@/app/current-sprint/sprint-panel';
+import BoardSelector from '@/app/current-sprint/board-selector';
 
 interface ActiveSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };

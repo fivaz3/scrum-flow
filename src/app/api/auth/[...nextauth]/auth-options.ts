@@ -31,13 +31,13 @@ function saveInsomniaConfig(access_token: string) {
     } catch (error) {
       // configString is sometimes an empty string which provokes SyntaxError when executing JSON.parse(configString)
       if (!(error instanceof SyntaxError)) {
+        console.log('unknown error when saving insomnia config', error);
         throw error;
       }
     }
   });
 }
 
-// TODO check if I should add a zod validation for these data
 function validateToken(data: unknown) {
   const RefreshTokenSchema = z.object({
     access_token: z.string(),
@@ -45,15 +45,11 @@ function validateToken(data: unknown) {
     expires_in: z.number(),
   });
 
-  const result = RefreshTokenSchema.safeParse(data);
+  const refreshToken = RefreshTokenSchema.parse(data);
 
-  if (!result.success) {
-    throw new Error("fetched token doesn't match zod schema", { cause: result.error.issues });
-  }
+  saveInsomniaConfig(refreshToken.access_token);
 
-  saveInsomniaConfig(result.data.access_token);
-
-  return result.data;
+  return refreshToken;
 }
 
 async function refreshAccessToken(token: JWT) {
@@ -73,7 +69,7 @@ async function refreshAccessToken(token: JWT) {
   });
 
   if (!response.ok) {
-    throw new Error('Error refreshing access token', { cause: await response.text() });
+    throw new Error(`Error refreshing access token ${await response.text()}`);
   }
 
   const { access_token, expires_in, refresh_token } = validateToken(await response.json());
@@ -118,9 +114,6 @@ export default {
 
         return await refreshAccessToken(token);
       } catch (error) {
-        if (error instanceof Error) {
-          console.log(error.message, error.cause);
-        }
         // The error property will be used client-side to handle the refresh token error
         return { ...token, error: 'RefreshAccessTokenError' };
       }

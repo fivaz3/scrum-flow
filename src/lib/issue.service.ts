@@ -53,7 +53,7 @@ async function addEstimationToIssues(boardId: string | number, rawIssues: unknow
   }));
 }
 
-// TODO add pagination
+// TODO add  pagination
 // TODO these issues have too many useless attributes, I should request only those I need
 export async function getIssuesFromSprint(
   boardId: string | number,
@@ -97,7 +97,11 @@ const IssueWithChangeLogSchema = IssueSchema.merge(
 export type IssueWithChangeLog = z.infer<typeof IssueWithChangeLogSchema>;
 
 export async function getIssuesFromSprintWithChangelog(boardId: string | number, sprintId: number) {
-  const issues = await getIssuesFromSprint(boardId, sprintId, { expand: 'changelog' });
+  // issuetype=Story exclude Sub-tasks issues
+  const issues = await getIssuesFromSprint(boardId, sprintId, {
+    expand: 'changelog',
+    jql: 'issuetype=Story',
+  });
 
   const issuesWithChangelog = validateData(z.array(IssueWithChangeLogSchema), issues);
 

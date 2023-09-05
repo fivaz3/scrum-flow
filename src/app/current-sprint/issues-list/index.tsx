@@ -1,5 +1,5 @@
 import { Grid } from '@tremor/react';
-import IssueTable from '@/app/sprint/IssueTable';
+import IssueTable from '@/app/current-sprint/IssueTable';
 import { getIssuesFromSprintWithChangelog } from '@/lib/issue.service';
 
 export interface IssuesListProps {

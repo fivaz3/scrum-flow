@@ -9,8 +9,9 @@ import { Session } from 'next-auth';
 import Link from 'next/link';
 
 const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Sprint', href: '/sprint' },
+  { name: 'Accueil', href: '/' },
+  { name: 'Sprint actuel', href: '/current-sprint' },
+  { name: 'Réglages', href: '/settings' },
 ];
 
 function classNames(...classes: string[]) {
