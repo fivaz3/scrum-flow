@@ -6,6 +6,7 @@ import { Fragment, useEffect } from 'react';
 import { signIn, signOut } from 'next-auth/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Session } from 'next-auth';
+import Link from 'next/link';
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -56,7 +57,7 @@ export default function Navbar({ session }: NavbarProps) {
                 </div>
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                   {navigation.map((item) => (
-                    <a
+                    <Link
                       key={item.name}
                       href={item.href}
                       className={classNames(
@@ -67,7 +68,7 @@ export default function Navbar({ session }: NavbarProps) {
                       )}
                       aria-current={pathname === item.href ? 'page' : undefined}>
                       {item.name}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               </div>
