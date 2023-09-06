@@ -1,22 +1,40 @@
-import { getAuthData } from '@/lib/jira.service';
+import { getCloudId } from '@/lib/jira.service';
 
-async function callBackend(path: string, queryParams: Record<string, string>) {
-  const { accessToken, cloudId } = await getAuthData();
-  const url = `${process.env.BACKEND_URL as string}${path}?${new URLSearchParams(queryParams)}`;
+export async function getBackEnd(path: string, accessToken: string): Promise<unknown> {
+  const cloudId = await getCloudId(accessToken);
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL as string}${path}`;
+
   const res = await fetch(url, {
+    method: 'GET',
     headers: {
-      Accept: 'application/json',
-      'x-access-token': accessToken,
-      'x-cloud-id': cloudId,
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken} ${cloudId}`,
     },
   });
 
   if (!res.ok) {
-    console.error(`failed fetch from ${url}`, await res.text());
-    throw Error(`Failed to fetch from ${url}`);
+    throw Error(`An error occurred while accessing ${url} : ${await res.text()}`);
   }
 
-  const result = await res.json();
-  return result;
+  return await res.json();
+}
+
+export async function postBackEnd(path: string, data: unknown, accessToken: string) {
+  const cloudId = await getCloudId(accessToken);
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL as string}${path}`;
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken} ${cloudId}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    throw Error(`An error occurred while accessing ${url} : ${await res.text()}`);
+  }
+
+  return await res.json();
 }

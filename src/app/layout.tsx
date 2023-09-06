@@ -12,9 +12,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <Suspense fallback={<div>Chargement...</div>}>
           <NextAuthProvider>
             <Nav />
+            {children}
           </NextAuthProvider>
         </Suspense>
-        {children}
       </body>
     </html>
   );

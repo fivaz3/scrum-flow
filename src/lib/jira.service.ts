@@ -37,7 +37,7 @@ async function fetchResources(accessToken: string) {
   return await res.json();
 }
 
-async function getCloudId(accessToken: string) {
+export async function getCloudId(accessToken: string) {
   const response = await fetchResources(accessToken);
 
   // TODO test this application with a account without any activating any Jira service to see if this error case makes sense

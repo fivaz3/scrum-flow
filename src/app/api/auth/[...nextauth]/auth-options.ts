@@ -2,41 +2,8 @@ import { AuthOptions } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import { z } from 'zod';
 import { atlassianProvider } from '@/app/api/auth/[...nextauth]/atlassian-provider';
-import fs from 'fs';
 
 const ATLASSIAN_REFRESH_TOKEN_URL = 'https://auth.atlassian.com/oauth/token';
-
-function saveInsomniaConfig(access_token: string) {
-  const pathToFile = 'insomnia-config.json';
-  fs.readFile(pathToFile, 'utf8', function (err, configString) {
-    if (err) {
-      console.log(err);
-      return;
-    }
-
-    try {
-      // Parse the JSON data
-      const config = JSON.parse(configString);
-
-      // Modify the data
-      config.access_token = access_token;
-
-      // Write the modified data back to the file
-      fs.writeFile(pathToFile, JSON.stringify(config, null, 2), function (err) {
-        if (err) {
-          console.log(err);
-          return;
-        }
-      });
-    } catch (error) {
-      // configString is sometimes an empty string which provokes SyntaxError when executing JSON.parse(configString)
-      if (!(error instanceof SyntaxError)) {
-        console.log('unknown error when saving insomnia config', error);
-        throw error;
-      }
-    }
-  });
-}
 
 function validateToken(data: unknown) {
   const RefreshTokenSchema = z.object({
@@ -45,11 +12,7 @@ function validateToken(data: unknown) {
     expires_in: z.number(),
   });
 
-  const refreshToken = RefreshTokenSchema.parse(data);
-
-  saveInsomniaConfig(refreshToken.access_token);
-
-  return refreshToken;
+  return RefreshTokenSchema.parse(data);
 }
 
 async function refreshAccessToken(token: JWT) {
@@ -74,6 +37,8 @@ async function refreshAccessToken(token: JWT) {
 
   const { access_token, expires_in, refresh_token } = validateToken(await response.json());
 
+  // saveInsomniaConfig(access_token, refresh_token);
+
   return {
     ...token, // Keep the previous token properties
     access_token,
@@ -90,7 +55,7 @@ export default {
       try {
         // Persist the OAuth access_token to the token right after sign in
         if (account) {
-          saveInsomniaConfig(account.access_token);
+          // saveInsomniaConfig(account.access_token, account.refresh_token);
 
           token.access_token = account.access_token;
           token.expires_at = account.expires_at;
@@ -119,7 +84,7 @@ export default {
       }
     },
     async session({ session, token }) {
-      saveInsomniaConfig(token.access_token);
+      // saveInsomniaConfig(token.access_token);
       // Send properties to the client, like an access_token from a provider.
       session.access_token = token.access_token;
       if (token.error) {
