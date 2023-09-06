@@ -26,3 +26,44 @@ export async function getActiveSprint(boardId: string | number): Promise<Sprint 
 
   return validatedResponse.values[0];
 }
+
+export async function getPreviousSprints(boardId: string | number): Promise<Sprint[]> {
+  const response = await callApi(`/rest/agile/1.0/board/${boardId}/sprint`, { state: 'closed' });
+
+  const JiraResponseSchema = z.object({
+    maxResults: z.number(),
+    startAt: z.number(),
+    isLast: z.boolean(),
+    values: z.array(SprintSchema),
+  });
+
+  const { values: sprints } = validateData(JiraResponseSchema, response);
+
+  const sprintsWithIssuesOrNull: Array<Sprint | null> = await Promise.all(
+    sprints.map(async (sprint) => {
+      if (await hasIssues(boardId, sprint.id)) {
+        return sprint;
+      }
+      return null;
+    })
+  );
+
+  return sprintsWithIssuesOrNull.filter((sprint): sprint is Sprint => sprint !== null);
+}
+
+export async function hasIssues(boardId: string | number, sprintId: number): Promise<boolean> {
+  const response = await callApi(`/rest/agile/1.0/board/${boardId}/sprint/${sprintId}/issue`, {
+    maxResults: '1',
+  });
+
+  const IssueSchema = z.object({
+    startAt: z.number(),
+    maxResults: z.number(),
+    total: z.number(),
+    issues: z.array(z.unknown()),
+  });
+
+  const validatedResponse = validateData(IssueSchema, response);
+
+  return validatedResponse.issues.length === 1;
+}

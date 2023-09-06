@@ -5,15 +5,15 @@ import { format, parseISO } from 'date-fns';
 import { Sprint } from '@/lib/sprint.service';
 
 export interface SprintPanelProps {
-  currentSprint: Sprint;
+  sprint: Sprint;
 }
 
-export default function SprintPanel({ currentSprint }: SprintPanelProps) {
+export default function SprintPanel({ sprint }: SprintPanelProps) {
   return (
     <div>
-      <Title className="text-2xl">Sprint Actuel: {currentSprint.name}</Title>
-      <Text>Commence le : {format(parseISO(currentSprint.startDate), 'dd/MM/yyyy à HH:mm')}</Text>
-      <Text>Fini le :{format(parseISO(currentSprint.endDate), 'dd/MM/yyyy à HH:mm')}</Text>
+      <Title className="text-2xl">Sprint Actuel: {sprint.name}</Title>
+      <Text>Commence le : {format(parseISO(sprint.startDate), 'dd/MM/yyyy à HH:mm')}</Text>
+      <Text>Fini le :{format(parseISO(sprint.endDate), 'dd/MM/yyyy à HH:mm')}</Text>
     </div>
   );
 }

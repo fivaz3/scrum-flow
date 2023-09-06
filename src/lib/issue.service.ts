@@ -1,8 +1,9 @@
 import { z } from 'zod';
 import { callApi, validateData } from '@/lib/jira.service';
 import { getBoardConfiguration } from '@/lib/board.service';
-import { differenceInSeconds, parseISO } from 'date-fns';
+import { differenceInSeconds, getHours, parseISO, setHours } from 'date-fns';
 import { getInProgressStatuses } from '@/lib/project.service';
+// TODO add a eslint plugin that will fix my imports merging them possible
 
 const IssueSchema = z.object({
   id: z.string(),
@@ -171,9 +172,19 @@ async function getTimeInProgress(issue: IssueWithChangeLog): Promise<number> {
       if (!inProgressStart && hasMovedToInProgress(item)) {
         // Issue moved to "In Progress"
         inProgressStart = parseISO(history.created);
+        // Check if inProgressStart is within working hours
+        if (getHours(inProgressStart) < 9) {
+          // Set inProgressStart to 09:00
+          inProgressStart = setHours(inProgressStart, 9);
+        }
       } else if (inProgressStart && hasLeftInProgress(item)) {
         // Issue moved out of "In Progress"
-        const inProgressStopped = parseISO(history.created);
+        let inProgressStopped = parseISO(history.created);
+        // Check if inProgressStopped is within working hours
+        if (getHours(inProgressStopped) > 18) {
+          // Set inProgressStopped to 18:00
+          inProgressStopped = setHours(inProgressStopped, 18);
+        }
         const durationInProgress = differenceInSeconds(inProgressStopped, inProgressStart);
         totalTimeSpentInProgress += durationInProgress;
         inProgressStart = null;

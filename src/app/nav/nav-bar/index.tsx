@@ -11,6 +11,7 @@ import Link from 'next/link';
 const navigation = [
   { name: 'Accueil', href: '/' },
   { name: 'Sprint actuel', href: '/current-sprint' },
+  { name: 'Sprints précedents', href: '/previous-sprints' },
   { name: 'Réglages', href: '/settings' },
 ];
 

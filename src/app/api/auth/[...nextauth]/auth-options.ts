@@ -84,7 +84,7 @@ export default {
       }
     },
     async session({ session, token }) {
-      // saveInsomniaConfig(token.access_token);
+      // console.log(token.access_token, '\n');
       // Send properties to the client, like an access_token from a provider.
       session.access_token = token.access_token;
       if (token.error) {

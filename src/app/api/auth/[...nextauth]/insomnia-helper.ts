@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-export function saveInsomniaConfig(access_token: string, refresh_token: string) {
+export function saveInsomniaConfig(access_token: string) {
   const pathToFile = 'insomnia-config.json';
   fs.readFile(pathToFile, 'utf8', function (err, configString) {
     if (err) {
@@ -14,7 +14,6 @@ export function saveInsomniaConfig(access_token: string, refresh_token: string) 
 
       // Modify the data
       config.access_token = access_token;
-      config.refresh_token = refresh_token;
 
       // Write the modified data back to the file
       fs.writeFile(pathToFile, JSON.stringify(config, null, 2), function (err) {

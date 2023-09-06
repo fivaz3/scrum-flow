@@ -4,13 +4,13 @@ import { getIssuesFromSprintWithChangelog } from '@/lib/issue.service';
 
 export interface IssuesListProps {
   boardId: number | string;
-  currentSprintId: number;
+  sprintId: number;
 }
 
-export default async function IssuesList({ boardId, currentSprintId }: IssuesListProps) {
+export default async function IssuesList({ boardId, sprintId }: IssuesListProps) {
   const { toDoIssues, doingIssues, doneIssues } = await getIssuesFromSprintWithChangelog(
     boardId,
-    currentSprintId
+    sprintId
   );
 
   return (

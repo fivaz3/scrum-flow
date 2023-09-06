@@ -1,17 +1,17 @@
 import { Flex, Title } from '@tremor/react';
 import { getBoards } from '@/lib/board.service';
-import { getActiveSprint } from '@/lib/sprint.service';
 import { Suspense } from 'react';
 import IssuesList from '@/app/current-sprint/issues-list';
 import LoadingBar from '@/components/LoadingBar';
 import SprintPanelLoading from '@/app/current-sprint/sprint-panel/sprint-panel-loading';
 import SprintPanel from '@/app/current-sprint/sprint-panel';
 import BoardSelector from '@/app/current-sprint/board-selector';
+import { getPreviousSprints } from '@/lib/sprint.service';
 
-interface ActiveSprintPageProps {
+interface PreviousSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
 }
-export default async function ActiveSprintPage({ searchParams }: ActiveSprintPageProps) {
+export default async function PreviousSprintPage({ searchParams }: PreviousSprintPageProps) {
   const boards = await getBoards();
 
   if (boards.length === 0) {
@@ -26,9 +26,9 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
 
   const boardId = searchParams.boardId || boards[0].id;
 
-  const currentSprint = await getActiveSprint(boardId);
+  const sprints = await getPreviousSprints(boardId);
 
-  if (!currentSprint) {
+  if (!sprints) {
     return (
       <main className="p-4 md:p-10 mx-auto max-w-7xl">
         <div>
@@ -40,21 +40,25 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
-      <Flex className="content-start">
-        <Suspense fallback={<SprintPanelLoading />}>
-          <SprintPanel sprint={currentSprint} />
-          <BoardSelector boardId={`${boardId}`} boards={boards} />
-        </Suspense>
-      </Flex>
-      <Suspense
-        fallback={
-          <div>
-            chargement des tickets...
-            <LoadingBar />
-          </div>
-        }>
-        <IssuesList boardId={boardId} sprintId={currentSprint.id} />
-      </Suspense>
+      {sprints.map((sprint) => (
+        <>
+          <Flex className="content-start">
+            <Suspense fallback={<SprintPanelLoading />}>
+              <SprintPanel sprint={sprint} />
+              <BoardSelector boardId={`${boardId}`} boards={boards} />
+            </Suspense>
+          </Flex>
+          <Suspense
+            fallback={
+              <div>
+                chargement des tickets...
+                <LoadingBar />
+              </div>
+            }>
+            <IssuesList boardId={boardId} sprintId={sprint.id} />
+          </Suspense>
+        </>
+      ))}
     </main>
   );
 }

@@ -16,7 +16,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    currentSprint: {
+    sprint: {
       id: 1,
       state: 'active',
       name: 'Scrum 1',
