@@ -134,9 +134,6 @@ export async function getIssuesFromSprintWithChangelog(boardId: string | number,
 async function getTimeInProgress(issue: IssueWithChangeLog): Promise<number> {
   const inProgressColumns = await getInProgressStatuses();
 
-  let inProgressStart: Date | null = null;
-  let totalTimeSpentInProgress = 0;
-
   // sort histories by date
   issue.changelog.histories.sort(
     (a, b) => parseISO(a.created).valueOf() - parseISO(b.created).valueOf()
@@ -165,6 +162,9 @@ async function getTimeInProgress(issue: IssueWithChangeLog): Promise<number> {
     history.items.filter((item) => item.fieldId === 'status');
     return history;
   });
+
+  let inProgressStart: Date | null = null;
+  let totalTimeSpentInProgress = 0;
 
   for (const history of historiesOfStatus) {
     for (const item of history.items) {
