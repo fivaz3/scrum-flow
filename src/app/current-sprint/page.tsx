@@ -16,11 +16,9 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
 
   if (boards.length === 0) {
     return (
-      <main className="p-4 md:p-10 mx-auto max-w-7xl">
-        <div>
-          <Title>Vous n&apos;avez pas encore créé un board de type Scrum</Title>
-        </div>
-      </main>
+      <div>
+        <Title>Vous n&apos;avez pas encore créé un board de type Scrum</Title>
+      </div>
     );
   }
 
@@ -30,16 +28,14 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
 
   if (!currentSprint) {
     return (
-      <main className="p-4 md:p-10 mx-auto max-w-7xl">
-        <div>
-          <Title>Il n&apos;y a pas encore de sprint actives</Title>
-        </div>
-      </main>
+      <div>
+        <Title>Il n&apos;y a pas encore de sprint actives</Title>
+      </div>
     );
   }
 
   return (
-    <main className="p-4 md:p-10 mx-auto max-w-7xl">
+    <>
       <Flex className="content-start">
         <Suspense fallback={<SprintPanelLoading />}>
           <SprintPanel sprint={currentSprint} />
@@ -55,6 +51,6 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
         }>
         <IssuesList boardId={boardId} sprintId={currentSprint.id} />
       </Suspense>
-    </main>
+    </>
   );
 }

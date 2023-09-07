@@ -16,11 +16,9 @@ export default async function PreviousSprintPage({ searchParams }: PreviousSprin
 
   if (boards.length === 0) {
     return (
-      <main className="p-4 md:p-10 mx-auto max-w-7xl">
-        <div>
-          <Title>Vous n&apos;avez pas encore créé un board de type Scrum</Title>
-        </div>
-      </main>
+      <div>
+        <Title>Vous n&apos;avez pas encore créé un board de type Scrum</Title>
+      </div>
     );
   }
 
@@ -30,16 +28,14 @@ export default async function PreviousSprintPage({ searchParams }: PreviousSprin
 
   if (!sprints) {
     return (
-      <main className="p-4 md:p-10 mx-auto max-w-7xl">
-        <div>
-          <Title>Il n&apos;y a pas encore de sprint actives</Title>
-        </div>
-      </main>
+      <div>
+        <Title>Il n&apos;y a pas encore de sprint actives</Title>
+      </div>
     );
   }
 
   return (
-    <main className="p-4 md:p-10 mx-auto max-w-7xl">
+    <>
       {sprints.map((sprint) => (
         <>
           <Flex className="content-start">
@@ -59,6 +55,6 @@ export default async function PreviousSprintPage({ searchParams }: PreviousSprin
           </Suspense>
         </>
       ))}
-    </main>
+    </>
   );
 }

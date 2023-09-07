@@ -6,6 +6,7 @@ import { atlassianProvider } from '@/app/api/auth/[...nextauth]/atlassian-provid
 const ATLASSIAN_REFRESH_TOKEN_URL = 'https://auth.atlassian.com/oauth/token';
 
 function validateToken(data: unknown) {
+  console.log('trying to validate token');
   const RefreshTokenSchema = z.object({
     access_token: z.string(),
     refresh_token: z.string(),
@@ -31,11 +32,15 @@ async function refreshAccessToken(token: JWT) {
     }),
   });
 
+  console.log(`calling ${ATLASSIAN_REFRESH_TOKEN_URL}`);
+
   if (!response.ok) {
+    console.log(`Error refreshing access token ${await response.text()}`);
     throw new Error(`Error refreshing access token ${await response.text()}`);
   }
 
   const { access_token, expires_in, refresh_token } = validateToken(await response.json());
+  console.log('token refreshed');
 
   // saveInsomniaConfig(access_token, refresh_token);
 

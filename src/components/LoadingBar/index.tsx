@@ -1,5 +1,4 @@
 'use client';
-
 import ReactLoading from 'react-loading';
 
 export type LoadingType =

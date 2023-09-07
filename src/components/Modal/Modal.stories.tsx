@@ -1,19 +1,23 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import FullCalendarApp from '.';
+import Modal from '.';
 
 const meta = {
-  component: FullCalendarApp,
+  component: Modal,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
   argTypes: {},
-} satisfies Meta<typeof FullCalendarApp>;
+} satisfies Meta<typeof Modal>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
-  args: {},
+  args: {
+    isOpen: true,
+    setOpen: () => console.log('modal closed'),
+    children: <p>Modal</p>,
+  },
 };

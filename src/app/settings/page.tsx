@@ -1,12 +1,6 @@
 'use client';
 import { Card } from '@tremor/react';
-import FullCalendarApp from '@/components/FullCalendarApp';
 interface ActiveSprintPageProps {}
-
-type FormData = {
-  start_at: string;
-  end_at: string;
-};
 
 export default function SettingsPage({}: ActiveSprintPageProps) {
   // const { register, handleSubmit, reset } = useForm<FormData>({
@@ -43,7 +37,16 @@ export default function SettingsPage({}: ActiveSprintPageProps) {
 
   return (
     <Card>
-      <FullCalendarApp></FullCalendarApp>
+      {/*<ScheduleForm*/}
+      {/*  employees={[*/}
+      {/*    { id: '1', name: 'Alice' },*/}
+      {/*    { id: '2', name: 'Bob' },*/}
+      {/*    { id: '3', name: 'Charlie' },*/}
+      {/*  ]}*/}
+      {/*  selectedSchedule={null}*/}
+      {/*  onSubmit={() => Promise.resolve(console.log('submit'))}*/}
+      {/*  onDelete={() => Promise.resolve(console.log('delete'))}*/}
+      {/*/>*/}
     </Card>
   );
 }
