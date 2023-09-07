@@ -1,7 +1,16 @@
 import { z } from 'zod';
 import { callApi, validateData } from '@/lib/jira.service';
 import { getBoardConfiguration } from '@/lib/board.service';
-import { differenceInSeconds, getHours, parseISO, setHours } from 'date-fns';
+import {
+  addDays,
+  differenceInSeconds,
+  endOfDay,
+  getHours,
+  isSameDay,
+  parseISO,
+  setHours,
+  startOfDay,
+} from 'date-fns';
 import { getInProgressStatuses } from '@/lib/project.service';
 // TODO add a eslint plugin that will fix my imports merging them possible
 
@@ -185,8 +194,35 @@ async function getTimeInProgress(issue: IssueWithChangeLog): Promise<number> {
           // Set inProgressStopped to 18:00
           inProgressStopped = setHours(inProgressStopped, 18);
         }
-        const durationInProgress = differenceInSeconds(inProgressStopped, inProgressStart);
-        totalTimeSpentInProgress += durationInProgress;
+
+        // Check if inProgressStart and inProgressStopped are on different days
+        if (isSameDay(inProgressStart, inProgressStopped)) {
+          // Calculate duration for a single day
+          const durationInProgress = differenceInSeconds(inProgressStopped, inProgressStart);
+          totalTimeSpentInProgress += durationInProgress;
+        } else {
+          // Calculate duration for multiple days
+          let currentDate = startOfDay(inProgressStart);
+          const endDate = endOfDay(inProgressStopped);
+          while (currentDate <= endDate) {
+            if (isSameDay(currentDate, inProgressStart)) {
+              // First day
+              const endOfDayTime = setHours(currentDate, 18);
+              const durationInProgress = differenceInSeconds(endOfDayTime, inProgressStart);
+              totalTimeSpentInProgress += durationInProgress;
+            } else if (isSameDay(currentDate, inProgressStopped)) {
+              // Last day
+              const startOfDayTime = setHours(currentDate, 9);
+              const durationInProgress = differenceInSeconds(inProgressStopped, startOfDayTime);
+              totalTimeSpentInProgress += durationInProgress;
+            } else {
+              // In-between days
+              totalTimeSpentInProgress += 9 * 60 * 60; // Add 9 hours for a full working day
+            }
+            currentDate = addDays(currentDate, 1); // Move to next day
+          }
+        }
+
         inProgressStart = null;
       }
     }

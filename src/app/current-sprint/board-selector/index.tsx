@@ -5,10 +5,6 @@ import { Board } from '@/lib/board.service';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 
-export function SearchBarFallback() {
-  return <>placeholder</>;
-}
-
 export interface BoardSelectorProps {
   boardId: string;
   boards: Board[];
@@ -38,7 +34,7 @@ export default function BoardSelector({ boards, boardId }: BoardSelectorProps) {
         className="w-14"
         value={`${boardId}`}
         onValueChange={(boardId) =>
-          router.push(pathname + '?' + createQueryString('boardId', boardId))
+          router.push(`${pathname}?${createQueryString('boardId', boardId)}`)
         }>
         {boards.map((board) => (
           <SelectItem key={board.id} value={`${board.id}`}>

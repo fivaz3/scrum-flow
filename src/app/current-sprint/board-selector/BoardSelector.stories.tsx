@@ -6,6 +6,9 @@ const meta = {
   component: BoardSelector,
   parameters: {
     layout: 'centered',
+    nextjs: {
+      appDirectory: true,
+    },
   },
   tags: ['autodocs'],
   argTypes: {},

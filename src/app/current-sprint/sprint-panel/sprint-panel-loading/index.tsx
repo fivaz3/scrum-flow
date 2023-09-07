@@ -7,9 +7,9 @@ export interface SprintPanelLoadingProps {}
 
 export default function SprintPanelLoading({}: SprintPanelLoadingProps) {
   return (
-    <>
+    <div>
       <Title className="text-2xl">Chargement du Sprint actuel...</Title>
-      <LoadingBar />
-    </>
+      <LoadingBar className="m-auto" />
+    </div>
   );
 }

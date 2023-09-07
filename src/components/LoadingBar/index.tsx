@@ -18,6 +18,7 @@ export interface LoadingBarProps {
   color?: string;
   height?: string;
   width?: string;
+  className?: string;
 }
 
 export default function LoadingBar({
@@ -25,6 +26,9 @@ export default function LoadingBar({
   color = '#1d75d3',
   height,
   width,
+  className,
 }: LoadingBarProps) {
-  return <ReactLoading type={type} color={color} height={height} width={width} />;
+  return (
+    <ReactLoading type={type} color={color} height={height} width={width} className={className} />
+  );
 }

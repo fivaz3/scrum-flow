@@ -1,19 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import LoadingBar from '.';
+import FullCalendarApp from '.';
 
 const meta = {
-  component: LoadingBar,
+  component: FullCalendarApp,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
   argTypes: {},
-} satisfies Meta<typeof LoadingBar>;
+} satisfies Meta<typeof FullCalendarApp>;
 
 export default meta;
-type Story1 = StoryObj<typeof meta>;
+type Story = StoryObj<typeof meta>;
 
-export const Primary: Story1 = {
+export const Primary: Story = {
   args: {},
 };
