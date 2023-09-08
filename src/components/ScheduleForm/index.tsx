@@ -1,8 +1,7 @@
 import { Controller, useForm } from 'react-hook-form';
-import { Schedule } from '@/components/Calendar/schedule.service';
+import { Schedule, ScheduleIn, ScheduleInSchema } from '@/components/Calendar/schedule.service';
 import React, { useEffect } from 'react';
 import { Employee } from '@/components/DevList';
-import { z } from 'zod';
 import { format } from 'date-fns';
 import classNames from 'classnames';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 export interface ScheduleFormProps {
   employees: Employee[];
   selectedSchedule: Schedule | null;
-  onSubmit: (_data: Schedule) => Promise<void>;
+  onSubmit: (_data: ScheduleIn) => Promise<void>;
   onDelete: () => Promise<void>;
 }
 
@@ -20,26 +19,6 @@ export default function ScheduleForm({
   onSubmit,
   onDelete,
 }: ScheduleFormProps) {
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  const dateErrorMessage = 'Format de date invalide. Le format attendu est YYYY-MM-DD';
-  const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
-  const timeErrorMessage = "Format d'heure invalide. Le format attendu est hh:mm";
-
-  const schema = z
-    .object({
-      employeeId: z.string(),
-      startDate: z.string().regex(dateRegex, dateErrorMessage),
-      endDate: z.string().regex(dateRegex, dateErrorMessage),
-      startTime: z.string().regex(timeRegex, timeErrorMessage),
-      endTime: z.string().regex(timeRegex, timeErrorMessage),
-      isRecurring: z.boolean(),
-      daysOfWeek: z.array(z.number()),
-    })
-    .refine((data) => !(data.isRecurring && data.daysOfWeek.length === 0), {
-      message: 'Il faut avoir sélectionner au moins 1 jour de la semaine',
-      path: ['daysOfWeek'],
-    });
-
   const {
     register,
     handleSubmit,
@@ -48,9 +27,9 @@ export default function ScheduleForm({
     setValue,
     control,
     formState: { errors },
-  } = useForm<Schedule>({
-    resolver: zodResolver(schema),
-    defaultValues: {
+  } = useForm<ScheduleIn>({
+    resolver: zodResolver(ScheduleInSchema),
+    defaultValues: selectedSchedule || {
       employeeId: employees[0].id,
       startDate: format(new Date(), 'yyyy-MM-dd'),
       endDate: format(new Date(), 'yyyy-MM-dd'),
@@ -71,7 +50,7 @@ export default function ScheduleForm({
     }
   }, [watchIsRecurring, watchStartDate, setValue]);
 
-  async function submitThenReset(data: Schedule) {
+  async function submitThenReset(data: ScheduleIn) {
     await onSubmit(data);
     reset();
   }

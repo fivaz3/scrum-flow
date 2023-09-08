@@ -1,25 +1,32 @@
 import React, { useState } from 'react';
-import { Schedule } from '@/components/Calendar/schedule.service';
+import {
+  addSchedule,
+  editSchedule,
+  Schedule,
+  ScheduleIn,
+} from '@/components/Calendar/schedule.service';
 import ScheduleForm from '@/components/ScheduleForm';
 import Modal from '@/components/Modal';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { EventClickArg } from '@fullcalendar/core';
+import { useSession } from 'next-auth/react';
 
 type Employee = {
   id: string;
   name: string;
 };
 
-type SingleScheduleA = {
+type SingleEvent = {
   id: string;
   title: string;
   start: string;
   end: string;
 };
 
-type RecurringScheduleB = {
+type RecurringEvent = {
   id: string;
   title: string;
   daysOfWeek: number[];
@@ -58,6 +65,8 @@ const App = () => {
       daysOfWeek: [1, 2, 3, 4, 5],
     },
   ]);
+  const { data: session } = useSession();
+
   const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>(
     employees.map((employee) => employee.id)
   );
@@ -72,53 +81,29 @@ const App = () => {
     }
   };
 
-  async function handleAddOrEditSchedule(data: Schedule) {
-    if (selectedSchedule) {
-      await handleEditSchedule(data);
-    } else {
-      await handleAddSchedule(data);
+  async function handleAddOrEditSchedule(data: ScheduleIn) {
+    if (!session?.access_token) {
+      throw "Vous n'est pas connecté";
     }
-  }
-
-  async function handleAddSchedule(data: any) {
-    setSchedules((schedules) => [
-      ...schedules,
-      {
-        id: Math.random().toString(),
-        daysOfWeek: data.daysOfWeek,
-        isRecurring: data.isRecurring,
-        employeeId: data.employeeId,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        startTime: data.startTime,
-        endTime: data.endTime,
-      },
-    ]);
+    if (selectedSchedule) {
+      await handleEditSchedule(data, selectedSchedule.id, session.access_token);
+    } else {
+      await handleAddSchedule(data, session.access_token);
+    }
     setShowDialog(false);
     setSelectedSchedule(null);
   }
 
-  async function handleEditSchedule(data: any) {
-    if (selectedSchedule) {
-      setSchedules(
-        schedules.map((schedule) =>
-          schedule.id === selectedSchedule.id
-            ? {
-                ...schedule,
-                employeeId: data.employeeId,
-                date: data.date,
-                startTime: data.startTime,
-                endTime: data.endTime,
-                recurring: data.recurring,
-                endDate: data.endDate,
-                daysOfWeek: data.daysOfWeek,
-              }
-            : schedule
-        )
-      );
-      setShowDialog(false);
-      setSelectedSchedule(null);
-    }
+  async function handleAddSchedule(scheduleIn: ScheduleIn, accessToken: string) {
+    const schedule = await addSchedule(scheduleIn, accessToken);
+    setSchedules((previousSchedules) => [...previousSchedules, schedule]);
+  }
+
+  async function handleEditSchedule(scheduleIn: ScheduleIn, id: string, accessToken: string) {
+    const editedSchedule = await editSchedule(scheduleIn, id, accessToken);
+    setSchedules(
+      schedules.map((schedule) => (schedule.id === editedSchedule.id ? editedSchedule : schedule))
+    );
   }
 
   async function handleDeleteSchedule() {
@@ -129,40 +114,46 @@ const App = () => {
     }
   }
 
-  const handleEventClick = (info: any) => {
+  function handleEventClick(info: EventClickArg) {
     const schedule = schedules.find((schedule) => schedule.id === info.event.id);
     if (schedule) {
       setSelectedSchedule(schedule);
       setShowDialog(true);
     }
-  };
+  }
 
-  const formatSchedules = () => {
+  function convertScheduleToEvent() {
+    function convertScheduleToSingleEvent(schedule: Schedule): SingleEvent {
+      return {
+        id: schedule.id,
+        title: employees.find((employee) => employee.id === schedule.employeeId)?.name || '',
+        start: schedule.startDate + 'T' + schedule.startTime.padStart(2, '0') + ':00',
+        end: schedule.endDate + 'T' + schedule.endTime.padStart(2, '0') + ':00',
+      };
+    }
+
+    function convertScheduleToRecurringEvent(schedule: Schedule): RecurringEvent {
+      return {
+        id: schedule.id,
+        title: employees.find((employee) => employee.id === schedule.employeeId)?.name || '',
+        daysOfWeek: schedule.daysOfWeek,
+        startTime: schedule.startTime,
+        endTime: schedule.endTime,
+        startRecur: schedule.startDate,
+        endRecur: schedule.endDate,
+      };
+    }
+
     return schedules
       .filter((schedule) => selectedEmployeeIds.includes(schedule.employeeId))
       .map((schedule) => {
         if (schedule.isRecurring) {
-          const formattedSchedule: RecurringScheduleB = {
-            id: schedule.id,
-            title: employees.find((employee) => employee.id === schedule.employeeId)?.name || '',
-            daysOfWeek: schedule.daysOfWeek,
-            startTime: schedule.startTime,
-            endTime: schedule.endTime,
-            startRecur: schedule.startDate,
-            endRecur: schedule.endDate,
-          };
-          return formattedSchedule;
+          return convertScheduleToRecurringEvent(schedule);
         } else {
-          const formattedSchedule: SingleScheduleA = {
-            id: schedule.id,
-            title: employees.find((employee) => employee.id === schedule.employeeId)?.name || '',
-            start: schedule.startDate + 'T' + schedule.startTime.padStart(2, '0') + ':00',
-            end: schedule.endDate + 'T' + schedule.endTime.padStart(2, '0') + ':00',
-          };
-          return formattedSchedule;
+          return convertScheduleToSingleEvent(schedule);
         }
       });
-  };
+  }
 
   return (
     <div>
@@ -195,7 +186,7 @@ const App = () => {
               center: 'title',
               right: 'dayGridMonth,timeGridWeek,timeGridDay',
             }}
-            events={formatSchedules()}
+            events={convertScheduleToEvent()}
             eventClick={handleEventClick}
           />
         </div>
