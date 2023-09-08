@@ -1,5 +1,6 @@
 'use client';
 import { Card } from '@tremor/react';
+import Calendar from '@/components/Calendar';
 interface ActiveSprintPageProps {}
 
 export default function SettingsPage({}: ActiveSprintPageProps) {
@@ -37,16 +38,7 @@ export default function SettingsPage({}: ActiveSprintPageProps) {
 
   return (
     <Card>
-      {/*<ScheduleForm*/}
-      {/*  employees={[*/}
-      {/*    { id: '1', name: 'Alice' },*/}
-      {/*    { id: '2', name: 'Bob' },*/}
-      {/*    { id: '3', name: 'Charlie' },*/}
-      {/*  ]}*/}
-      {/*  selectedSchedule={null}*/}
-      {/*  onSubmit={() => Promise.resolve(console.log('submit'))}*/}
-      {/*  onDelete={() => Promise.resolve(console.log('delete'))}*/}
-      {/*/>*/}
+      <Calendar></Calendar>
     </Card>
   );
 }

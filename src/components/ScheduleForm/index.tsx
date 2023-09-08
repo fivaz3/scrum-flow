@@ -1,10 +1,11 @@
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { Schedule } from '@/components/Calendar/schedule.service';
 import React, { useEffect } from 'react';
 import { Employee } from '@/components/DevList';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { format } from 'date-fns';
+import classNames from 'classnames';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export interface ScheduleFormProps {
   employees: Employee[];
@@ -20,16 +21,24 @@ export default function ScheduleForm({
   onDelete,
 }: ScheduleFormProps) {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  const dateErrorMessage = 'Invalid time format. Expected format is YYYY-MM-DD';
+  const dateErrorMessage = 'Format de date invalide. Le format attendu est YYYY-MM-DD';
   const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
-  const timeErrorMessage = 'Invalid time format. Expected format is hh:mm';
+  const timeErrorMessage = "Format d'heure invalide. Le format attendu est hh:mm";
 
-  const schema = z.object({
-    startDate: z.string().regex(dateRegex, dateErrorMessage),
-    endDate: z.string().regex(dateRegex, dateErrorMessage),
-    startTime: z.string().regex(timeRegex, timeErrorMessage),
-    endTime: z.string().regex(timeRegex, timeErrorMessage),
-  });
+  const schema = z
+    .object({
+      employeeId: z.string(),
+      startDate: z.string().regex(dateRegex, dateErrorMessage),
+      endDate: z.string().regex(dateRegex, dateErrorMessage),
+      startTime: z.string().regex(timeRegex, timeErrorMessage),
+      endTime: z.string().regex(timeRegex, timeErrorMessage),
+      isRecurring: z.boolean(),
+      daysOfWeek: z.array(z.number()),
+    })
+    .refine((data) => !(data.isRecurring && data.daysOfWeek.length === 0), {
+      message: 'Il faut avoir sélectionner au moins 1 jour de la semaine',
+      path: ['daysOfWeek'],
+    });
 
   const {
     register,
@@ -37,6 +46,7 @@ export default function ScheduleForm({
     watch,
     reset,
     setValue,
+    control,
     formState: { errors },
   } = useForm<Schedule>({
     resolver: zodResolver(schema),
@@ -49,14 +59,19 @@ export default function ScheduleForm({
     },
   });
 
+  const watchIsRecurring = watch('isRecurring');
+  const watchStartDate = watch('startDate');
+
   useEffect(() => {
-    if (!watch('isRecurring')) {
-      setValue('endDate', watch('startDate'));
+    if (!watchIsRecurring) {
+      setValue('endDate', watchStartDate);
+      setValue('daysOfWeek', []);
+    } else {
+      setValue('daysOfWeek', [1, 2, 3, 4, 5]);
     }
-  }, [setValue, watch]);
+  }, [watchIsRecurring, watchStartDate, setValue]);
 
   async function submitThenReset(data: Schedule) {
-    console.log('submitThenReset');
     await onSubmit(data);
     reset();
   }
@@ -66,7 +81,6 @@ export default function ScheduleForm({
       <form onSubmit={handleSubmit(submitThenReset)} className="bg-white p-4 rounded">
         <h3 className="text-lg leading-6 font-medium text-gray-900">Add Schedule</h3>
         <div>
-          {JSON.stringify(errors, null, 2)}
           <label>
             Employee:
             <select {...register('employeeId')}>
@@ -100,8 +114,7 @@ export default function ScheduleForm({
             Recurring:
             <input type="checkbox" {...register('isRecurring')} />
           </label>
-          <div>
-            {/*<div className={classNames({ hidden: !watch('isRecurring') })}>*/}
+          <div className={classNames({ hidden: !watch('isRecurring') })}>
             <br />
             <label>
               End Date:
@@ -110,12 +123,32 @@ export default function ScheduleForm({
             </label>
             <br />
             Days of Week:
-            {[0, 1, 2, 3, 4, 5, 6].map((day) => (
-              <React.Fragment key={day}>
-                <input type="checkbox" value={day} defaultChecked {...register('daysOfWeek')} />
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day]}
-              </React.Fragment>
-            ))}
+            {['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'].map(
+              (day, index) => (
+                <label key={day}>
+                  <Controller
+                    name="daysOfWeek"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <input
+                        type="checkbox"
+                        value={index}
+                        checked={value.includes(index)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          if (checked) {
+                            onChange([...value, index]);
+                          } else {
+                            onChange(value.filter((v) => v !== index));
+                          }
+                        }}
+                      />
+                    )}
+                  />
+                  {day}
+                </label>
+              )
+            )}
             {errors.daysOfWeek && <p>{errors.daysOfWeek.message}</p>}
           </div>
           <br />

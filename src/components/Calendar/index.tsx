@@ -73,8 +73,6 @@ const App = () => {
   };
 
   async function handleAddOrEditSchedule(data: Schedule) {
-    console.log('handleAddOrEditSchedule');
-    console.log('data', data);
     if (selectedSchedule) {
       await handleEditSchedule(data);
     } else {
@@ -83,17 +81,17 @@ const App = () => {
   }
 
   async function handleAddSchedule(data: any) {
-    setSchedules([
+    setSchedules((schedules) => [
       ...schedules,
       {
         id: Math.random().toString(),
+        daysOfWeek: data.daysOfWeek,
+        isRecurring: data.isRecurring,
         employeeId: data.employeeId,
         startDate: data.startDate,
+        endDate: data.endDate,
         startTime: data.startTime,
         endTime: data.endTime,
-        isRecurring: data.isRecurring,
-        endDate: data.endDate,
-        daysOfWeek: data.daysOfWeek,
       },
     ]);
     setShowDialog(false);
