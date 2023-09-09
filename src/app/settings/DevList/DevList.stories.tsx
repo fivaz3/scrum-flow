@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import DevList from '.';
+import MembersList from './index';
 
 const meta = {
-  component: DevList,
+  component: MembersList,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
   argTypes: {},
-} satisfies Meta<typeof DevList>;
+} satisfies Meta<typeof MembersList>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -17,6 +17,8 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   args: {
     members: [],
-    addScheduleEvent: (memberId) => console.log('opening schedule form for user: ' + memberId),
+    selectedMemberIds: [],
+    handleMemberSelect: () => console.log('member was selected'),
+    openForm: () => console.log('opening schedule form'),
   },
 };

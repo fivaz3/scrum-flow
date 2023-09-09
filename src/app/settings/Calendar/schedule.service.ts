@@ -60,7 +60,7 @@ export async function editSchedule(
   accessToken: string
 ): Promise<Schedule> {
   // return { ...data, id: Math.random().toString() };
-  const response = await putBackEnd(PATH, data, accessToken);
+  const response = await putBackEnd(`${PATH}/${id}`, data, accessToken);
 
   return validateData(ScheduleSchema, response);
 }

@@ -1,8 +1,8 @@
 import { Card } from '@tremor/react';
-import Calendar from '@/components/Calendar';
-import { Member } from '@/components/DevList';
-import { getSchedules } from '@/components/Calendar/schedule.service';
+import { getSchedules } from '@/app/settings/Calendar/schedule.service';
 import { getAccessToken } from '@/lib/jira.service';
+import { Member } from '@/app/settings/DevList';
+import Calendar from '@/app/settings/Calendar';
 
 interface ActiveSprintPageProps {}
 

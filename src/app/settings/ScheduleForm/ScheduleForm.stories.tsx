@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import ScheduleForm from '.';
+import ScheduleForm from './index';
 
 const meta = {
   component: ScheduleForm,

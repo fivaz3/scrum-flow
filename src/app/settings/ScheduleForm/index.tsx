@@ -1,7 +1,7 @@
 import { Controller, useForm } from 'react-hook-form';
-import { Schedule, ScheduleIn, ScheduleInSchema } from '@/components/Calendar/schedule.service';
+import { Schedule, ScheduleIn, ScheduleInSchema } from '@/app/settings/Calendar/schedule.service';
 import React, { useEffect } from 'react';
-import { Member } from '@/components/DevList';
+import { Member } from '../DevList';
 import { format } from 'date-fns';
 import classNames from 'classnames';
 import { zodResolver } from '@hookform/resolvers/zod';
