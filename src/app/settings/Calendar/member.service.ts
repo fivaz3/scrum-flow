@@ -1,10 +1,16 @@
 import { callApi, validateData } from '@/lib/jira.service';
 import { z } from 'zod';
 
-const MemberSchema = z.object({
+export const MemberSchema = z.object({
   accountId: z.string(),
   displayName: z.string(),
   emailAddress: z.string(),
+  avatarUrls: z.object({
+    '48x48': z.string(),
+    '24x24': z.string(),
+    '16x16': z.string(),
+    '32x32': z.string(),
+  }),
 });
 
 export type Member = z.infer<typeof MemberSchema>;

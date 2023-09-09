@@ -22,6 +22,7 @@ export const ToDo: Story = {
         id: '2',
         fields: {
           summary: 'issue 2',
+          assignee: null,
           status: {
             id: '1',
             name: 'To Do',
@@ -46,6 +47,7 @@ export const Doing: Story = {
         id: '3',
         fields: {
           summary: 'issue 3',
+          assignee: null,
           status: {
             id: '1',
             name: 'In Progress',
@@ -62,6 +64,7 @@ export const Doing: Story = {
         id: '1',
         fields: {
           summary: 'issue 1',
+          assignee: null,
           status: {
             id: '1',
             name: 'Done',
@@ -86,6 +89,7 @@ export const Done: Story = {
         id: '4',
         fields: {
           summary: 'issue 4',
+          assignee: null,
           status: {
             id: '4',
             name: 'Done',
