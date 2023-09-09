@@ -1,28 +1,10 @@
-import { Flex, Title } from '@tremor/react';
-import { getBoards } from '@/lib/board.service';
-import { getActiveSprint } from '@/lib/sprint.service';
-import { Suspense } from 'react';
-import IssuesList from '@/app/current-sprint/issues-list';
-import LoadingBar from '@/components/LoadingBar';
-import SprintPanelLoading from '@/app/current-sprint/sprint-panel/sprint-panel-loading';
-import SprintPanel from '@/app/current-sprint/sprint-panel';
-import BoardSelector from '@/app/current-sprint/board-selector';
-import moment from 'moment';
+import { main } from '@/app/current-sprint/test1';
 
 interface ActiveSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
 }
 export default async function ActiveSprintPage({ searchParams }: ActiveSprintPageProps) {
-  const workingSchedule = {
-    id: '3',
-    accountId: '1000',
-    startDate: '2023-07-01',
-    endDate: '2024-07-01',
-    startTime: '14:00',
-    endTime: '17:00',
-    isRecurring: true,
-    daysOfWeek: [1, 2, 3, 4, 5],
-  };
+  main();
 
   const issue = {
     id: '10020',
@@ -130,159 +112,89 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
     },
   };
 
-  interface WorkingSchedule {
-    id: string;
-    accountId: string;
-    startDate: string;
-    endDate: string;
-    startTime: string;
-    endTime: string;
-    isRecurring: boolean;
-    daysOfWeek: number[];
-  }
+  // function getTimeSpentInStatus(issue: Issue, workingSchedules: WorkingSchedule[]) {
+  //   const histories = issue.changelog.histories.sort(
+  //     (a, b) => parseISO(a.created).getTime() - parseISO(b.created).getTime()
+  //   );
+  //
+  //   let timeSpent = 0;
+  //
+  //   let inProgressStart = null;
+  //
+  //   for (const history of histories) {
+  //     for (const item of history.items) {
+  //       if (item.fieldId === 'status') {
+  //         if (item.toString === 'In Progress') {
+  //           inProgressStart = history.created; // start tracking time
+  //         } else if (item.fromString === 'In Progress' && inProgressStart) {
+  //           timeSpent += calculateTime(workingSchedules, inProgressStart, history.created);
+  //           inProgressStart = null; // stop tracking time
+  //         }
+  //       }
+  //     }
+  //   }
+  //
+  //   if (inProgressStart && issue.fields.status.name === 'In Progress') {
+  //     // issue is still in progress
+  //     timeSpent += calculateTime(workingSchedules, inProgressStart, new Date().toISOString());
+  //   }
+  //
+  //   return timeSpent; // returns time spent in minutes
+  // }
 
-  interface Issue {
-    id: string;
-    key: string;
-    fields: {
-      estimation: number;
-      assignee: {
-        accountId: string;
-        displayName: string;
-      };
-      status: {
-        description: string;
-        name: string;
-        id: string;
-        statusCategory: {
-          id: number;
-          key: string;
-          colorName: string;
-          name: string;
-        };
-      };
-    };
-    changelog: {
-      startAt: number;
-      maxResults: number;
-      total: number;
-      histories: {
-        id: string;
-        created: string;
-        items: {
-          fieldId?: string;
-          fromString?: string | null;
-          toString?: string | null;
-        }[];
-      }[];
-    };
-  }
+  // console.log(
+  //   `Time spent in progress within working schedule: ${getTimeSpentInStatus(
+  //     issue,
+  //     workingSchedules
+  //   )} hours`
+  // );
 
-  function getTimeSpentInProgress(issue: Issue, workingSchedule: WorkingSchedule): number {
-    const histories = issue.changelog.histories;
+  // console.log(
+  //   `Time spent in progress within working schedule luxon: ${calculateTimeSpentInProgressLuxon(
+  //     issue,
+  //     workingSchedule
+  //   )} hours`
+  // );
 
-    let timeSpent = 0;
-
-    let inProgressStart = null;
-
-    for (const history of histories) {
-      for (const item of history.items) {
-        if (item.fieldId === 'status') {
-          if (item.toString === 'In Progress') {
-            inProgressStart = moment(history.created);
-          } else if (item.fromString === 'In Progress' && inProgressStart) {
-            const inProgressEnd = moment(history.created);
-
-            let current = moment(inProgressStart);
-
-            while (current.isBefore(inProgressEnd)) {
-              if (
-                current.isBetween(
-                  workingSchedule.startDate,
-                  workingSchedule.endDate,
-                  undefined,
-                  '[]'
-                ) &&
-                workingSchedule.daysOfWeek.includes(current.day())
-              ) {
-                const startOfWorkDay = moment(current)
-                  .hour(parseInt(workingSchedule.startTime.split(':')[0]))
-                  .minute(parseInt(workingSchedule.startTime.split(':')[1]))
-                  .second(0);
-
-                const endOfWorkDay = moment(current)
-                  .hour(parseInt(workingSchedule.endTime.split(':')[0]))
-                  .minute(parseInt(workingSchedule.endTime.split(':')[1]))
-                  .second(0);
-
-                if (current.isSameOrAfter(startOfWorkDay)) {
-                  if (inProgressEnd.isSameOrBefore(endOfWorkDay)) {
-                    timeSpent += inProgressEnd.diff(current, 'seconds');
-                    current = inProgressEnd;
-                  } else {
-                    timeSpent += endOfWorkDay.diff(current, 'seconds');
-                    current = endOfWorkDay.add(1, 'day').startOf('day');
-                  }
-                } else {
-                  current = startOfWorkDay;
-                }
-              } else {
-                current.add(1, 'day').startOf('day');
-              }
-            }
-
-            inProgressStart = null;
-          }
-        }
-      }
-    }
-
-    return timeSpent / (60 * 60);
-  }
-
-  const timeSpentInProgress = getTimeSpentInProgress(issue, workingSchedule);
-
-  console.log(`Time spent in progress within working schedule: ${timeSpentInProgress} hours`);
-
-  const boards = await getBoards();
-
-  if (boards.length === 0) {
-    return (
-      <div>
-        <Title>Vous n&apos;avez pas encore créé un board de type Scrum</Title>
-      </div>
-    );
-  }
-
-  const boardId = searchParams.boardId || boards[0].id;
-
-  const currentSprint = await getActiveSprint(boardId);
-
-  if (!currentSprint) {
-    return (
-      <div>
-        <Title>Il n&apos;y a pas encore de sprint actives</Title>
-      </div>
-    );
-  }
-
-  return (
-    <>
-      <Flex className="content-start">
-        <Suspense fallback={<SprintPanelLoading />}>
-          <SprintPanel sprint={currentSprint} />
-          <BoardSelector boardId={`${boardId}`} boards={boards} />
-        </Suspense>
-      </Flex>
-      <Suspense
-        fallback={
-          <div>
-            chargement des tickets...
-            <LoadingBar />
-          </div>
-        }>
-        <IssuesList boardId={boardId} sprintId={currentSprint.id} />
-      </Suspense>
-    </>
-  );
+  // const boards = await getBoards();
+  //
+  // if (boards.length === 0) {
+  //   return (
+  //     <div>
+  //       <Title>Vous n&apos;avez pas encore créé un board de type Scrum</Title>
+  //     </div>
+  //   );
+  // }
+  //
+  // const boardId = searchParams.boardId || boards[0].id;
+  //
+  // const currentSprint = await getActiveSprint(boardId);
+  //
+  // if (!currentSprint) {
+  //   return (
+  //     <div>
+  //       <Title>Il n&apos;y a pas encore de sprint actives</Title>
+  //     </div>
+  //   );
+  // }
+  //
+  // return (
+  //   <>
+  //     <Flex className="content-start">
+  //       <Suspense fallback={<SprintPanelLoading />}>
+  //         <SprintPanel sprint={currentSprint} />
+  //         <BoardSelector boardId={`${boardId}`} boards={boards} />
+  //       </Suspense>
+  //     </Flex>
+  //     <Suspense
+  //       fallback={
+  //         <div>
+  //           chargement des tickets...
+  //           <LoadingBar />
+  //         </div>
+  //       }>
+  //       <IssuesList boardId={boardId} sprintId={currentSprint.id} />
+  //     </Suspense>
+  //   </>
+  // );
 }
