@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import {
   addSchedule,
+  deleteSchedule,
   editSchedule,
   Schedule,
   ScheduleIn,
@@ -83,7 +84,11 @@ export default function Calendar({ members, currentSchedules }: CalendarProps) {
   }
 
   async function handleDeleteSchedule() {
+    if (!session?.access_token) {
+      throw "Vous n'est pas connecté";
+    }
     if (selectedSchedule) {
+      await deleteSchedule(selectedSchedule.id, session.access_token);
       setSchedules(schedules.filter((schedule) => schedule.id !== selectedSchedule.id));
       setShowDialog(false);
       setSelectedSchedule(null);
@@ -124,13 +129,9 @@ export default function Calendar({ members, currentSchedules }: CalendarProps) {
       .filter((schedule) => selectedMemberIds.includes(schedule.memberId))
       .map((schedule) => {
         if (schedule.isRecurring) {
-          const recurringEvent = convertScheduleToRecurringEvent(schedule);
-          console.log('recurringEvent', recurringEvent);
-          return recurringEvent;
+          return convertScheduleToRecurringEvent(schedule);
         } else {
-          const singleEvent = convertScheduleToSingleEvent(schedule);
-          console.log('singleEvent', singleEvent);
-          return singleEvent;
+          return convertScheduleToSingleEvent(schedule);
         }
       });
   }

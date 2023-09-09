@@ -1,4 +1,4 @@
-import { getBackEnd, postBackEnd, putBackEnd } from '@/lib/backend.service';
+import { deleteBackEnd, getBackEnd, postBackEnd, putBackEnd } from '@/lib/backend.service';
 import { validateData } from '@/lib/jira.service';
 import { z } from 'zod';
 
@@ -59,8 +59,17 @@ export async function editSchedule(
   id: string,
   accessToken: string
 ): Promise<Schedule> {
-  // return { ...data, id: Math.random().toString() };
   const response = await putBackEnd(`${PATH}/${id}`, data, accessToken);
 
   return validateData(ScheduleSchema, response);
+}
+
+export async function deleteSchedule(id: string, accessToken: string): Promise<void> {
+  const response = await deleteBackEnd(`${PATH}/${id}`, accessToken);
+
+  const ResponseSchema = z.object({
+    success: z.boolean(),
+  });
+
+  validateData(ResponseSchema, response);
 }

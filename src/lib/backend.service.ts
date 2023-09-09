@@ -1,7 +1,7 @@
 import { getCloudId } from '@/lib/jira.service';
 
 export async function requestBackEnd(
-  method: 'GET' | 'POST' | 'PUT',
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   path: string,
   data: unknown,
   accessToken: string
@@ -40,4 +40,8 @@ export async function postBackEnd(path: string, data: unknown, accessToken: stri
 
 export async function putBackEnd(path: string, data: unknown, accessToken: string) {
   return requestBackEnd('PUT', path, data, accessToken);
+}
+
+export async function deleteBackEnd(path: string, accessToken: string) {
+  return requestBackEnd('DELETE', path, null, accessToken);
 }
