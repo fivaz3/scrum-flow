@@ -1,8 +1,18 @@
 'use client';
 
 import { IssueWithTimeSpent } from '@/lib/issue.service';
-import { formatDuration, intervalToDuration } from 'date-fns';
+import { formatDuration } from 'date-fns';
 import { Card, Title } from '@tremor/react';
+import { fr } from 'date-fns/locale';
+
+function convertMinutes(minutes: number): string {
+  const duration = {
+    hours: Math.floor(minutes / 60),
+    minutes: minutes % 60,
+  };
+
+  return formatDuration(duration, { format: ['hours', 'minutes'], locale: fr });
+}
 
 export interface IssueTableProps {
   label: string;
@@ -40,11 +50,7 @@ export default function IssueTable({ issues, label }: IssueTableProps) {
                           <span className={'text-red-500'}>sans estimation</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        {formatDuration(
-                          intervalToDuration({ start: 0, end: issue.timeSpent * 1000 })
-                        )}
-                      </td>
+                      <td className="px-6 py-4 text-right">{convertMinutes(issue.timeSpent)}</td>
                     </tr>
                   ))}
                 </tbody>

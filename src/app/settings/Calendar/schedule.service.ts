@@ -1,6 +1,7 @@
 import { deleteBackEnd, getBackEnd, postBackEnd, putBackEnd } from '@/lib/backend.service';
-import { validateData } from '@/lib/jira.service';
+import { getAccessToken, validateData } from '@/lib/jira.service';
 import { z } from 'zod';
+import { Issue } from '@/lib/issue.service';
 
 export type Schedule = {
   id: string;
@@ -48,6 +49,13 @@ export async function addSchedule(data: ScheduleIn, accessToken: string): Promis
   return validateData(ScheduleSchema, response);
 }
 
+export async function getSchedulesServer(): Promise<Schedule[]> {
+  const accessToken = await getAccessToken();
+  const response = await getBackEnd(PATH, accessToken);
+
+  return validateData(z.array(ScheduleSchema), response);
+}
+
 export async function getSchedules(accessToken: string): Promise<Schedule[]> {
   const response = await getBackEnd(PATH, accessToken);
 
@@ -72,4 +80,10 @@ export async function deleteSchedule(id: string, accessToken: string): Promise<v
   });
 
   validateData(ResponseSchema, response);
+}
+
+export function getMemberSchedule(issue: Issue, schedules: Schedule[]) {
+  const memberId = !issue.fields.assignee?.accountId || schedules[0].memberId;
+
+  return schedules.filter((schedule) => schedule.memberId === memberId);
 }

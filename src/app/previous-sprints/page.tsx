@@ -7,6 +7,7 @@ import SprintPanelLoading from '@/app/current-sprint/sprint-panel/sprint-panel-l
 import SprintPanel from '@/app/current-sprint/sprint-panel';
 import BoardSelector from '@/app/current-sprint/board-selector';
 import { getPreviousSprints } from '@/lib/sprint.service';
+import AlertForSchedules from '@/components/AlertForSchedules';
 
 interface PreviousSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
@@ -36,6 +37,9 @@ export default async function PreviousSprintPage({ searchParams }: PreviousSprin
 
   return (
     <>
+      <Suspense fallback={<></>}>
+        <AlertForSchedules />
+      </Suspense>
       {sprints.map((sprint) => (
         <>
           <Flex className="content-start">

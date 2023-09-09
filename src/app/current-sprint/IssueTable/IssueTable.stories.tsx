@@ -20,6 +20,7 @@ export const ToDo: Story = {
     issues: [
       {
         id: '2',
+        key: 'SCRUM-1',
         fields: {
           summary: 'issue 2',
           assignee: null,
@@ -45,6 +46,7 @@ export const Doing: Story = {
     issues: [
       {
         id: '3',
+        key: 'SCRUM-1',
         fields: {
           summary: 'issue 3',
           assignee: null,
@@ -62,6 +64,7 @@ export const Doing: Story = {
       },
       {
         id: '1',
+        key: 'SCRUM-1',
         fields: {
           summary: 'issue 1',
           assignee: null,
@@ -87,6 +90,7 @@ export const Done: Story = {
     issues: [
       {
         id: '4',
+        key: 'SCRUM-1',
         fields: {
           summary: 'issue 4',
           assignee: null,
