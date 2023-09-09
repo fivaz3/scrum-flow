@@ -19,7 +19,7 @@ export const Primary: Story = {
     onSubmit: () => Promise.resolve(console.log('form submitted')),
     onDelete: () => Promise.resolve(console.log('form closed')),
     selectedSchedule: null,
-    employees: [
+    members: [
       { id: '1', name: 'Alice' },
       { id: '2', name: 'Bob' },
       { id: '3', name: 'Charlie' },

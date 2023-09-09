@@ -10,7 +10,7 @@ export function validateData<Z, T>(zodSchema: z.ZodType<Z>, data: NotPromiseOrFu
   return zodSchema.parse(data);
 }
 
-async function getAccessToken() {
+export async function getAccessToken() {
   const session = await getServerSession(authOptions);
   if (!session?.access_token) {
     console.error("Unauthorized access detected, you don't have an access token");

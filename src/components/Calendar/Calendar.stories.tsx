@@ -18,5 +18,23 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
-  args: {},
+  args: {
+    members: [
+      { id: '1', name: 'Alice' },
+      { id: '2', name: 'Bob' },
+      { id: '3', name: 'Charlie' },
+    ],
+    currentSchedules: [
+      {
+        id: '3',
+        memberId: '1',
+        startDate: '2023-09-08',
+        endDate: '2023-09-08',
+        startTime: '14:00',
+        endTime: '17:00',
+        isRecurring: false,
+        daysOfWeek: [],
+      },
+    ],
+  },
 };

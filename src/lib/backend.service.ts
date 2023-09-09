@@ -9,14 +9,19 @@ export async function requestBackEnd(
   const cloudId = await getCloudId(accessToken);
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL as string}${path}`;
 
-  const res = await fetch(url, {
+  const options: RequestInit = {
     method,
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken} ${cloudId}`,
     },
-    body: JSON.stringify(data),
-  });
+  };
+
+  if (data) {
+    options.body = JSON.stringify(data);
+  }
+
+  const res = await fetch(url, options);
 
   if (!res.ok) {
     throw Error(`An error occurred while accessing ${url} : ${await res.text()}`);

@@ -1,20 +1,20 @@
 import { Controller, useForm } from 'react-hook-form';
 import { Schedule, ScheduleIn, ScheduleInSchema } from '@/components/Calendar/schedule.service';
 import React, { useEffect } from 'react';
-import { Employee } from '@/components/DevList';
+import { Member } from '@/components/DevList';
 import { format } from 'date-fns';
 import classNames from 'classnames';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 export interface ScheduleFormProps {
-  employees: Employee[];
+  members: Member[];
   selectedSchedule: Schedule | null;
   onSubmit: (_data: ScheduleIn) => Promise<void>;
   onDelete: () => Promise<void>;
 }
 
 export default function ScheduleForm({
-  employees,
+  members,
   selectedSchedule,
   onSubmit,
   onDelete,
@@ -30,7 +30,7 @@ export default function ScheduleForm({
   } = useForm<ScheduleIn>({
     resolver: zodResolver(ScheduleInSchema),
     defaultValues: selectedSchedule || {
-      employeeId: employees[0].id,
+      memberId: members[0].id,
       startDate: format(new Date(), 'yyyy-MM-dd'),
       endDate: format(new Date(), 'yyyy-MM-dd'),
       isRecurring: false,
@@ -51,6 +51,7 @@ export default function ScheduleForm({
   }, [watchIsRecurring, watchStartDate, setValue]);
 
   async function submitThenReset(data: ScheduleIn) {
+    // console.log('data', data);
     await onSubmit(data);
     reset();
   }
@@ -61,11 +62,11 @@ export default function ScheduleForm({
         <h3 className="text-lg leading-6 font-medium text-gray-900">Add Schedule</h3>
         <div>
           <label>
-            Employee:
-            <select {...register('employeeId')}>
-              {employees.map((employee) => (
-                <option key={employee.id} value={employee.id}>
-                  {employee.name}
+            Member:
+            <select {...register('memberId')}>
+              {members.map((member) => (
+                <option key={member.id} value={member.id}>
+                  {member.name}
                 </option>
               ))}
             </select>

@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import {
   addSchedule,
@@ -13,11 +14,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { EventClickArg } from '@fullcalendar/core';
 import { useSession } from 'next-auth/react';
-
-type Employee = {
-  id: string;
-  name: string;
-};
+import { Member } from '@/components/DevList';
 
 type SingleEvent = {
   id: string;
@@ -36,48 +33,37 @@ type RecurringEvent = {
   endRecur: string;
 };
 
-const employees: Employee[] = [
-  { id: '1', name: 'Alice' },
-  { id: '2', name: 'Bob' },
-  { id: '3', name: 'Charlie' },
-];
+export interface CalendarProps {
+  members: Member[];
+  currentSchedules: Schedule[];
+}
 
-const App = () => {
+export default function Calendar({ members, currentSchedules }: CalendarProps) {
   const [schedules, setSchedules] = useState<Schedule[]>([
     {
-      id: '1',
-      employeeId: '1',
+      id: '3',
+      memberId: '1',
       startDate: '2023-09-08',
       endDate: '2023-09-08',
-      startTime: '09:00',
-      endTime: '12:00',
+      startTime: '14:00',
+      endTime: '17:00',
       isRecurring: false,
       daysOfWeek: [],
-    },
-    {
-      id: '2',
-      employeeId: '2',
-      startDate: '2023-09-08',
-      endDate: '2023-09-15',
-      endTime: '12:00',
-      startTime: '09:00',
-      isRecurring: true,
-      daysOfWeek: [1, 2, 3, 4, 5],
     },
   ]);
   const { data: session } = useSession();
 
-  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>(
-    employees.map((employee) => employee.id)
+  const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>(
+    members.map((member) => member.id)
   );
   const [showDialog, setShowDialog] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
 
-  const handleEmployeeSelect = (employeeId: string) => {
-    if (selectedEmployeeIds.includes(employeeId)) {
-      setSelectedEmployeeIds(selectedEmployeeIds.filter((id) => id !== employeeId));
+  const handleMemberSelect = (memberId: string) => {
+    if (selectedMemberIds.includes(memberId)) {
+      setSelectedMemberIds(selectedMemberIds.filter((id) => id !== memberId));
     } else {
-      setSelectedEmployeeIds([...selectedEmployeeIds, employeeId]);
+      setSelectedMemberIds([...selectedMemberIds, memberId]);
     }
   };
 
@@ -96,6 +82,7 @@ const App = () => {
 
   async function handleAddSchedule(scheduleIn: ScheduleIn, accessToken: string) {
     const schedule = await addSchedule(scheduleIn, accessToken);
+    console.log(schedule);
     setSchedules((previousSchedules) => [...previousSchedules, schedule]);
   }
 
@@ -126,7 +113,7 @@ const App = () => {
     function convertScheduleToSingleEvent(schedule: Schedule): SingleEvent {
       return {
         id: schedule.id,
-        title: employees.find((employee) => employee.id === schedule.employeeId)?.name || '',
+        title: members.find((member) => member.id === schedule.memberId)?.name || '',
         start: schedule.startDate + 'T' + schedule.startTime.padStart(2, '0') + ':00',
         end: schedule.endDate + 'T' + schedule.endTime.padStart(2, '0') + ':00',
       };
@@ -135,7 +122,7 @@ const App = () => {
     function convertScheduleToRecurringEvent(schedule: Schedule): RecurringEvent {
       return {
         id: schedule.id,
-        title: employees.find((employee) => employee.id === schedule.employeeId)?.name || '',
+        title: members.find((member) => member.id === schedule.memberId)?.name || '',
         daysOfWeek: schedule.daysOfWeek,
         startTime: schedule.startTime,
         endTime: schedule.endTime,
@@ -145,7 +132,7 @@ const App = () => {
     }
 
     return schedules
-      .filter((schedule) => selectedEmployeeIds.includes(schedule.employeeId))
+      .filter((schedule) => selectedMemberIds.includes(schedule.memberId))
       .map((schedule) => {
         if (schedule.isRecurring) {
           return convertScheduleToRecurringEvent(schedule);
@@ -165,14 +152,14 @@ const App = () => {
             Add Schedule
           </button>
           <ul>
-            {employees.map((employee) => (
-              <li key={employee.id} className="mb-2">
+            {members.map((member) => (
+              <li key={member.id} className="mb-2">
                 <input
                   type="checkbox"
-                  checked={selectedEmployeeIds.includes(employee.id)}
-                  onChange={() => handleEmployeeSelect(employee.id)}
+                  checked={selectedMemberIds.includes(member.id)}
+                  onChange={() => handleMemberSelect(member.id)}
                 />
-                <span className="ml-2">{employee.name}</span>
+                <span className="ml-2">{member.name}</span>
               </li>
             ))}
           </ul>
@@ -193,7 +180,7 @@ const App = () => {
       </div>
       <Modal isOpen={showDialog} setOpen={() => setShowDialog(false)}>
         <ScheduleForm
-          employees={employees}
+          members={members}
           selectedSchedule={selectedSchedule}
           onSubmit={handleAddOrEditSchedule}
           onDelete={handleDeleteSchedule}
@@ -201,6 +188,4 @@ const App = () => {
       </Modal>
     </div>
   );
-};
-
-export default App;
+}

@@ -16,7 +16,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    employees: [],
-    addScheduleEvent: (employeeId) => console.log('opening schedule form for user: ' + employeeId),
+    members: [],
+    addScheduleEvent: (memberId) => console.log('opening schedule form for user: ' + memberId),
   },
 };

@@ -1,10 +1,10 @@
-import { postBackEnd, putBackEnd } from '@/lib/backend.service';
+import { getBackEnd, postBackEnd, putBackEnd } from '@/lib/backend.service';
 import { validateData } from '@/lib/jira.service';
 import { z } from 'zod';
 
 export type Schedule = {
   id: string;
-  employeeId: string;
+  memberId: string;
   startDate: string;
   endDate: string;
   startTime: string;
@@ -17,12 +17,12 @@ export type ScheduleIn = Omit<Schedule, 'id'>;
 
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 const dateErrorMessage = 'Format de date invalide. Le format attendu est YYYY-MM-DD';
-const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
-const timeErrorMessage = "Format d'heure invalide. Le format attendu est hh:mm";
+const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)(:[0-5]\d)?$/;
+const timeErrorMessage = "Format d'heure invalide. Le format attendu est hh:mm ou hh:mm:ss";
 
 export const ScheduleSchema = z.object({
   id: z.string(),
-  employeeId: z.string(),
+  memberId: z.string(),
   startDate: z.string().regex(dateRegex, dateErrorMessage),
   endDate: z.string().regex(dateRegex, dateErrorMessage),
   startTime: z.string().regex(timeRegex, timeErrorMessage),
@@ -39,11 +39,19 @@ export const ScheduleInSchema = ScheduleSchema.omit({ id: true }).refine(
   }
 );
 
+const PATH = '/api/schedule';
+
 export async function addSchedule(data: ScheduleIn, accessToken: string): Promise<Schedule> {
-  return { ...data, id: Math.random().toString() };
-  const response = await postBackEnd('/api/working-schedule', data, accessToken);
+  // return { ...data, id: Math.random().toString() };
+  const response = await postBackEnd(PATH, data, accessToken);
 
   return validateData(ScheduleSchema, response);
+}
+
+export async function getSchedules(accessToken: string): Promise<Schedule[]> {
+  const response = await getBackEnd(PATH, accessToken);
+
+  return validateData(z.array(ScheduleSchema), response);
 }
 
 export async function editSchedule(
@@ -51,8 +59,8 @@ export async function editSchedule(
   id: string,
   accessToken: string
 ): Promise<Schedule> {
-  return { ...data, id: Math.random().toString() };
-  const response = await putBackEnd(`/api/working-schedule/${id}`, data, accessToken);
+  // return { ...data, id: Math.random().toString() };
+  const response = await putBackEnd(PATH, data, accessToken);
 
   return validateData(ScheduleSchema, response);
 }

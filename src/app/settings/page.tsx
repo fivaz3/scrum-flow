@@ -1,44 +1,25 @@
-'use client';
 import { Card } from '@tremor/react';
 import Calendar from '@/components/Calendar';
+import { Member } from '@/components/DevList';
+import { getSchedules } from '@/components/Calendar/schedule.service';
+import { getAccessToken } from '@/lib/jira.service';
+
 interface ActiveSprintPageProps {}
 
-export default function SettingsPage({}: ActiveSprintPageProps) {
-  // const { register, handleSubmit, reset } = useForm<FormData>({
-  //   defaultValues: {
-  //     start_at: '09:00',
-  //     end_at: '18:00',
-  //   },
-  // });
-  //
-  // const { data: session } = useSession();
+export default async function SettingsPage({}: ActiveSprintPageProps) {
+  const members: Member[] = [
+    { id: '1', name: 'Alice' },
+    { id: '2', name: 'Bob' },
+    { id: '3', name: 'Charlie' },
+  ];
 
-  // useEffect(() => {
-  //   console.log('x');
-  //   if (session?.access_token) {
-  //     getBackEnd('/api/working-schedule', session.access_token).then((data) => {
-  //       console.log('data', data);
-  //       const WorkingScheduleSchema = z.object({
-  //         start_at: z.string(),
-  //         end_at: z.string(),
-  //       });
-  //       const workingSchedule = WorkingScheduleSchema.parse(data);
-  //       reset(workingSchedule);
-  //     });
-  //   }
-  // }, [reset, session?.access_token]);
-  //
-  // const onSubmit = async (data: FormData) => {
-  //   // Submit data to your backend
-  //   console.log('data', data);
-  //   if (session?.access_token) {
-  //     await postBackEnd('/api/working-schedule', data, session.access_token);
-  //   }
-  // };
+  const accessToken = await getAccessToken();
+
+  const currentSchedules = await getSchedules(accessToken);
 
   return (
     <Card>
-      <Calendar></Calendar>
+      <Calendar members={members} currentSchedules={currentSchedules} />
     </Card>
   );
 }
