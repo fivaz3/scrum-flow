@@ -1,10 +1,10 @@
 import { Controller, useForm } from 'react-hook-form';
 import { Schedule, ScheduleIn, ScheduleInSchema } from '@/app/settings/Calendar/schedule.service';
 import React, { useEffect } from 'react';
-import { Member } from '../DevList';
 import { format } from 'date-fns';
 import classNames from 'classnames';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Member } from '@/app/settings/Calendar/member.service';
 
 export interface ScheduleFormProps {
   members: Member[];
@@ -30,7 +30,7 @@ export default function ScheduleForm({
   } = useForm<ScheduleIn>({
     resolver: zodResolver(ScheduleInSchema),
     defaultValues: selectedSchedule || {
-      memberId: members[0].id,
+      memberId: members[0].accountId,
       startDate: format(new Date(), 'yyyy-MM-dd'),
       endDate: format(new Date(), 'yyyy-MM-dd'),
       isRecurring: false,
@@ -65,8 +65,8 @@ export default function ScheduleForm({
             Member:
             <select {...register('memberId')}>
               {members.map((member) => (
-                <option key={member.id} value={member.id}>
-                  {member.name}
+                <option key={member.accountId} value={member.accountId}>
+                  {member.displayName}
                 </option>
               ))}
             </select>

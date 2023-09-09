@@ -15,7 +15,8 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { EventClickArg } from '@fullcalendar/core';
 import { useSession } from 'next-auth/react';
-import MembersList, { Member } from '../DevList';
+import MembersList from '../DevList';
+import { Member } from '@/app/settings/Calendar/member.service';
 
 type SingleEvent = {
   id: string;
@@ -43,7 +44,7 @@ export default function Calendar({ members, currentSchedules }: CalendarProps) {
   const [schedules, setSchedules] = useState<Schedule[]>(currentSchedules);
 
   const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>(
-    members.map((member) => member.id)
+    members.map((member) => member.accountId)
   );
   const [showDialog, setShowDialog] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
@@ -105,18 +106,20 @@ export default function Calendar({ members, currentSchedules }: CalendarProps) {
 
   function convertScheduleToEvent() {
     function convertScheduleToSingleEvent(schedule: Schedule): SingleEvent {
+      const member = members.find((member) => member.accountId === schedule.memberId);
       return {
         id: schedule.id,
-        title: members.find((member) => member.id === schedule.memberId)?.name || '',
+        title: member?.displayName || 'member supprimé',
         start: schedule.startDate + 'T' + schedule.startTime,
         end: schedule.endDate + 'T' + schedule.endTime,
       };
     }
 
     function convertScheduleToRecurringEvent(schedule: Schedule): RecurringEvent {
+      const member = members.find((member) => member.accountId === schedule.memberId);
       return {
         id: schedule.id,
-        title: members.find((member) => member.id === schedule.memberId)?.name || '',
+        title: member?.displayName || 'member supprimé',
         daysOfWeek: schedule.daysOfWeek,
         startTime: schedule.startTime,
         endTime: schedule.endTime,
@@ -143,7 +146,10 @@ export default function Calendar({ members, currentSchedules }: CalendarProps) {
           <MembersList
             members={members}
             selectedMemberIds={selectedMemberIds}
-            openForm={() => setShowDialog(true)}
+            openForm={() => {
+              setSelectedSchedule(null);
+              setShowDialog(true);
+            }}
             handleMemberSelect={handleMemberSelect}
           />
         </div>

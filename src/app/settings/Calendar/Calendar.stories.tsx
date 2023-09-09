@@ -20,9 +20,9 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   args: {
     members: [
-      { id: '1', name: 'Alice' },
-      { id: '2', name: 'Bob' },
-      { id: '3', name: 'Charlie' },
+      { accountId: '1', displayName: 'Alice', emailAddress: 'alice@gmail.com' },
+      { accountId: '2', displayName: 'Bob', emailAddress: 'bob@gmail.com' },
+      { accountId: '3', displayName: 'Charlie', emailAddress: 'charlie@gmail.com' },
     ],
     currentSchedules: [
       {

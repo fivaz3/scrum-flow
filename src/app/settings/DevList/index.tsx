@@ -1,9 +1,5 @@
 import React from 'react';
-
-export type Member = {
-  id: string;
-  name: string;
-};
+import { Member } from '@/app/settings/Calendar/member.service';
 
 export interface DevListProps {
   members: Member[];
@@ -25,13 +21,13 @@ export default function MembersList({
       </button>
       <ul>
         {members.map((member) => (
-          <li key={member.id} className="mb-2">
+          <li key={member.accountId} className="mb-2">
             <input
               type="checkbox"
-              checked={selectedMemberIds.includes(member.id)}
-              onChange={() => handleMemberSelect(member.id)}
+              checked={selectedMemberIds.includes(member.accountId)}
+              onChange={() => handleMemberSelect(member.accountId)}
             />
-            <span className="ml-2">{member.name}</span>
+            <span className="ml-2">{member.displayName}</span>
           </li>
         ))}
       </ul>
