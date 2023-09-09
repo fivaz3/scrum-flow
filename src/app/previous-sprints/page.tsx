@@ -41,7 +41,7 @@ export default async function PreviousSprintPage({ searchParams }: PreviousSprin
         <AlertForSchedules />
       </Suspense>
       {sprints.map((sprint) => (
-        <>
+        <div key={sprint.id}>
           <Flex className="content-start">
             <Suspense fallback={<SprintPanelLoading />}>
               <SprintPanel sprint={sprint} />
@@ -57,7 +57,7 @@ export default async function PreviousSprintPage({ searchParams }: PreviousSprin
             }>
             <IssuesList boardId={boardId} sprintId={sprint.id} />
           </Suspense>
-        </>
+        </div>
       ))}
     </>
   );

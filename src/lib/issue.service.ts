@@ -208,10 +208,6 @@ async function getTimeInProgress(
 
   const historiesOfStatus = getStatusHistory(issue.changelog.histories);
 
-  if (issue.key === 'SCRUM-15') {
-    console.log(JSON.stringify(historiesOfStatus));
-  }
-
   let inProgressStart: Date | null = null;
   let totalTimeSpentInProgressInMinutes = 0;
 
@@ -239,13 +235,6 @@ async function getTimeInProgress(
     );
   }
 
-  console.log(
-    'totalTimeSpentInProgress ',
-    totalTimeSpentInProgressInMinutes,
-    ' for issue: ',
-    issue.key
-  );
-
   return totalTimeSpentInProgressInMinutes;
 }
 
@@ -271,28 +260,23 @@ function calculateTimeInMinutes(
         const endOfWork = set(day, { hours: endHour, minutes: endMinute });
 
         if (isSameDay(day, taskStartedAt)) {
-          console.log('first day');
           if (taskStartedAt < endOfWork) {
             const diff = differenceInMinutes(
               Math.min(endOfWork.getTime(), taskEndedAt.getTime()),
               Math.max(startOfWork.getTime(), taskStartedAt.getTime())
             );
-            console.log('diff', diff / 60);
             totalMinutes += diff;
           }
         } else if (isSameDay(day, taskEndedAt)) {
-          console.log('last day');
           if (taskEndedAt > startOfWork) {
             const diff = differenceInMinutes(
               Math.min(endOfWork.getTime(), taskEndedAt.getTime()),
               Math.max(startOfWork.getTime(), taskStartedAt.getTime())
             );
-            console.log('diff', diff / 60);
             totalMinutes += diff;
           }
         } else {
           const diff = differenceInMinutes(endOfWork, startOfWork);
-          console.log('diff', diff / 60);
           totalMinutes += diff;
         }
       }

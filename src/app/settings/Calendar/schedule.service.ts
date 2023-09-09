@@ -82,8 +82,8 @@ export async function deleteSchedule(id: string, accessToken: string): Promise<v
   validateData(ResponseSchema, response);
 }
 
-export function getMemberSchedule(issue: Issue, schedules: Schedule[]) {
-  const memberId = !issue.fields.assignee?.accountId || schedules[0].memberId;
+export function getMemberSchedule(issue: Issue, schedules: Schedule[]): Schedule[] {
+  const memberId = issue.fields.assignee?.accountId || schedules[0].memberId;
 
   return schedules.filter((schedule) => schedule.memberId === memberId);
 }

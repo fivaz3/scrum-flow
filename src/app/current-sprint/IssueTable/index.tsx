@@ -6,6 +6,10 @@ import { Card, Title } from '@tremor/react';
 import { fr } from 'date-fns/locale';
 
 function convertMinutes(minutes: number): string {
+  if (minutes < 1) {
+    return '0 minutes';
+  }
+
   const duration = {
     hours: Math.floor(minutes / 60),
     minutes: minutes % 60,
@@ -44,7 +48,9 @@ export default function IssueTable({ issues, label }: IssueTableProps) {
                 <tbody className="bg-white divide-y divide-gray-200 whitespace-nowrap text-sm font-medium">
                   {issues.map((issue) => (
                     <tr key={issue.id}>
-                      <td className="px-6 py-4 text-gray-900 capitalize">{issue.fields.summary}</td>
+                      <td className="px-6 py-4 text-gray-900 capitalize">
+                        {issue.key} - {issue.fields.summary}
+                      </td>
                       <td className="px-6 py-4 text-gray-500 text-center">
                         {issue.estimation || (
                           <span className={'text-red-500'}>sans estimation</span>
