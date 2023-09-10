@@ -28,18 +28,22 @@ export default function Navbar({ session }: NavbarProps) {
     <Disclosure as="nav" className="bg-white shadow-sm">
       {({ open }) => (
         <>
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex h-16 justify-between">
-              <Logo />
-              <NavLinks pathname={pathname} />
-              <UserInfo session={session} />
-              <div className="-mr-2 flex items-center sm:hidden">
-                <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
-                  <MobileMenuButton open={open} />
-                </Disclosure.Button>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between h-16">
+              <div className="flex">
+                <div className="-ml-2 mr-2 flex items-center md:hidden">
+                  {/* Mobile menu button */}
+                  <Disclosure.Button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                    <MobileMenuButton open={open} />
+                  </Disclosure.Button>
+                </div>
+                <Logo />
+                <NavLinks isLogged={!!session?.user} pathname={pathname} />
               </div>
+              <UserInfo session={session} />
             </div>
           </div>
+
           <Disclosure.Panel className="sm:hidden">
             <MobileMenu pathname={pathname} session={session} />
           </Disclosure.Panel>
