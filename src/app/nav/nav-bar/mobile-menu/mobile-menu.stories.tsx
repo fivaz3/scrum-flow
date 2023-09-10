@@ -1,33 +1,31 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import Navbar from '.';
+import MobileMenu from './index';
 import { session } from '@/seeds/session';
+import { navigation } from '@/app/nav/nav-bar/nav-bar.service';
 
 const meta = {
-  component: Navbar,
+  component: MobileMenu,
   parameters: {
-    layout: 'fullscreen',
-    nextjs: {
-      appDirectory: true,
-      navigation: {
-        pathname: '/settings',
-      },
-    },
+    layout: 'centered',
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof Navbar>;
+  argTypes: {},
+} satisfies Meta<typeof MobileMenu>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const LoggedIn: Story = {
   args: {
+    pathname: navigation[1].href,
     session,
   },
 };
 
 export const LoggedOut: Story = {
   args: {
+    pathname: navigation[0].href,
     session: null,
   },
 };

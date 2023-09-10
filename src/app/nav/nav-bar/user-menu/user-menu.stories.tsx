@@ -1,21 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import Navbar from '.';
+import UserMenu from './index';
 import { session } from '@/seeds/session';
 
 const meta = {
-  component: Navbar,
+  component: UserMenu,
   parameters: {
-    layout: 'fullscreen',
-    nextjs: {
-      appDirectory: true,
-      navigation: {
-        pathname: '/settings',
-      },
-    },
+    layout: 'centered',
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof Navbar>;
+  argTypes: {},
+} satisfies Meta<typeof UserMenu>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
