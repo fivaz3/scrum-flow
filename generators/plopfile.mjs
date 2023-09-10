@@ -12,12 +12,12 @@ export default function (plop) {
     actions: [
       {
         type: 'add',
-        path: '../src/components/{{pascalCase name}}/index.tsx',
+        path: '../src/components/{{dashCase name}}/index.tsx',
         templateFile: 'templates/component.tsx.hbs',
       },
       {
         type: 'add',
-        path: '../src/components/{{pascalCase name}}/{{pascalCase name}}.stories.tsx',
+        path: '../src/components/{{dashCase name}}/{{dashCase name}}.stories.tsx',
         templateFile: 'templates/component-stories.tsx.hbs',
       },
     ],
@@ -35,7 +35,7 @@ export default function (plop) {
     actions: [
       {
         type: 'add',
-        path: '../src/pages/{{dashCase name}}.tsx',
+        path: '../src/app/{{dashCase name}}/page.tsx',
         templateFile: 'templates/page.tsx.hbs',
       },
     ],
