@@ -2,11 +2,11 @@ import { getBoards } from '@/lib/board.service';
 import { getActiveSprint } from '@/lib/sprint.service';
 import { Flex, Title } from '@tremor/react';
 import { Suspense } from 'react';
-import SprintPanelLoading from '@/app/current-sprint/sprint-panel/sprint-panel-loading';
-import SprintPanel from '@/app/current-sprint/sprint-panel';
-import BoardSelector from '@/app/current-sprint/board-selector';
+import SprintPanelLoading from '@/app/(dashboard)/current-sprint/sprint-panel/sprint-panel-loading';
+import SprintPanel from '@/app/(dashboard)/current-sprint/sprint-panel';
+import BoardSelector from '@/app/(dashboard)/current-sprint/board-selector';
 import LoadingBar from '@/components/LoadingBar';
-import IssuesList from '@/app/current-sprint/issues-list';
+import IssuesList from '@/app/(dashboard)/current-sprint/issues-list';
 import AlertForSchedules from '@/components/AlertForSchedules';
 
 interface ActiveSprintPageProps {

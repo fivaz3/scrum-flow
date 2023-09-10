@@ -6,7 +6,7 @@ import {
   editSchedule,
   Schedule,
   ScheduleIn,
-} from '@/app/settings/Calendar/schedule.service';
+} from '@/app/(dashboard)/settings/Calendar/schedule.service';
 import ScheduleForm from '../ScheduleForm';
 import Modal from '@/components/Modal';
 import FullCalendar from '@fullcalendar/react';
@@ -16,7 +16,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { EventClickArg } from '@fullcalendar/core';
 import { useSession } from 'next-auth/react';
 import MembersList from '../DevList';
-import { Member } from '@/app/settings/Calendar/member.service';
+import { Member } from '@/app/(dashboard)/settings/Calendar/member.service';
 
 type SingleEvent = {
   id: string;

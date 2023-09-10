@@ -11,12 +11,12 @@ import {
   set,
 } from 'date-fns';
 import { getInProgressStatuses } from '@/lib/project.service';
-import { MemberSchema } from '@/app/settings/Calendar/member.service';
+import { MemberSchema } from '@/app/(dashboard)/settings/Calendar/member.service';
 import {
   getMemberSchedule,
   getSchedulesServer,
   Schedule,
-} from '@/app/settings/Calendar/schedule.service';
+} from '@/app/(dashboard)/settings/Calendar/schedule.service';
 // TODO add a eslint plugin that will fix my imports merging them possible
 
 const IssueSchema = z.object({

@@ -1,5 +1,5 @@
 import { Grid } from '@tremor/react';
-import IssueTable from '@/app/current-sprint/IssueTable';
+import IssueTable from '@/app/(dashboard)/current-sprint/IssueTable';
 import { getIssuesFromSprintWithChangelog } from '@/lib/issue.service';
 import { Suspense } from 'react';
 

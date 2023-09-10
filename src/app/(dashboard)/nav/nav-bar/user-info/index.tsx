@@ -12,21 +12,22 @@ export interface UserInfoProps {
 
 export default function UserInfo({ session }: UserInfoProps) {
   return (
-    <div className="flex items-center">
-      {session?.user ? (
-        <>
-          <div className="flex-shrink-0">
-            <button
-              type="button"
-              className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-              <span>Board</span>
-            </button>
-          </div>
-          <div className="hidden md:ml-4 md:flex-shrink-0 md:flex md:items-center">
+    <div className="hidden md:block">
+      <div className="ml-4 flex items-center md:ml-6">
+        {session?.user ? (
+          <>
+            <div className="flex-shrink-0">
+              <button
+                type="button"
+                className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+                <span>Board</span>
+              </button>
+            </div>
+
             <Menu as="div" className="ml-3 relative">
               <div>
-                <Menu.Button className="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <Menu.Button className="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                   <span className="sr-only">Open user menu</span>
                   <Image
                     className="h-8 w-8 rounded-full"
@@ -39,7 +40,7 @@ export default function UserInfo({ session }: UserInfoProps) {
               </div>
               <Transition
                 as={Fragment}
-                enter="transition ease-out duration-200"
+                enter="transition ease-out duration-100"
                 enterFrom="transform opacity-0 scale-95"
                 enterTo="transform opacity-100 scale-100"
                 leave="transition ease-in duration-75"
@@ -61,23 +62,23 @@ export default function UserInfo({ session }: UserInfoProps) {
                 </Menu.Items>
               </Transition>
             </Menu>
+          </>
+        ) : (
+          <div className="flex-shrink-0">
+            <button
+              className="gap-1 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              onClick={() => signIn('atlassian')}>
+              <Image
+                src="mark-onecolor-blue-atlassian.svg"
+                alt="atlassian logo"
+                width={24}
+                height={24}
+              />
+              Se connecter avec Atlassian
+            </button>
           </div>
-        </>
-      ) : (
-        <div className="flex-shrink-0">
-          <button
-            className="gap-1 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            onClick={() => signIn('atlassian')}>
-            <Image
-              src="atlassian/Mark/mark/SVG/mark-onecolor-blue-atlassian.svg"
-              alt="atlassian logo"
-              width={24}
-              height={24}
-            />
-            Se connecter avec Atlassian
-          </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

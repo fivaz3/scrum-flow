@@ -1,10 +1,14 @@
 import { Controller, useForm } from 'react-hook-form';
-import { Schedule, ScheduleIn, ScheduleInSchema } from '@/app/settings/Calendar/schedule.service';
+import {
+  Schedule,
+  ScheduleIn,
+  ScheduleInSchema,
+} from '@/app/(dashboard)/settings/Calendar/schedule.service';
 import React, { useEffect } from 'react';
 import { format } from 'date-fns';
 import classNames from 'classnames';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Member } from '@/app/settings/Calendar/member.service';
+import { Member } from '@/app/(dashboard)/settings/Calendar/member.service';
 
 export interface ScheduleFormProps {
   members: Member[];

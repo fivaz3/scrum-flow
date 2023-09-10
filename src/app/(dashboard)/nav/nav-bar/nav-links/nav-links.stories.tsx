@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import NavLinks from './index';
-import { navigation } from '@/app/nav/nav-bar/nav-bar.service';
+import { navigation } from '@/app/(dashboard)/nav/nav-bar/nav-bar.service';
 
 const meta = {
   component: NavLinks,

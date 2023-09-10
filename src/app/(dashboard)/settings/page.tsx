@@ -1,7 +1,7 @@
 import { Card } from '@tremor/react';
-import { getSchedulesServer } from '@/app/settings/Calendar/schedule.service';
-import Calendar from '@/app/settings/Calendar';
-import { getMembers } from '@/app/settings/Calendar/member.service';
+import { getSchedulesServer } from '@/app/(dashboard)/settings/Calendar/schedule.service';
+import Calendar from '@/app/(dashboard)/settings/Calendar';
+import { getMembers } from '@/app/(dashboard)/settings/Calendar/member.service';
 
 interface ActiveSprintPageProps {}
 

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import IssueTable from '.';
+import IssueTable from './index';
 
 const meta = {
   component: IssueTable,

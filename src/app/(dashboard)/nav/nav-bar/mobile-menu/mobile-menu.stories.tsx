@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import MobileMenu from './index';
 import { session } from '@/seeds/session';
-import { navigation } from '@/app/nav/nav-bar/nav-bar.service';
+import { navigation } from '@/app/(dashboard)/nav/nav-bar/nav-bar.service';
 import { Disclosure } from '@headlessui/react';
 import { Session } from 'next-auth';
 
