@@ -6,6 +6,12 @@ const meta = {
   component: Navbar,
   parameters: {
     layout: 'fullscreen',
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        pathname: '/settings',
+      },
+    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Navbar>;
