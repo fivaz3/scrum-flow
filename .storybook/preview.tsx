@@ -1,8 +1,7 @@
 import type { Preview } from '@storybook/react';
+import '../src/app/globals.css';
 
 import { withThemeByClassName } from '@storybook/addon-styling';
-
-import '../src/app/globals.css';
 
 const preview: Preview = {
   parameters: {
