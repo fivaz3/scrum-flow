@@ -1,28 +1,27 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import UserMenu from './index';
-import { session } from '@/seeds/session';
+import MobileMenu from './index';
 
 const meta = {
-  component: UserMenu,
+  component: MobileMenu,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
   argTypes: {},
-} satisfies Meta<typeof UserMenu>;
+} satisfies Meta<typeof MobileMenu>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const LoggedIn: Story = {
+export const Open: Story = {
   args: {
-    session,
+    open: true,
   },
 };
 
-export const LoggedOut: Story = {
+export const Close: Story = {
   args: {
-    session: null,
+    open: false,
   },
 };

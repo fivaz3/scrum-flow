@@ -5,11 +5,11 @@ import classNames from 'classnames';
 import { signIn, signOut } from 'next-auth/react';
 import { Session } from 'next-auth';
 
-export interface UserMenuProps {
+export interface UserInfoProps {
   session: Session | null;
 }
 
-export default function UserMenu({ session }: UserMenuProps) {
+export default function UserInfo({ session }: UserInfoProps) {
   return (
     <div className="hidden sm:ml-6 sm:flex sm:items-center">
       <Menu as="div" className="relative ml-3">
@@ -39,7 +39,7 @@ export default function UserMenu({ session }: UserMenuProps) {
                 {({ active }) => (
                   <button
                     className={classNames(
-                      active ? 'bg-gray-100' : '',
+                      { 'bg-gray-100': active },
                       'flex w-full px-4 py-2 text-sm text-gray-700'
                     )}
                     onClick={() => signOut()}>
@@ -52,7 +52,7 @@ export default function UserMenu({ session }: UserMenuProps) {
                 {({ active }) => (
                   <button
                     className={classNames(
-                      active ? 'bg-gray-100' : '',
+                      { 'bg-gray-100': active },
                       'flex w-full px-4 py-2 text-sm text-gray-700'
                     )}
                     onClick={() => signIn('atlassian')}>
