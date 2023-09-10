@@ -18,7 +18,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-function MobileMenuWrapper({ session }: { session: Session | null }) {
+function MobileMenuWrapper({ session }: { session: Session }) {
   return (
     /* Render a `div` for the root `Disclosure` component */
     <Disclosure as="div">
@@ -40,12 +40,4 @@ export const LoggedIn: Story = {
     session,
   },
   render: () => <MobileMenuWrapper session={session}></MobileMenuWrapper>,
-};
-
-export const LoggedOut: Story = {
-  args: {
-    pathname: navigation[0].href,
-    session: null,
-  },
-  render: () => <MobileMenuWrapper session={null}></MobileMenuWrapper>,
 };

@@ -20,9 +20,3 @@ export const LoggedIn: Story = {
     session,
   },
 };
-
-export const LoggedOut: Story = {
-  args: {
-    session: null,
-  },
-};

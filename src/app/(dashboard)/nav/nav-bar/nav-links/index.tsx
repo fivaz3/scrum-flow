@@ -1,16 +1,15 @@
 import Link from 'next/link';
 import classNames from 'classnames';
-import { getLinks } from '@/app/(dashboard)/nav/nav-bar/nav-bar.service';
+import { getPrivateLinks } from '@/app/(dashboard)/nav/nav-bar/nav-bar.service';
 
 export interface NavLinksProps {
-  isLogged: boolean;
   pathname: string | null;
 }
-export default function NavLinks({ isLogged, pathname }: NavLinksProps) {
+export default function NavLinks({ pathname }: NavLinksProps) {
   return (
     <div className="hidden md:block">
       <div className="ml-10 flex items-baseline space-x-4">
-        {getLinks(isLogged).map((item) => (
+        {getPrivateLinks().map((item) => (
           <Link
             key={item.name}
             href={item.href}

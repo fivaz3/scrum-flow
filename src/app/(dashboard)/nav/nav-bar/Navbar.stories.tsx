@@ -26,10 +26,3 @@ export const LoggedIn: Story = {
     children: <p>Test</p>,
   },
 };
-
-export const LoggedOut: Story = {
-  args: {
-    session: null,
-    children: <p>Test</p>,
-  },
-};

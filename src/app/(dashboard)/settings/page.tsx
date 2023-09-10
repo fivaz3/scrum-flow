@@ -1,4 +1,3 @@
-import { Card } from '@tremor/react';
 import { getSchedulesServer } from '@/app/(dashboard)/settings/Calendar/schedule.service';
 import Calendar from '@/app/(dashboard)/settings/Calendar';
 import { getMembers } from '@/app/(dashboard)/settings/Calendar/member.service';
@@ -10,9 +9,5 @@ export default async function SettingsPage({}: ActiveSprintPageProps) {
 
   const currentSchedules = await getSchedulesServer();
 
-  return (
-    <Card>
-      <Calendar members={members} currentSchedules={currentSchedules} />
-    </Card>
-  );
+  return <Calendar members={members} currentSchedules={currentSchedules} />;
 }

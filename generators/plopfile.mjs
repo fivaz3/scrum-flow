@@ -35,7 +35,7 @@ export default function (plop) {
     actions: [
       {
         type: 'add',
-        path: '../src/app/{{dashCase name}}/page.tsx',
+        path: '../src/app/(dashboard)/{{dashCase name}}/page.tsx',
         templateFile: 'templates/page.tsx.hbs',
       },
     ],

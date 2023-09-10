@@ -15,16 +15,14 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const IsLogged: Story = {
+export const Home: Story = {
   args: {
-    isLogged: true,
     pathname: navigation[0].href,
   },
 };
 
 export const Other: Story = {
   args: {
-    isLogged: true,
     pathname: navigation[1].href,
   },
 };
