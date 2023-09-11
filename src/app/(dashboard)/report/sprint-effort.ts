@@ -1,29 +1,11 @@
 import { Sprint } from '@/lib/sprint.service';
-import {
-  addEstimationToIssuesWithChangeLog,
-  getIssuesFromSprintWithChangelog,
-  IssueWithChangeLog,
-} from '@/components/IssueTable/issue-time-spent.service';
+
 import { isAfter, isBefore, parseISO } from 'date-fns';
-import { callApi } from '@/lib/jira.service';
-
-export async function getIssuesWithChangelog(
-  boardId: string | number,
-  accessToken: string,
-  cloudId: string
-): Promise<IssueWithChangeLog[]> {
-  const issuesPaginated = await callApi(
-    `/rest/agile/1.0/board/${boardId}/issue`,
-    {
-      expand: 'changelog',
-      jql: 'issuetype=Story',
-    },
-    accessToken,
-    cloudId
-  );
-
-  return await addEstimationToIssuesWithChangeLog(boardId, issuesPaginated, accessToken, cloudId);
-}
+import {
+  getIssuesFromSprintWithChangelog,
+  getIssuesWithChangelog,
+  IssueWithChangeLog,
+} from '@/lib/issue/issue.service';
 
 function getSprintHistory(histories: IssueWithChangeLog['changelog']['histories']) {
   // sort histories by date
