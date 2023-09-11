@@ -94,6 +94,22 @@ export async function getIssuesFromSprint(
   return await addEstimationToIssues(boardId, response, accessToken, cloudId);
 }
 
+export async function getIssues(
+  boardId: string | number,
+  queryParams: Record<string, string>,
+  accessToken: string,
+  cloudId: string
+) {
+  const response = await callApi(
+    `/rest/agile/1.0/board/${boardId}/issue`,
+    queryParams,
+    accessToken,
+    cloudId
+  );
+
+  return await addEstimationToIssues(boardId, response, accessToken, cloudId);
+}
+
 const IssueWithChangeLogSchema = IssueSchema.merge(
   z.object({
     changelog: z.object({
@@ -122,6 +138,30 @@ const IssueWithChangeLogSchema = IssueSchema.merge(
 
 export type IssueWithChangeLog = z.infer<typeof IssueWithChangeLogSchema>;
 
+const IssueWithChangelogAndFieldsSchema = IssueWithChangeLogSchema.merge(
+  z.object({ fields: z.object({ summary: z.string() }).passthrough() })
+);
+
+export type IssueWithChangelogAndFields = z.infer<typeof IssueWithChangelogAndFieldsSchema>;
+
+export async function getIssuesWithChangelog(
+  boardId: string | number,
+  accessToken: string,
+  cloudId: string
+): Promise<IssueWithChangelogAndFields[]> {
+  const issues = await getIssues(
+    boardId,
+    {
+      expand: 'changelog',
+      jql: 'issuetype=Story',
+    },
+    accessToken,
+    cloudId
+  );
+
+  return validateData(z.array(IssueWithChangelogAndFieldsSchema), issues);
+}
+
 export async function getIssuesFromSprintWithChangelog(
   boardId: string | number,
   sprintId: number,
@@ -141,18 +181,6 @@ export async function getIssuesFromSprintWithChangelog(
   );
 
   const issuesWithChangelog = validateData(z.array(IssueWithChangeLogSchema), issues);
-
-  // for (const issue of issuesWithChangelog) {
-  //   for (const history of issue.changelog.histories) {
-  //     for (const item of history.items) {
-  //       if (!item.fieldId) {
-  //         console.log('issue.key', issue.key);
-  //         console.log('history.id', history.id);
-  //         console.log('item', item);
-  //       }
-  //     }
-  //   }
-  // }
 
   const schedules = await getSchedulesServer();
 
