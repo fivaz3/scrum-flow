@@ -68,17 +68,15 @@ export async function addEstimationToIssuesWithChangeLog(
     maxResults: z.number(),
     total: z.number(),
     issues: z.array(
-      IssueWithChangeLogSchema.merge(
-        z
-          .object({
-            fields: z
-              .object({
-                [configuration.estimation.field.fieldId]: z.number().nullable(),
-              })
-              .passthrough(),
-          })
-          .passthrough()
-      )
+      z
+        .object({
+          fields: z
+            .object({
+              [configuration.estimation.field.fieldId]: z.number().nullable(),
+            })
+            .passthrough(),
+        })
+        .passthrough()
     ),
   });
 
