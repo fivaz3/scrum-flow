@@ -1,11 +1,11 @@
 import { Flex, Title } from '@tremor/react';
 import { getBoards } from '@/lib/board.service';
 import { Suspense } from 'react';
-import PreviousIssueList from '../current-sprint/previous-issue-list';
+import PreviousIssueList from './previous-issue-list';
 import LoadingBar from '@/components/LoadingBar';
-import SprintPanelLoading from '@/app/(dashboard)/current-sprint/sprint-panel/sprint-panel-loading';
-import SprintPanel from '@/app/(dashboard)/current-sprint/sprint-panel';
-import BoardSelector from '@/app/(dashboard)/current-sprint/board-selector';
+import SprintPanelLoading from '@/components/sprint-panel/sprint-panel-loading';
+import SprintPanel from '../../../components/sprint-panel';
+import BoardSelector from '../../../components/board-selector';
 import { getPreviousSprints } from '@/lib/sprint.service';
 import AlertForSchedules from '@/components/AlertForSchedules';
 import { getAuthData } from '@/lib/jira.service';

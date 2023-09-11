@@ -1,5 +1,5 @@
 import { ReactNode, Suspense } from 'react';
-import Nav from '@/app/(dashboard)/nav';
+import Nav from '../nav';
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   return (

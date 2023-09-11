@@ -4,7 +4,7 @@ import Link from 'next/link';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { signOut } from 'next-auth/react';
-import { getPrivateLinks } from '@/app/(dashboard)/nav/nav-bar/nav-bar.service';
+import { getPrivateLinks } from '@/app/nav/nav-bar/nav-bar.service';
 
 interface MobileMenuProps {
   pathname: string | null;

@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth/next';
 import authOptions from '@/app/api/auth/[...nextauth]/auth-options';
-import NavBar from '@/app/(dashboard)/nav/nav-bar';
+import NavBar from '@/app/nav/nav-bar';
 import { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
 

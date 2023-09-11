@@ -4,12 +4,12 @@ import { Disclosure } from '@headlessui/react';
 import { ReactNode, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
 import { Session } from 'next-auth';
-import Logo from '@/app/(dashboard)/nav/nav-bar/logo';
-import NavLinks from '@/app/(dashboard)/nav/nav-bar/nav-links';
-import MobileMenuButton from '@/app/(dashboard)/nav/nav-bar/mobile-menu-button';
-import MobileMenu from '@/app/(dashboard)/nav/nav-bar/mobile-menu';
-import UserInfo from '@/app/(dashboard)/nav/nav-bar/user-info';
-import { getPrivateLinks } from '@/app/(dashboard)/nav/nav-bar/nav-bar.service';
+import Logo from '@/app/nav/nav-bar/logo';
+import NavLinks from '@/app/nav/nav-bar/nav-links';
+import MobileMenuButton from '@/app/nav/nav-bar/mobile-menu-button';
+import MobileMenu from '@/app/nav/nav-bar/mobile-menu';
+import UserInfo from '@/app/nav/nav-bar/user-info';
+import { getPrivateLinks } from '@/app/nav/nav-bar/nav-bar.service';
 
 export interface NavbarProps {
   session: Session;
