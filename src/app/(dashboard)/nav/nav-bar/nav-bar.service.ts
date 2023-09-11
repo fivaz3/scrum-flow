@@ -5,6 +5,7 @@ export const navigation: Link[] = [
   { name: 'Sprint actuel', href: '/current-sprint' },
   { name: 'Sprints précedents', href: '/previous-sprints' },
   { name: 'Réglages', href: '/settings' },
+  { name: 'Rapport', href: '/report' },
 ];
 
 export function getPrivateLinks(): Link[] {

@@ -6,8 +6,8 @@ import SprintPanelLoading from '@/app/(dashboard)/current-sprint/sprint-panel/sp
 import SprintPanel from '@/app/(dashboard)/current-sprint/sprint-panel';
 import BoardSelector from '@/app/(dashboard)/current-sprint/board-selector';
 import LoadingBar from '@/components/LoadingBar';
-import IssuesList from '@/app/(dashboard)/current-sprint/issues-list';
 import AlertForSchedules from '@/components/AlertForSchedules';
+import PreviousIssueList from '@/app/(dashboard)/current-sprint/previous-issue-list';
 
 interface ActiveSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
@@ -53,7 +53,7 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
             <LoadingBar />
           </div>
         }>
-        <IssuesList boardId={boardId} sprintId={currentSprint.id} />
+        <PreviousIssueList boardId={boardId} sprintId={currentSprint.id} />
       </Suspense>
     </>
   );

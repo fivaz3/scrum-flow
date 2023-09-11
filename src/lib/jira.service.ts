@@ -21,9 +21,12 @@ export async function getAccessToken() {
 }
 
 async function fetchResources(accessToken: string) {
-  const res: Response = await fetch('https://api.atlassian.com/oauth/token/accessible-resources', {
+  // const url = 'https://api.atlassian.com/oauth/token/accessible-resources'
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL as string}/api/resources`;
+
+  const res: Response = await fetch(url, {
+    cache: 'force-cache',
     headers: {
-      Accept: 'application/json',
       Authorization: 'Bearer ' + accessToken,
       'Content-Type': 'application/json',
     },
@@ -58,6 +61,7 @@ export async function getCloudId(accessToken: string) {
 
   return validatedResources[0].id;
 }
+
 export async function getAuthData() {
   const accessToken = await getAccessToken();
   const cloudId = await getCloudId(accessToken);

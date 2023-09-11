@@ -1,7 +1,7 @@
 import { Flex, Title } from '@tremor/react';
 import { getBoards } from '@/lib/board.service';
 import { Suspense } from 'react';
-import IssuesList from '@/app/(dashboard)/current-sprint/issues-list';
+import PreviousIssueList from '../current-sprint/previous-issue-list';
 import LoadingBar from '@/components/LoadingBar';
 import SprintPanelLoading from '@/app/(dashboard)/current-sprint/sprint-panel/sprint-panel-loading';
 import SprintPanel from '@/app/(dashboard)/current-sprint/sprint-panel';
@@ -27,14 +27,6 @@ export default async function PreviousSprintPage({ searchParams }: PreviousSprin
 
   const sprints = await getPreviousSprints(boardId);
 
-  if (!sprints) {
-    return (
-      <div>
-        <Title>Il n&apos;y a pas encore de sprint actives</Title>
-      </div>
-    );
-  }
-
   return (
     <>
       <Suspense fallback={<></>}>
@@ -55,7 +47,7 @@ export default async function PreviousSprintPage({ searchParams }: PreviousSprin
                 <LoadingBar />
               </div>
             }>
-            <IssuesList boardId={boardId} sprintId={sprint.id} />
+            <PreviousIssueList boardId={boardId} sprintId={sprint.id} />
           </Suspense>
         </div>
       ))}

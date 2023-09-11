@@ -123,38 +123,12 @@ export async function getIssuesFromSprintWithChangelog(boardId: string | number,
   const issuesWithChangelog = validateData(z.array(IssueWithChangeLogSchema), issues);
   const schedules = await getSchedulesServer();
 
-  const issuesWithTimeSpent = [];
-
-  const promises = issuesWithChangelog.map(async (issue) => {
-    const timeSpent = await getTimeInProgress(issue, schedules);
-    return {
+  return await Promise.all(
+    issuesWithChangelog.map(async (issue) => ({
       ...issue,
-      timeSpent,
-    };
-  });
-
-  for (const promise of promises) {
-    const result = await promise;
-    issuesWithTimeSpent.push(result);
-  }
-
-  const toDoIssues = issuesWithTimeSpent.filter(
-    (issue) => issue.fields.status.statusCategory.name === 'To Do'
+      timeSpent: await getTimeInProgress(issue, schedules),
+    }))
   );
-
-  const doingIssues = issuesWithTimeSpent.filter(
-    (issue) => issue.fields.status.statusCategory.name === 'In Progress'
-  );
-
-  const doneIssues = issuesWithTimeSpent.filter(
-    (issue) => issue.fields.status.statusCategory.name === 'Done'
-  );
-
-  return {
-    toDoIssues,
-    doingIssues,
-    doneIssues,
-  };
 }
 
 async function hasMovedToInProgress(
