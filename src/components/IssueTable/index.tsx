@@ -1,5 +1,3 @@
-'use client';
-
 import { formatDuration } from 'date-fns';
 import { Card, Title } from '@tremor/react';
 import { fr } from 'date-fns/locale';

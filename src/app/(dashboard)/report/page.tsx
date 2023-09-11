@@ -1,8 +1,7 @@
 import { getAuthData } from '@/lib/jira.service';
 import { getActiveSprint } from '@/lib/sprint.service';
 import { getBoards } from '@/lib/board.service';
-import { getEstimatedEffort } from '@/lib/sprint/sprint-effort.service';
-
+import { getEstimatedEffort } from '@/app/(dashboard)/report/sprint-effort';
 export interface RapportProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
 }

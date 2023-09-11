@@ -1,5 +1,5 @@
 import IssueTable from '../../../../components/IssueTable';
-import { getIssuesFromSprintWithTimeSpent } from '@/lib/issue/issue-time-spent.service';
+import { getIssuesFromSprintWithTimeSpent } from '@/components/IssueTable/issue-time-spent.service';
 
 export interface PreviousIssueListProps {
   boardId: number | string;
