@@ -48,10 +48,10 @@ export default function IssueTable({ issues, label }: IssueTableProps) {
                 <tbody className="bg-white divide-y divide-gray-200 whitespace-nowrap text-sm font-medium">
                   {issues.map((issue) => (
                     <tr key={issue.id}>
-                      <td className="px-6 py-4 text-gray-900 capitalize">
+                      <td className="max-w-0 px-6 py-4 text-gray-900 capitalize truncate">
                         {issue.key} - {issue.fields.summary}
                       </td>
-                      <td className="px-6 py-4 text-gray-500 text-center">
+                      <td className="w-2/12 px-6 py-4 text-gray-500 text-center">
                         {issue.estimation || (
                           <span className={'text-red-500'}>sans estimation</span>
                         )}
