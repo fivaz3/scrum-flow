@@ -1,6 +1,7 @@
 import { getAuthData } from '@/lib/jira.service';
-import { getActiveSprint, getEstimatedEffort } from '@/lib/sprint.service';
+import { getActiveSprint } from '@/lib/sprint.service';
 import { getBoards } from '@/lib/board.service';
+import { getEstimatedEffort } from '@/lib/sprint/sprint-effort.service';
 
 export interface RapportProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
@@ -27,9 +28,7 @@ export default async function Rapport({ searchParams }: RapportProps) {
     throw 'error';
   }
 
-  const number = await getEstimatedEffort(boardId, sprint, accessToken, cloudId);
-
-  console.log(number);
+  await getEstimatedEffort(boardId, sprint, accessToken, cloudId);
 
   return <div className="">sprints[0].id</div>;
 }

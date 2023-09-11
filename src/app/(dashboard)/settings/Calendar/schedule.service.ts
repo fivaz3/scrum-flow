@@ -1,7 +1,7 @@
 import { deleteBackEnd, getBackEnd, postBackEnd, putBackEnd } from '@/lib/backend.service';
 import { getAccessToken, validateData } from '@/lib/jira.service';
 import { z } from 'zod';
-import { Issue } from '@/lib/issue.service';
+import { Issue } from '@/lib/issue/issue.service';
 
 export type Schedule = {
   id: string;

@@ -1,9 +1,9 @@
 'use client';
 
-import { IssueWithTimeSpent } from '@/lib/issue.service';
 import { formatDuration } from 'date-fns';
 import { Card, Title } from '@tremor/react';
 import { fr } from 'date-fns/locale';
+import { IssueWithTimeSpent } from '@/lib/issue/issue.service';
 
 function convertMinutes(minutes: number): string {
   if (minutes < 1) {

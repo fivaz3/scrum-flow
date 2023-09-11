@@ -21,8 +21,8 @@ export async function getAccessToken() {
 }
 
 async function fetchResources(accessToken: string) {
-  // const url = 'https://api.atlassian.com/oauth/token/accessible-resources'
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL as string}/api/resources`;
+  const url = 'https://api.atlassian.com/oauth/token/accessible-resources';
+  // const url = `${process.env.NEXT_PUBLIC_BACKEND_URL as string}/api/resources`;
 
   const res: Response = await fetch(url, {
     cache: 'force-cache',

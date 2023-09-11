@@ -1,5 +1,5 @@
 import IssueTable from '../../../../components/IssueTable';
-import { getIssuesFromSprintWithChangelog } from '@/lib/issue.service';
+import { getIssuesFromSprintWithTimeSpent } from '@/lib/issue/issue-time-spent.service';
 
 export interface PreviousIssueListProps {
   boardId: number | string;
@@ -14,7 +14,7 @@ export default async function PreviousIssueList({
   accessToken,
   cloudId,
 }: PreviousIssueListProps) {
-  const issues = await getIssuesFromSprintWithChangelog(boardId, sprintId, accessToken, cloudId);
+  const issues = await getIssuesFromSprintWithTimeSpent(boardId, sprintId, accessToken, cloudId);
 
   return <IssueTable label="Done" issues={issues}></IssueTable>;
 }

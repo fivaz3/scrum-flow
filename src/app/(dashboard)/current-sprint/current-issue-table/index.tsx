@@ -1,6 +1,6 @@
 import { Grid } from '@tremor/react';
 import IssueTable from '../../../../components/IssueTable';
-import { getIssuesFromSprintWithChangelog } from '@/lib/issue.service';
+import { getIssuesFromSprintWithTimeSpent } from '@/lib/issue/issue-time-spent.service';
 
 export interface CurrentIssueListProps {
   boardId: number | string;
@@ -15,7 +15,7 @@ export default async function CurrentIssueList({
   accessToken,
   cloudId,
 }: CurrentIssueListProps) {
-  const issues = await getIssuesFromSprintWithChangelog(boardId, sprintId, accessToken, cloudId);
+  const issues = await getIssuesFromSprintWithTimeSpent(boardId, sprintId, accessToken, cloudId);
 
   const toDoIssues = issues.filter((issue) => issue.fields.status.statusCategory.name === 'To Do');
 
