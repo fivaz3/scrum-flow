@@ -1,10 +1,18 @@
 import { z } from 'zod';
 import { callApi, validateData } from '@/lib/jira.service';
 
-export async function getInProgressStatuses(): Promise<string[]> {
+export async function getInProgressStatuses(
+  accessToken: string,
+  cloudId: string
+): Promise<string[]> {
   // TODO make this variable available later
   const projectId = '10001';
-  const response = await callApi(`/rest/api/2/project/${projectId}/statuses`);
+  const response = await callApi(
+    `/rest/api/2/project/${projectId}/statuses`,
+    {},
+    accessToken,
+    cloudId
+  );
 
   const projectStatuses = validateData(
     z.array(

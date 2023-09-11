@@ -41,8 +41,13 @@ export type Issue = z.infer<typeof IssueSchema>;
 
 export type IssueWithTimeSpent = Issue & { timeSpent: number };
 
-async function addEstimationToIssues(boardId: string | number, rawIssues: unknown) {
-  const configuration = await getBoardConfiguration(boardId);
+async function addEstimationToIssues(
+  boardId: string | number,
+  rawIssues: unknown,
+  accessToken: string,
+  cloudId: string
+) {
+  const configuration = await getBoardConfiguration(boardId, accessToken, cloudId);
 
   const IssueSchemaTransformation = z.object({
     startAt: z.number(),
@@ -75,14 +80,18 @@ async function addEstimationToIssues(boardId: string | number, rawIssues: unknow
 export async function getIssuesFromSprint(
   boardId: string | number,
   sprintId: number,
-  queryParams: Record<string, string>
+  queryParams: Record<string, string>,
+  accessToken: string,
+  cloudId: string
 ) {
   const response = await callApi(
     `/rest/agile/1.0/board/${boardId}/sprint/${sprintId}/issue`,
-    queryParams
+    queryParams,
+    accessToken,
+    cloudId
   );
 
-  return await addEstimationToIssues(boardId, response);
+  return await addEstimationToIssues(boardId, response, accessToken, cloudId);
 }
 
 const IssueWithChangeLogSchema = IssueSchema.merge(
@@ -98,7 +107,7 @@ const IssueWithChangeLogSchema = IssueSchema.merge(
           items: z.array(
             z.object({
               field: z.string(),
-              fieldId: z.string(),
+              fieldId: z.string().optional(),
               from: z.string().nullable(),
               fromString: z.string().nullable(),
               to: z.string().nullable(),
@@ -113,28 +122,54 @@ const IssueWithChangeLogSchema = IssueSchema.merge(
 
 export type IssueWithChangeLog = z.infer<typeof IssueWithChangeLogSchema>;
 
-export async function getIssuesFromSprintWithChangelog(boardId: string | number, sprintId: number) {
+export async function getIssuesFromSprintWithChangelog(
+  boardId: string | number,
+  sprintId: number,
+  accessToken: string,
+  cloudId: string
+) {
   // issuetype=Story exclude Sub-tasks issues
-  const issues = await getIssuesFromSprint(boardId, sprintId, {
-    expand: 'changelog',
-    jql: 'issuetype=Story',
-  });
+  const issues = await getIssuesFromSprint(
+    boardId,
+    sprintId,
+    {
+      expand: 'changelog',
+      jql: 'issuetype=Story',
+    },
+    accessToken,
+    cloudId
+  );
 
   const issuesWithChangelog = validateData(z.array(IssueWithChangeLogSchema), issues);
+
+  // for (const issue of issuesWithChangelog) {
+  //   for (const history of issue.changelog.histories) {
+  //     for (const item of history.items) {
+  //       if (!item.fieldId) {
+  //         console.log('issue.key', issue.key);
+  //         console.log('history.id', history.id);
+  //         console.log('item', item);
+  //       }
+  //     }
+  //   }
+  // }
+
   const schedules = await getSchedulesServer();
 
   return await Promise.all(
     issuesWithChangelog.map(async (issue) => ({
       ...issue,
-      timeSpent: await getTimeInProgress(issue, schedules),
+      timeSpent: await getTimeInProgress(issue, schedules, accessToken, cloudId),
     }))
   );
 }
 
 async function hasMovedToInProgress(
-  item: IssueWithChangeLog['changelog']['histories'][0]['items'][0]
+  item: IssueWithChangeLog['changelog']['histories'][0]['items'][0],
+  accessToken: string,
+  cloudId: string
 ) {
-  const inProgressColumns = await getInProgressStatuses();
+  const inProgressColumns = await getInProgressStatuses(accessToken, cloudId);
   return !!(
     item.fromString &&
     !inProgressColumns.includes(item.fromString) &&
@@ -144,9 +179,11 @@ async function hasMovedToInProgress(
 }
 
 async function hasLeftInProgress(
-  item: IssueWithChangeLog['changelog']['histories'][0]['items'][0]
+  item: IssueWithChangeLog['changelog']['histories'][0]['items'][0],
+  accessToken: string,
+  cloudId: string
 ) {
-  const inProgressColumns = await getInProgressStatuses();
+  const inProgressColumns = await getInProgressStatuses(accessToken, cloudId);
   return !!(
     item.fromString &&
     inProgressColumns.includes(item.fromString) &&
@@ -172,7 +209,9 @@ function getStatusHistory(histories: IssueWithChangeLog['changelog']['histories'
 
 async function getTimeInProgress(
   issue: IssueWithChangeLog,
-  workingSchedules: Schedule[]
+  workingSchedules: Schedule[],
+  accessToken: string,
+  cloudId: string
 ): Promise<number> {
   if (workingSchedules.length === 0) {
     return -1;
@@ -187,9 +226,9 @@ async function getTimeInProgress(
 
   for (const history of historiesOfStatus) {
     for (const item of history.items) {
-      if (!inProgressStart && (await hasMovedToInProgress(item))) {
+      if (!inProgressStart && (await hasMovedToInProgress(item, accessToken, cloudId))) {
         inProgressStart = parseISO(history.created); // start tracking time
-      } else if (inProgressStart && (await hasLeftInProgress(item))) {
+      } else if (inProgressStart && (await hasLeftInProgress(item, accessToken, cloudId))) {
         totalTimeSpentInProgressInMinutes += calculateTimeInMinutes(
           memberSchedule,
           inProgressStart,

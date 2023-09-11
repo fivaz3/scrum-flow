@@ -7,13 +7,15 @@ import SprintPanel from '@/app/(dashboard)/current-sprint/sprint-panel';
 import BoardSelector from '@/app/(dashboard)/current-sprint/board-selector';
 import LoadingBar from '@/components/LoadingBar';
 import AlertForSchedules from '@/components/AlertForSchedules';
-import PreviousIssueList from '@/app/(dashboard)/current-sprint/previous-issue-list';
+import { getAuthData } from '@/lib/jira.service';
+import CurrentIssueList from '@/app/(dashboard)/current-sprint/current-issue-table';
 
 interface ActiveSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
 }
 export default async function ActiveSprintPage({ searchParams }: ActiveSprintPageProps) {
-  const boards = await getBoards();
+  const { accessToken, cloudId } = await getAuthData();
+  const boards = await getBoards(accessToken, cloudId);
 
   if (boards.length === 0) {
     return (
@@ -25,7 +27,7 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
 
   const boardId = searchParams.boardId || boards[0].id;
 
-  const currentSprint = await getActiveSprint(boardId);
+  const currentSprint = await getActiveSprint(boardId, accessToken, cloudId);
 
   if (!currentSprint) {
     return (
@@ -53,7 +55,12 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
             <LoadingBar />
           </div>
         }>
-        <PreviousIssueList boardId={boardId} sprintId={currentSprint.id} />
+        <CurrentIssueList
+          boardId={boardId}
+          sprintId={currentSprint.id}
+          accessToken={accessToken}
+          cloudId={cloudId}
+        />
       </Suspense>
     </>
   );

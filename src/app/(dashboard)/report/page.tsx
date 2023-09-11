@@ -1,13 +1,11 @@
-import { getAccessToken, getCloudId } from '@/lib/jira.service';
+import { getAuthData } from '@/lib/jira.service';
 
 export interface RapportProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
 }
 
 export default async function Rapport({ searchParams }: RapportProps) {
-  const accessToken = await getAccessToken();
-  const boards = await getCloudId(accessToken);
-  console.log('boards', boards);
+  const { accessToken, cloudId } = await getAuthData();
 
   // if (boards.length === 0) {
   //   return (

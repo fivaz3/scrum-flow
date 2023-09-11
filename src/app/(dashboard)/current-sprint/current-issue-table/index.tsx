@@ -5,10 +5,17 @@ import { getIssuesFromSprintWithChangelog } from '@/lib/issue.service';
 export interface CurrentIssueListProps {
   boardId: number | string;
   sprintId: number;
+  accessToken: string;
+  cloudId: string;
 }
 
-export default async function CurrentIssueList({ boardId, sprintId }: CurrentIssueListProps) {
-  const issues = await getIssuesFromSprintWithChangelog(boardId, sprintId);
+export default async function CurrentIssueList({
+  boardId,
+  sprintId,
+  accessToken,
+  cloudId,
+}: CurrentIssueListProps) {
+  const issues = await getIssuesFromSprintWithChangelog(boardId, sprintId, accessToken, cloudId);
 
   const toDoIssues = issues.filter((issue) => issue.fields.status.statusCategory.name === 'To Do');
 

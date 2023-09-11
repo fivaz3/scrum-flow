@@ -15,8 +15,8 @@ export const MemberSchema = z.object({
 
 export type Member = z.infer<typeof MemberSchema>;
 
-export async function getMembers(): Promise<Member[]> {
-  const response = await callApi(`/rest/api/2/users`);
+export async function getMembers(accessToken: string, cloudId: string): Promise<Member[]> {
+  const response = await callApi(`/rest/api/2/users`, {}, accessToken, cloudId);
 
   const MemberAndAppSchema = MemberSchema.merge(
     z.object({

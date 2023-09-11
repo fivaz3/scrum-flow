@@ -1,4 +1,4 @@
-import { getCloudId } from '@/lib/jira.service';
+import { getCloudIdClient } from '@/lib/jira.service';
 
 export async function requestBackEnd(
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
@@ -6,7 +6,7 @@ export async function requestBackEnd(
   data: unknown,
   accessToken: string
 ): Promise<unknown> {
-  const cloudId = await getCloudId(accessToken);
+  const cloudId = await getCloudIdClient(accessToken);
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL as string}${path}`;
 
   const options: RequestInit = {

@@ -21,19 +21,27 @@ const BoardListSchema = z.object({
   values: z.array(BoardSchema),
 });
 
-async function filterBoards(boards: Board[]): Promise<Board[]> {
+async function filterBoards(
+  boards: Board[],
+  accessToken: string,
+  cloudId: string
+): Promise<Board[]> {
   const scrumBoards: Board[] = [];
   for (const board of boards) {
-    if (await isBoardScrum(board.id)) {
+    if (await isBoardScrum(board.id, accessToken, cloudId)) {
       scrumBoards.push(board);
     }
   }
   return scrumBoards;
 }
 
-async function isBoardScrum(boardId: number): Promise<boolean> {
+async function isBoardScrum(
+  boardId: number,
+  accessToken: string,
+  cloudId: string
+): Promise<boolean> {
   try {
-    await getBoardConfiguration(boardId);
+    await getBoardConfiguration(boardId, accessToken, cloudId);
     return true;
   } catch (error) {
     if (!(error instanceof ZodError)) {
@@ -43,12 +51,12 @@ async function isBoardScrum(boardId: number): Promise<boolean> {
   }
 }
 
-export async function getBoards(): Promise<Board[]> {
-  const response = await callApi(`/rest/agile/1.0/board/`);
+export async function getBoards(accessToken: string, cloudId: string): Promise<Board[]> {
+  const response = await callApi(`/rest/agile/1.0/board/`, {}, accessToken, cloudId);
 
   const { values } = validateData(BoardListSchema, response);
 
-  return filterBoards(values);
+  return filterBoards(values, accessToken, cloudId);
 }
 
 const BoardConfigurationSchema = z.object({
@@ -63,8 +71,17 @@ const BoardConfigurationSchema = z.object({
 
 type BoardConfiguration = z.infer<typeof BoardConfigurationSchema>;
 
-export async function getBoardConfiguration(boardId: number | string): Promise<BoardConfiguration> {
-  const response = await callApi(`/rest/agile/1.0/board/${boardId}/configuration`);
+export async function getBoardConfiguration(
+  boardId: number | string,
+  accessToken: string,
+  cloudId: string
+): Promise<BoardConfiguration> {
+  const response = await callApi(
+    `/rest/agile/1.0/board/${boardId}/configuration`,
+    {},
+    accessToken,
+    cloudId
+  );
 
   return validateData(BoardConfigurationSchema, response);
 }

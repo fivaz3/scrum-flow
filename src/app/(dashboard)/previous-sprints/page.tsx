@@ -8,12 +8,14 @@ import SprintPanel from '@/app/(dashboard)/current-sprint/sprint-panel';
 import BoardSelector from '@/app/(dashboard)/current-sprint/board-selector';
 import { getPreviousSprints } from '@/lib/sprint.service';
 import AlertForSchedules from '@/components/AlertForSchedules';
+import { getAuthData } from '@/lib/jira.service';
 
 interface PreviousSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
 }
 export default async function PreviousSprintPage({ searchParams }: PreviousSprintPageProps) {
-  const boards = await getBoards();
+  const { accessToken, cloudId } = await getAuthData();
+  const boards = await getBoards(accessToken, cloudId);
 
   if (boards.length === 0) {
     return (
@@ -25,7 +27,7 @@ export default async function PreviousSprintPage({ searchParams }: PreviousSprin
 
   const boardId = searchParams.boardId || boards[0].id;
 
-  const sprints = await getPreviousSprints(boardId);
+  const sprints = await getPreviousSprints(boardId, accessToken, cloudId);
 
   return (
     <>
@@ -47,7 +49,12 @@ export default async function PreviousSprintPage({ searchParams }: PreviousSprin
                 <LoadingBar />
               </div>
             }>
-            <PreviousIssueList boardId={boardId} sprintId={sprint.id} />
+            <PreviousIssueList
+              boardId={boardId}
+              sprintId={sprint.id}
+              accessToken={accessToken}
+              cloudId={cloudId}
+            />
           </Suspense>
         </div>
       ))}

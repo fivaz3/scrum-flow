@@ -40,7 +40,7 @@ async function fetchResources(accessToken: string) {
   return await res.json();
 }
 
-export async function getCloudId(accessToken: string) {
+export async function getCloudIdClient(accessToken: string) {
   const response = await fetchResources(accessToken);
 
   // TODO test this application with a account without any activating any Jira service to see if this error case makes sense
@@ -64,13 +64,16 @@ export async function getCloudId(accessToken: string) {
 
 export async function getAuthData() {
   const accessToken = await getAccessToken();
-  const cloudId = await getCloudId(accessToken);
+  const cloudId = await getCloudIdClient(accessToken);
   return { accessToken, cloudId };
 }
 
-export async function callApi(path: string, queryParams?: Record<string, string>) {
-  const { accessToken, cloudId } = await getAuthData();
-
+export async function callApi(
+  path: string,
+  queryParams: Record<string, string>,
+  accessToken: string,
+  cloudId: string
+) {
   const baseUrl = `https://api.atlassian.com/ex/jira/${cloudId}`;
 
   const url = `${baseUrl}${path}`;
