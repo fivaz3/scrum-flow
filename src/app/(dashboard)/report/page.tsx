@@ -1,10 +1,13 @@
-import { getAuthData } from '@/lib/jira.service';
-import { getActiveSprint } from '@/lib/sprint.service';
+import Graph from '@/components/graph';
 import { getBoards } from '@/lib/board.service';
-import { getEstimatedEffort } from '@/app/(dashboard)/report/sprint-effort';
+import { getPreviousSprints } from '@/lib/sprint.service';
+import { getAuthData } from '@/lib/jira.service';
+import { getDataForLineChart } from '@/app/(dashboard)/report/sprint-effort';
+
 export interface RapportProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
 }
+// TODO tell how much a point represent for each sprint and right now
 
 export default async function Rapport({ searchParams }: RapportProps) {
   const { accessToken, cloudId } = await getAuthData();
@@ -21,13 +24,9 @@ export default async function Rapport({ searchParams }: RapportProps) {
 
   const boardId = searchParams.boardId || boards[0].id;
 
-  const sprint = await getActiveSprint(boardId, accessToken, cloudId);
+  const sprints = await getPreviousSprints(boardId, accessToken, cloudId);
 
-  if (!sprint) {
-    throw 'error';
-  }
+  const data = await getDataForLineChart(boardId, sprints, accessToken, cloudId);
 
-  await getEstimatedEffort(boardId, sprint, accessToken, cloudId);
-
-  return <div className="">sprints[0].id</div>;
+  return <Graph data={data}></Graph>;
 }

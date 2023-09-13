@@ -6,6 +6,7 @@ import {
   getIssuesWithChangelog,
   IssueWithChangeLog,
 } from '@/lib/issue/issue.service';
+import { getIssuesFromSprintWithTimeSpent } from '@/components/IssueTable/issue-time-spent.service';
 
 function getSprintHistory(histories: IssueWithChangeLog['changelog']['histories']) {
   // sort histories by date
@@ -71,26 +72,26 @@ function wasAddedBeforeSprintStart(issue: IssueWithChangeLog, sprint: Sprint): b
     for (const item of history.items) {
       if (item.to === `${sprint.id}`) {
         if (isBefore(parseISO(history.created), startDate)) {
-          console.log(`first if - ${parseISO(history.created)} is before ${startDate}`);
-          console.log(
-            'for issue key',
-            issue.key,
-            'item.to is ',
-            item.to,
-            ' and item.field is ',
-            item.field
-          );
+          // console.log(`first if - ${parseISO(history.created)} is before ${startDate}`);
+          // console.log(
+          //   'for issue key',
+          //   issue.key,
+          //   'item.to is ',
+          //   item.to,
+          //   ' and item.field is ',
+          //   item.field
+          // );
           wasAddedBeforeStart = true;
         } else {
-          console.log(`first if - ${parseISO(history.created)} is not before ${startDate}`);
+          // console.log(`first if - ${parseISO(history.created)} is not before ${startDate}`);
         }
       }
       if (wasAddedBeforeStart && item.from === `${sprint.id}`) {
         if (isBefore(parseISO(history.created), startDate)) {
-          console.log(`second if - ${parseISO(history.created)} is before ${startDate}`);
+          // console.log(`second if - ${parseISO(history.created)} is before ${startDate}`);
           wasAddedBeforeStart = false;
         } else {
-          console.log(`second if - ${parseISO(history.created)} is not before ${startDate}`);
+          // console.log(`second if - ${parseISO(history.created)} is not before ${startDate}`);
         }
       }
     }
@@ -143,41 +144,66 @@ export async function getEstimatedEffort(
   sprint: Sprint,
   accessToken: string,
   cloudId: string
-) {
+): Promise<number> {
   const issues = await getIssuesFromBeforeSprintStart(boardId, sprint, accessToken, cloudId);
 
   console.log(
-    'issues',
+    'estimated issues',
     issues.map((issue) => issue.key)
   );
 
-  // get estimation of sprints
-  // const sprintEstimation = sprintIssues.reduce(
-  //   (total, issue) => total + (issue.estimation || 0),
-  //   0
-  // );
+  return issues.reduce((total, issue) => total + (issue.estimation || 0), 0);
+}
 
-  // return sprintEstimation;
+export async function getActualEffort(
+  boardId: number | string,
+  sprint: Sprint,
+  accessToken: string,
+  cloudId: string
+): Promise<number> {
+  const issues = await getIssuesFromSprintWithTimeSpent(boardId, sprint.id, accessToken, cloudId);
 
-  // const sprintFieldId = await getSprintFieldId(boardId, sprint, accessToken, cloudId);
-  // get issues
-  // filter issues to get only the history of sprint change
-  // for each issue get if it didn't move to another sprint before the sprint start
-  //   const configuration = await getBoardConfiguration(boardId);
-  //
-  //   const estimationKey = configuration.estimation.field.fieldId;
-  //
-  //   const issues = await getIssuesWithChangelog(boardId);
-  // const filteredIssues = issues.map((issue) => ({
-  //   ...issue,
-  //   changelog: {
-  //     ...issue.changelog,
-  //     histories: issue.changelog.histories
-  //       .map((history) => ({
-  //         ...history,
-  //         items: history.items.filter((item) => item.fieldId === sprintFieldId),
-  //       }))
-  //       .filter((history) => history.items.length > 0),
-  //   },
-  // }));
+  console.log(
+    'actual issues',
+    issues.map((issue) => issue.key)
+  );
+
+  return issues.reduce((total, issue) => total + (issue.estimation || 0), 0);
+}
+
+export type MaturitySprintDataSet = Array<{ precision: number; sprint: string }>;
+
+export async function getDataForLineChart(
+  boardId: number | string,
+  sprints: Sprint[],
+  accessToken: string,
+  cloudId: string
+): Promise<MaturitySprintDataSet> {
+  const chartData: MaturitySprintDataSet = [];
+  for (const sprint of sprints) {
+    const estimatedEffort = await getEstimatedEffort(boardId, sprint, accessToken, cloudId);
+    const actualEffort = await getActualEffort(boardId, sprint, accessToken, cloudId);
+    const accuracy = calculateAccuracy(estimatedEffort, actualEffort);
+    chartData.push({ precision: accuracy, sprint: sprint.name });
+    console.log('estimated effort: ', estimatedEffort, 'actual effort: ', actualEffort);
+  }
+  return chartData;
+}
+
+// A function that takes the estimated effort and the actual effort as parameters and returns the percentage of accuracy
+function calculateAccuracy(estimatedEffort: number, actualEffort: number): number {
+  // Check if the parameters are valid numbers
+  if (isNaN(estimatedEffort) || isNaN(actualEffort) || actualEffort === 0) {
+    // Throw an error if not
+    throw new Error('Invalid input');
+  }
+  // Calculate the relative error
+  const relativeError = (estimatedEffort - actualEffort) / actualEffort;
+  // Take the absolute value of the relative error
+  const absoluteError = Math.abs(relativeError);
+  // Calculate the accuracy
+  const accuracy = 1 - absoluteError;
+  // Convert the accuracy to percentage
+  // Return the percentage of accuracy
+  return accuracy * 100;
 }
