@@ -8,7 +8,7 @@ import BoardSelector from '../../../components/board-selector';
 import LoadingBar from '@/components/LoadingBar';
 import AlertForSchedules from '@/components/AlertForSchedules';
 import { getAuthData } from '@/lib/jira.service';
-import CurrentIssueList from '@/app/(dashboard)/current-sprint/current-issue-table';
+import CurrentIssueList from '@/app/(dashboard)/current-sprint/current-issue-list';
 
 interface ActiveSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };

@@ -1,5 +1,5 @@
-import IssueTable from '../../../../components/IssueTable';
-import { getIssuesFromSprintWithTimeSpent } from '@/components/IssueTable/issue-time-spent.service';
+import ClosedIssueTable from '@/app/(dashboard)/previous-sprints/previous-issue-list/ClosedIssueTable';
+import { getIssuesFromSprintWithTimeSpent } from '@/lib/issue/issue-time-spent.service';
 
 export interface PreviousIssueListProps {
   boardId: number | string;
@@ -16,5 +16,5 @@ export default async function PreviousIssueList({
 }: PreviousIssueListProps) {
   const issues = await getIssuesFromSprintWithTimeSpent(boardId, sprintId, accessToken, cloudId);
 
-  return <IssueTable label="Done" issues={issues}></IssueTable>;
+  return <ClosedIssueTable label="Done" issues={issues}></ClosedIssueTable>;
 }

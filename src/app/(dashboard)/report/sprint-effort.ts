@@ -6,7 +6,7 @@ import {
   getIssuesWithChangelog,
   IssueWithChangeLog,
 } from '@/lib/issue/issue.service';
-import { getIssuesFromSprintWithTimeSpent } from '@/components/IssueTable/issue-time-spent.service';
+import { getIssuesFromSprintWithTimeSpent } from '@/lib/issue/issue-time-spent.service';
 
 function getSprintHistory(histories: IssueWithChangeLog['changelog']['histories']) {
   // sort histories by date

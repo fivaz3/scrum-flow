@@ -3,6 +3,10 @@ import { MemberSchema } from '@/app/(dashboard)/settings/Calendar/member.service
 import { callApi, validateData } from '@/lib/jira.service';
 import { getBoardConfiguration } from '@/lib/board.service';
 
+// TODO add a eslint plugin that will fix my imports merging them possible
+// // TODO add  pagination
+// // TODO these issues have too many useless attributes, I should request only those I need
+
 export const IssueSchema = z.object({
   id: z.string(),
   key: z.string(),
