@@ -9,15 +9,18 @@ import {
   Schedule,
 } from '@/app/(dashboard)/settings/Calendar/schedule.service';
 import {
-  differenceInMinutes,
+  differenceInMilliseconds,
   eachDayOfInterval,
+  formatDuration,
   getDay,
+  intervalToDuration,
   isSameDay,
   isWithinInterval,
   parseISO,
   set,
 } from 'date-fns';
 import { getInProgressStatuses } from '@/lib/project.service';
+import { fr } from 'date-fns/locale';
 
 function getStatusHistory(histories: IssueWithChangeLog['changelog']['histories']) {
   // sort histories by date
@@ -62,12 +65,12 @@ async function hasLeftInProgress(
   );
 }
 
-function calculateTimeInMinutes(
+function calculateTimeInMilliseconds(
   workingSchedules: Schedule[],
   taskStartedAt: Date,
   taskEndedAt: Date
 ): number {
-  let totalMinutes = 0;
+  let totalMilliseconds = 0;
 
   eachDayOfInterval({ start: taskStartedAt, end: taskEndedAt }).forEach((day) => {
     workingSchedules.forEach((schedule) => {
@@ -85,29 +88,29 @@ function calculateTimeInMinutes(
 
         if (isSameDay(day, taskStartedAt)) {
           if (taskStartedAt < endOfWork) {
-            const diff = differenceInMinutes(
+            const difference = differenceInMilliseconds(
               Math.min(endOfWork.getTime(), taskEndedAt.getTime()),
               Math.max(startOfWork.getTime(), taskStartedAt.getTime())
             );
-            totalMinutes += diff;
+            totalMilliseconds += difference;
           }
         } else if (isSameDay(day, taskEndedAt)) {
           if (taskEndedAt > startOfWork) {
-            const diff = differenceInMinutes(
+            const difference = differenceInMilliseconds(
               Math.min(endOfWork.getTime(), taskEndedAt.getTime()),
               Math.max(startOfWork.getTime(), taskStartedAt.getTime())
             );
-            totalMinutes += diff;
+            totalMilliseconds += difference;
           }
         } else {
-          const diff = differenceInMinutes(endOfWork, startOfWork);
-          totalMinutes += diff;
+          const difference = differenceInMilliseconds(endOfWork, startOfWork);
+          totalMilliseconds += difference;
         }
       }
     });
   });
 
-  return totalMinutes;
+  return totalMilliseconds;
 }
 
 async function getTimeInProgress(
@@ -125,14 +128,14 @@ async function getTimeInProgress(
   const historiesOfStatus = getStatusHistory(issue.changelog.histories);
 
   let inProgressStart: Date | null = null;
-  let totalTimeSpentInProgressInMinutes = 0;
+  let totalTimeSpentInProgressInMilliseconds = 0;
 
   for (const history of historiesOfStatus) {
     for (const item of history.items) {
       if (!inProgressStart && (await hasMovedToInProgress(item, accessToken, cloudId))) {
         inProgressStart = parseISO(history.created); // start tracking time
       } else if (inProgressStart && (await hasLeftInProgress(item, accessToken, cloudId))) {
-        totalTimeSpentInProgressInMinutes += calculateTimeInMinutes(
+        totalTimeSpentInProgressInMilliseconds += calculateTimeInMilliseconds(
           memberSchedule,
           inProgressStart,
           parseISO(history.created)
@@ -144,14 +147,14 @@ async function getTimeInProgress(
 
   if (inProgressStart && issue.fields.status.statusCategory.name === 'In Progress') {
     // issue is still in progress
-    totalTimeSpentInProgressInMinutes += calculateTimeInMinutes(
+    totalTimeSpentInProgressInMilliseconds += calculateTimeInMilliseconds(
       memberSchedule,
       inProgressStart,
       new Date()
     );
   }
 
-  return totalTimeSpentInProgressInMinutes;
+  return totalTimeSpentInProgressInMilliseconds;
 }
 
 export async function getIssuesFromSprintWithTimeSpent(
@@ -174,4 +177,16 @@ export async function getIssuesFromSprintWithTimeSpent(
       timeSpent: await getTimeInProgress(issue, schedules, accessToken, cloudId),
     }))
   );
+}
+
+export function convertToDuration(milliseconds: number, debug = false): string {
+  if (milliseconds < 1) {
+    return '0 minutes';
+  }
+
+  const duration = intervalToDuration({ start: 0, end: milliseconds });
+
+  if (debug) console.log(duration);
+
+  return formatDuration(duration, { format: ['hours', 'minutes'], locale: fr });
 }

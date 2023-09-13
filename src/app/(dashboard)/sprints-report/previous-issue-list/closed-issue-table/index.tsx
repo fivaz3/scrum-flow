@@ -1,19 +1,5 @@
-import { formatDuration } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { IssueWithTimeSpent } from '@/lib/issue/issue.service';
-
-function convertMinutes(minutes: number): string {
-  if (minutes < 1) {
-    return '0 minutes';
-  }
-
-  const duration = {
-    hours: Math.floor(minutes / 60),
-    minutes: minutes % 60,
-  };
-
-  return formatDuration(duration, { format: ['days', 'hours', 'minutes'], locale: fr });
-}
+import { convertToDuration } from '@/lib/issue/issue-time-spent.service';
 
 export interface IssueTableProps {
   label: string;
@@ -29,13 +15,16 @@ export default function ClosedIssueTable({ issues }: IssueTableProps) {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50 font-medium text-xs text-gray-500 uppercase tracking-wider">
                 <tr>
-                  <th scope="col" className="w-6/12 px-6 py-3 text-left">
+                  <th scope="col" className="w-5/12 px-6 py-3 text-left">
                     Name
                   </th>
                   <th scope="col" className="w-2/12 px-6 py-3 text-center">
-                    Estimation
+                    Estimation (s. points)
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right">
+                  <th scope="col" className="w-2/12 px-6 py-3 text-center">
+                    Estimation (temps)
+                  </th>
+                  <th scope="col" className="w-3/12 px-6 py-3 text-right">
                     Temps passé
                   </th>
                 </tr>
@@ -43,13 +32,19 @@ export default function ClosedIssueTable({ issues }: IssueTableProps) {
               <tbody className="bg-white divide-y divide-gray-200 whitespace-nowrap text-sm font-medium">
                 {issues.map((issue) => (
                   <tr key={issue.id}>
-                    <td className="max-w-0 px-6 py-4 text-gray-900 capitalize truncate">
+                    <td className="w-5/12 max-w-0 px-6 py-4 text-gray-900 capitalize truncate">
                       {issue.key} - {issue.fields.summary}
                     </td>
                     <td className="w-2/12 px-6 py-4 text-gray-500 text-center">
                       {issue.estimation || <span className={'text-red-500'}>sans estimation</span>}
                     </td>
-                    <td className="px-6 py-4 text-right">{convertMinutes(issue.timeSpent)}</td>
+                    <td className="w-2/12 px-6 py-4 text-gray-500 text-center">
+                      {issue.estimation || <span className={'text-red-500'}>sans estimation</span>}
+                    </td>
+                    <td className="w-3/12 px-6 py-4 text-right">
+                      {issue.key === 'SCRUM-15' && `-${issue.timeSpent}-`}
+                      {convertToDuration(issue.timeSpent, issue.key === 'SCRUM-15')}
+                    </td>
                   </tr>
                 ))}
               </tbody>
