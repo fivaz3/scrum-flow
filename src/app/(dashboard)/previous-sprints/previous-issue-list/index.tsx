@@ -1,5 +1,5 @@
-import ClosedIssueTable from '@/app/(dashboard)/previous-sprints/previous-issue-list/ClosedIssueTable';
 import { getIssuesFromSprintWithTimeSpent } from '@/lib/issue/issue-time-spent.service';
+import ClosedIssueTable from '@/app/(dashboard)/previous-sprints/previous-issue-list/closed-issue-table';
 
 export interface PreviousIssueListProps {
   boardId: number | string;

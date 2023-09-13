@@ -147,10 +147,10 @@ export async function getEstimatedEffort(
 ): Promise<number> {
   const issues = await getIssuesFromBeforeSprintStart(boardId, sprint, accessToken, cloudId);
 
-  console.log(
-    'estimated issues',
-    issues.map((issue) => issue.key)
-  );
+  // console.log(
+  //   'estimated issues',
+  //   issues.map((issue) => issue.key)
+  // );
 
   return issues.reduce((total, issue) => total + (issue.estimation || 0), 0);
 }
@@ -163,10 +163,10 @@ export async function getActualEffort(
 ): Promise<number> {
   const issues = await getIssuesFromSprintWithTimeSpent(boardId, sprint.id, accessToken, cloudId);
 
-  console.log(
-    'actual issues',
-    issues.map((issue) => issue.key)
-  );
+  // console.log(
+  //   'actual issues',
+  //   issues.map((issue) => issue.key)
+  // );
 
   return issues.reduce((total, issue) => total + (issue.estimation || 0), 0);
 }
@@ -185,15 +185,15 @@ export async function getDataForLineChart(
     const actualEffort = await getActualEffort(boardId, sprint, accessToken, cloudId);
     const accuracy = calculateAccuracy(estimatedEffort, actualEffort);
     chartData.push({ precision: accuracy, sprint: sprint.name });
-    console.log('estimated effort: ', estimatedEffort, 'actual effort: ', actualEffort);
+    // console.log('estimated effort: ', estimatedEffort, 'actual effort: ', actualEffort);
   }
   return chartData;
 }
 
 // A function that takes the estimated effort and the actual effort as parameters and returns the percentage of accuracy
-function calculateAccuracy(estimatedEffort: number, actualEffort: number): number {
+export function calculateAccuracy(estimatedEffort: number, actualEffort: number): number {
   // Check if the parameters are valid numbers
-  if (isNaN(estimatedEffort) || isNaN(actualEffort) || actualEffort === 0) {
+  if (actualEffort === 0) {
     // Throw an error if not
     throw new Error('Invalid input');
   }
@@ -204,6 +204,7 @@ function calculateAccuracy(estimatedEffort: number, actualEffort: number): numbe
   // Calculate the accuracy
   const accuracy = 1 - absoluteError;
   // Convert the accuracy to percentage
+  const formattedAccuracy = parseFloat(accuracy.toFixed(2));
   // Return the percentage of accuracy
-  return accuracy * 100;
+  return formattedAccuracy * 100;
 }

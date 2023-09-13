@@ -3,11 +3,11 @@ import { getBoards } from '@/lib/board.service';
 import { Suspense } from 'react';
 import PreviousIssueList from './previous-issue-list';
 import LoadingBar from '@/components/LoadingBar';
-import SprintPanel from '../../../components/sprint-panel';
 import BoardSelector from '../../../components/board-selector';
 import { getPreviousSprints } from '@/lib/sprint.service';
 import AlertForSchedules from '@/components/AlertForSchedules';
 import { getAuthData } from '@/lib/jira.service';
+import PreviousSprintPanel from '@/app/(dashboard)/previous-sprints/previous-issue-list/previous-sprint-panel';
 
 interface PreviousSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
@@ -41,7 +41,12 @@ export default async function PreviousSprintPage({ searchParams }: PreviousSprin
       {sprints.map((sprint) => (
         <div key={sprint.id}>
           <div className="my-5">
-            <SprintPanel sprint={sprint} />
+            <PreviousSprintPanel
+              boardId={boardId}
+              sprint={sprint}
+              accessToken={accessToken}
+              cloudId={cloudId}
+            />
           </div>
 
           <Suspense
