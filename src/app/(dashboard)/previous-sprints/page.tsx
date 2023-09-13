@@ -1,9 +1,8 @@
-import { Flex, Title } from '@tremor/react';
+import { Title } from '@tremor/react';
 import { getBoards } from '@/lib/board.service';
 import { Suspense } from 'react';
 import PreviousIssueList from './previous-issue-list';
 import LoadingBar from '@/components/LoadingBar';
-import SprintPanelLoading from '@/components/sprint-panel/sprint-panel-loading';
 import SprintPanel from '../../../components/sprint-panel';
 import BoardSelector from '../../../components/board-selector';
 import { getPreviousSprints } from '@/lib/sprint.service';
@@ -34,14 +33,17 @@ export default async function PreviousSprintPage({ searchParams }: PreviousSprin
       <Suspense fallback={<></>}>
         <AlertForSchedules />
       </Suspense>
+
+      <div className="flex justify-end">
+        <BoardSelector boardId={`${boardId}`} boards={boards} />
+      </div>
+
       {sprints.map((sprint) => (
         <div key={sprint.id}>
-          <Flex className="content-start">
-            <Suspense fallback={<SprintPanelLoading />}>
-              <SprintPanel sprint={sprint} />
-              <BoardSelector boardId={`${boardId}`} boards={boards} />
-            </Suspense>
-          </Flex>
+          <div className="my-5">
+            <SprintPanel sprint={sprint} />
+          </div>
+
           <Suspense
             fallback={
               <div>
