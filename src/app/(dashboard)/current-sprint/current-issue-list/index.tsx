@@ -15,6 +15,7 @@ export default async function CurrentIssueList({
   accessToken,
   cloudId,
 }: CurrentIssueListProps) {
+  // TODO remove from the time spent concerning the amount of time a ticket spent in In Progress in the previous board
   const issues = await getIssuesFromSprintWithTimeSpent(boardId, sprintId, accessToken, cloudId);
 
   const toDoIssues = issues.filter((issue) => issue.fields.status.statusCategory.name === 'To Do');

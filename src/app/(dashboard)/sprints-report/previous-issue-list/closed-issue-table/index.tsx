@@ -12,7 +12,7 @@ function convertMinutes(minutes: number): string {
     minutes: minutes % 60,
   };
 
-  return formatDuration(duration, { format: ['hours', 'minutes'], locale: fr });
+  return formatDuration(duration, { format: ['days', 'hours', 'minutes'], locale: fr });
 }
 
 export interface IssueTableProps {

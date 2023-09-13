@@ -16,6 +16,9 @@ function validateToken(data: unknown) {
   return RefreshTokenSchema.parse(data);
 }
 
+// TODO fix the refresh Access Token being called multiple times, possible fix the updated tutorial
+// https://authjs.dev/guides/basics/refresh-token-rotation using cookies to save the refresh token and avoid requesting it twice
+
 async function refreshAccessToken(token: JWT) {
   console.log("token isn't valid anymore refreshing it");
 
@@ -91,6 +94,11 @@ export default {
     async session({ session, token }) {
       // console.log(token.access_token, '\n');
       // Send properties to the client, like an access_token from a provider.
+      if (!token) {
+        console.log(
+          "token doesn't exist alertasdasdas as d asd sad sad asdsa dsadsad ashdu isahdu hasduih asudh asuidh uisadh uiasdhuiashduishd sauodh ufasdhfauiosdhfui"
+        );
+      }
       session.access_token = token.access_token;
       if (token.error) {
         session.error = token.error;

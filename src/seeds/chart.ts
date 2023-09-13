@@ -1,4 +1,4 @@
-import { MaturitySprintDataSet } from '@/app/(dashboard)/report/sprint-effort';
+import { MaturitySprintDataSet } from '@/app/(dashboard)/sprints-report/sprint-effort';
 
 export const sprintAccuracyData: MaturitySprintDataSet = [
   {

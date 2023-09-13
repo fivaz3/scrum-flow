@@ -17,6 +17,7 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
   const { accessToken, cloudId } = await getAuthData();
   const boards = await getBoards(accessToken, cloudId);
 
+  // TODO add this board to part of the top head of the layout at the right of the name of the page
   if (boards.length === 0) {
     return (
       <div>
