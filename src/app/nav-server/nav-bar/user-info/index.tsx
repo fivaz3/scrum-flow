@@ -6,7 +6,7 @@ import { signOut } from 'next-auth/react';
 import { Session } from 'next-auth';
 
 export interface UserInfoProps {
-  session: Session;
+  session: Session | null;
 }
 
 export default function UserInfo({ session }: UserInfoProps) {
@@ -19,8 +19,8 @@ export default function UserInfo({ session }: UserInfoProps) {
               <span className="sr-only">Open user menu</span>
               <Image
                 className="h-8 w-8 rounded-full"
-                src={session.user?.image || 'https://avatar.vercel.sh/leerob'}
-                alt={`${session.user?.name || 'placeholder'} avatar`}
+                src={session?.user?.image || 'https://avatar.vercel.sh/leerob'}
+                alt={`${session?.user?.name || 'placeholder'} avatar`}
                 height={32}
                 width={32}
               />

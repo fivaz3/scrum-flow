@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import classNames from 'classnames';
-import { getPrivateLinks } from '@/app/nav/nav-bar/nav-bar.service';
+import { getPrivateLinks } from '@/app/nav-server/nav-bar/nav-bar.service';
 
 export interface NavLinksProps {
   pathname: string | null;

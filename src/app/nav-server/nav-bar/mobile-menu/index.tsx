@@ -4,11 +4,11 @@ import Link from 'next/link';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { signOut } from 'next-auth/react';
-import { getPrivateLinks } from '@/app/nav/nav-bar/nav-bar.service';
+import { getPrivateLinks } from '@/app/nav-server/nav-bar/nav-bar.service';
 
 interface MobileMenuProps {
   pathname: string | null;
-  session: Session;
+  session: Session | null;
 }
 // Mobile menu
 export default function MobileMenu({ pathname, session }: MobileMenuProps) {
@@ -47,7 +47,7 @@ function MobileMenuItems({ pathname }: MobileMenuItemsProps) {
 }
 
 interface MobileUserInfoProps {
-  session: Session;
+  session: Session | null;
 }
 
 function MobileUserInfo({ session }: MobileUserInfoProps) {
@@ -57,16 +57,16 @@ function MobileUserInfo({ session }: MobileUserInfoProps) {
         <div className="flex-shrink-0">
           <Image
             className="h-10 w-10 rounded-full"
-            src={session.user?.image || 'https://avatar.vercel.sh/leerob'}
+            src={session?.user?.image || 'https://avatar.vercel.sh/leerob'}
             height={40}
             width={40}
-            alt={`${session.user?.name} avatar`}
+            alt={`${session?.user?.name} avatar`}
           />
         </div>
         <div className="ml-3">
-          <div className="text-base font-medium leading-none text-white">{session.user?.name}</div>
+          <div className="text-base font-medium leading-none text-white">{session?.user?.name}</div>
           <div className="text-sm font-medium leading-none text-gray-400">
-            {session.user?.email}
+            {session?.user?.email}
           </div>
         </div>
       </div>
