@@ -42,19 +42,19 @@ function getTimeByPoints(points: number, sprint: Sprint): string {
   return formatDuration(pointDuration, { format: ['days', 'hours', 'minutes'], locale: fr });
 }
 
-export interface PreviousSprintPanelProps {
+interface PreviousSprintHeaderProps {
   sprint: Sprint;
   boardId: number | string;
   accessToken: string;
   cloudId: string;
 }
 
-export default async function PreviousSprintPanel({
+export default async function PreviousSprintHeader({
   boardId,
   sprint,
   accessToken,
   cloudId,
-}: PreviousSprintPanelProps) {
+}: PreviousSprintHeaderProps) {
   const estimatedEffort = await getEstimatedEffort(boardId, sprint, accessToken, cloudId);
   const actualEffort = await getActualEffort(boardId, sprint, accessToken, cloudId);
 

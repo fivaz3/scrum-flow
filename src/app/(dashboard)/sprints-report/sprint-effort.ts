@@ -4,6 +4,7 @@ import { isAfter, isBefore, parseISO } from 'date-fns';
 import {
   getIssuesFromSprintWithChangelog,
   getIssuesWithChangelog,
+  Issue,
   IssueWithChangeLog,
 } from '@/lib/issue/issue.service';
 import { getIssuesFromSprintWithTimeSpent } from '@/lib/issue/issue-time-spent.service';
@@ -163,11 +164,10 @@ export async function getActualEffort(
 ): Promise<number> {
   const issues = await getIssuesFromSprintWithTimeSpent(boardId, sprint.id, accessToken, cloudId);
 
-  // console.log(
-  //   'actual issues',
-  //   issues.map((issue) => issue.key)
-  // );
+  return getSumOfEstimations(issues);
+}
 
+export function getSumOfEstimations(issues: Issue[]) {
   return issues.reduce((total, issue) => total + (issue.estimation || 0), 0);
 }
 

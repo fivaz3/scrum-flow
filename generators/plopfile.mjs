@@ -1,4 +1,3 @@
-// TODO fix plopfile isn't following how I organize my pages and components
 export default function (plop) {
   plop.setGenerator('component', {
     description: 'create new component structure',

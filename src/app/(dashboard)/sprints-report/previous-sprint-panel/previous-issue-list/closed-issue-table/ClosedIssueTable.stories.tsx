@@ -17,6 +17,14 @@ type Story = StoryObj<typeof meta>;
 export const ToDo: Story = {
   args: {
     label: 'To Do',
+    sprint: {
+      id: 1,
+      name: 'test',
+      startDate: new Date().toISOString(),
+      endDate: new Date().toISOString(),
+      state: 'completed',
+      originBoardId: 1,
+    },
     issues: [
       {
         id: '2',
@@ -43,6 +51,14 @@ export const ToDo: Story = {
 export const Doing: Story = {
   args: {
     label: 'Doing',
+    sprint: {
+      id: 1,
+      name: 'test',
+      startDate: new Date().toISOString(),
+      endDate: new Date().toISOString(),
+      state: 'completed',
+      originBoardId: 1,
+    },
     issues: [
       {
         id: '3',
@@ -87,6 +103,14 @@ export const Doing: Story = {
 export const Done: Story = {
   args: {
     label: 'Done',
+    sprint: {
+      id: 1,
+      name: 'test',
+      startDate: new Date().toISOString(),
+      endDate: new Date().toISOString(),
+      state: 'completed',
+      originBoardId: 1,
+    },
     issues: [
       {
         id: '4',

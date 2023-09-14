@@ -7,6 +7,7 @@ export const SprintSchema = z.object({
   name: z.string(),
   startDate: z.string(),
   endDate: z.string(),
+  completeDate: z.string().optional(),
   originBoardId: z.number(),
 });
 
@@ -28,7 +29,7 @@ export async function getActiveSprint(
     maxResults: z.number(),
     startAt: z.number(),
     isLast: z.boolean(),
-    values: z.array(SprintSchema),
+    values: z.array(SprintSchema.omit({ completeDate: true })),
   });
 
   const validatedResponse = validateData(JiraResponseSchema, response);
@@ -52,7 +53,7 @@ export async function getPreviousSprints(
     maxResults: z.number(),
     startAt: z.number(),
     isLast: z.boolean(),
-    values: z.array(SprintSchema),
+    values: z.array(SprintSchema.merge(z.object({ completeDate: z.string() }))),
   });
 
   const { values: sprints } = validateData(JiraResponseSchema, response);

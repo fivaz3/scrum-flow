@@ -1,22 +1,18 @@
 import { Title } from '@tremor/react';
 import { getBoards } from '@/lib/board.service';
 import { Suspense } from 'react';
-import PreviousIssueList from './previous-issue-list';
-import LoadingBar from '@/components/LoadingBar';
 import BoardSelector from '../../../components/board-selector';
 import { getPreviousSprints } from '@/lib/sprint.service';
 import AlertForSchedules from '@/components/AlertForSchedules';
 import { getAuthData } from '@/lib/jira.service';
-import PreviousSprintPanel from '@/app/(dashboard)/sprints-report/previous-issue-list/previous-sprint-panel';
-import { getDataForLineChart } from '@/app/(dashboard)/sprints-report/sprint-effort';
 import Graph from '@/components/graph';
-
-// TODO tell how much a point represent for each sprint and right now
+import { getDataForLineChart } from '@/app/(dashboard)/sprints-report/sprint-effort';
+import PreviousSprintPanel from '@/app/(dashboard)/sprints-report/previous-sprint-panel';
 
 interface PreviousSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
 }
-export default async function PreviousSprintPage({ searchParams }: PreviousSprintPageProps) {
+export default async function SprintReportPage({ searchParams }: PreviousSprintPageProps) {
   const { accessToken, cloudId } = await getAuthData();
   const boards = await getBoards(accessToken, cloudId);
 
@@ -48,31 +44,14 @@ export default async function PreviousSprintPage({ searchParams }: PreviousSprin
         </div>
       </Suspense>
       {sprints.map((sprint) => (
-        <div key={sprint.id}>
-          <div className="my-5">
-            <PreviousSprintPanel
-              boardId={boardId}
-              sprint={sprint}
-              accessToken={accessToken}
-              cloudId={cloudId}
-            />
-          </div>
-
-          <Suspense
-            fallback={
-              <div>
-                chargement des tickets...
-                <LoadingBar />
-              </div>
-            }>
-            <PreviousIssueList
-              boardId={boardId}
-              sprintId={sprint.id}
-              accessToken={accessToken}
-              cloudId={cloudId}
-            />
-          </Suspense>
-        </div>
+        <Suspense key={sprint.id} fallback={<div>chargement des sprints...</div>}>
+          <PreviousSprintPanel
+            boardId={boardId}
+            sprint={sprint}
+            accessToken={accessToken}
+            cloudId={cloudId}
+          />
+        </Suspense>
       ))}
     </>
   );

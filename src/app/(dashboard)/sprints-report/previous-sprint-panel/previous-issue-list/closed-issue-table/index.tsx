@@ -1,12 +1,42 @@
-import { IssueWithTimeSpent } from '@/lib/issue/issue.service';
+import { Issue, IssueWithTimeSpent } from '@/lib/issue/issue.service';
 import { convertToDuration } from '@/lib/issue/issue-time-spent.service';
+import { Sprint } from '@/lib/sprint.service';
+import { getSumOfEstimations } from '@/app/(dashboard)/sprints-report/sprint-effort';
+import { differenceInMilliseconds, formatDuration, intervalToDuration, parseISO } from 'date-fns';
+import { fr } from 'date-fns/locale';
+
+function getEstimationInTime(
+  issues: Issue[],
+  estimationInPoints: number | null,
+  sprint: Sprint
+): string {
+  if (!estimationInPoints) {
+    return 'sans estimation';
+  }
+
+  const points = getSumOfEstimations(issues);
+
+  const sprintDurationInMilliseconds = differenceInMilliseconds(
+    parseISO(sprint.endDate),
+    parseISO(sprint.startDate)
+  );
+
+  const pointDurationInMilliseconds = sprintDurationInMilliseconds / points;
+
+  const issueEstimationInMilliseconds = estimationInPoints * pointDurationInMilliseconds;
+
+  const pointDuration = intervalToDuration({ start: 0, end: issueEstimationInMilliseconds });
+
+  return formatDuration(pointDuration, { format: ['days', 'hours', 'minutes'], locale: fr });
+}
 
 export interface IssueTableProps {
   label: string;
   issues: IssueWithTimeSpent[];
+  sprint: Sprint;
 }
 
-export default function ClosedIssueTable({ issues }: IssueTableProps) {
+export default function ClosedIssueTable({ issues, sprint }: IssueTableProps) {
   return (
     <div className="flex flex-col">
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -39,7 +69,7 @@ export default function ClosedIssueTable({ issues }: IssueTableProps) {
                       {issue.estimation || <span className={'text-red-500'}>sans estimation</span>}
                     </td>
                     <td className="w-2/12 px-6 py-4 text-gray-500 text-center">
-                      {issue.estimation || <span className={'text-red-500'}>sans estimation</span>}
+                      {getEstimationInTime(issues, issue.estimation, sprint)}
                     </td>
                     <td className="w-3/12 px-6 py-4 text-right">
                       {issue.key === 'SCRUM-15' && `-${issue.timeSpent}-`}
