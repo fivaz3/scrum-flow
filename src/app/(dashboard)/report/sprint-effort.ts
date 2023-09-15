@@ -171,23 +171,31 @@ export function getSumOfEstimations(issues: Issue[]) {
   return issues.reduce((total, issue) => total + (issue.estimation || 0), 0);
 }
 
-export type MaturitySprintDataSet = Array<{ precision: number; sprint: string }>;
+export type SprintAccuracyChartData = Array<{ precision: number; sprintName: string }>;
+
+async function getSprintAccuracy(
+  boardId: number | string,
+  sprint: Sprint,
+  accessToken: string,
+  cloudId: string
+): Promise<number> {
+  const estimatedEffort = await getEstimatedEffort(boardId, sprint, accessToken, cloudId);
+  const actualEffort = await getActualEffort(boardId, sprint, accessToken, cloudId);
+  return calculateAccuracy(estimatedEffort, actualEffort);
+}
 
 export async function getDataForLineChart(
   boardId: number | string,
   sprints: Sprint[],
   accessToken: string,
   cloudId: string
-): Promise<MaturitySprintDataSet> {
-  const chartData: MaturitySprintDataSet = [];
-  for (const sprint of sprints) {
-    const estimatedEffort = await getEstimatedEffort(boardId, sprint, accessToken, cloudId);
-    const actualEffort = await getActualEffort(boardId, sprint, accessToken, cloudId);
-    const accuracy = calculateAccuracy(estimatedEffort, actualEffort);
-    chartData.push({ precision: accuracy, sprint: sprint.name });
-    // console.log('estimated effort: ', estimatedEffort, 'actual effort: ', actualEffort);
-  }
-  return chartData;
+): Promise<SprintAccuracyChartData> {
+  const accuracyPromises = sprints.map(async (sprint) => {
+    const precision = await getSprintAccuracy(boardId, sprint, accessToken, cloudId);
+    return { precision: precision, sprintName: sprint.name };
+  });
+
+  return Promise.all(accuracyPromises);
 }
 
 // A function that takes the estimated effort and the actual effort as parameters and returns the percentage of accuracy

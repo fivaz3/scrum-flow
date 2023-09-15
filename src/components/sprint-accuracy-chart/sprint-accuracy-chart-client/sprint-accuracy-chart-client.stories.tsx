@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import Graph from '.';
+import SprintAccuracyChartClient from './index';
 import { sprintAccuracyData } from '@/seeds/chart';
 
 const meta = {
-  component: Graph,
+  component: SprintAccuracyChartClient,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
   argTypes: {},
-} satisfies Meta<typeof Graph>;
+} satisfies Meta<typeof SprintAccuracyChartClient>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
