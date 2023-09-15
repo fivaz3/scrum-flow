@@ -1,6 +1,6 @@
 import { getDataForLineChart } from '@/app/(dashboard)/report/sprint-effort';
 import { Sprint } from '@/lib/sprint.service';
-import SprintAccuracyChartClient from '@/components/sprint-accuracy-chart/sprint-accuracy-chart-client';
+import SprintAccuracyChartClient from '@/app/(dashboard)/report/sprint-accuracy-chart/sprint-accuracy-chart-client';
 
 interface GraphProps {
   boardId: string | number;

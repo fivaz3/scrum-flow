@@ -42,24 +42,26 @@ function getTimeByPoints(points: number, sprint: Sprint): string {
   return formatDuration(pointDuration, { format: ['days', 'hours', 'minutes'], locale: fr });
 }
 
-interface PreviousSprintHeaderProps {
+interface ClosedSprintHeaderProps {
   sprint: Sprint;
   boardId: number | string;
   accessToken: string;
   cloudId: string;
 }
 
-export default async function PreviousSprintHeader({
+// TODO tell how much a point represent for each sprint and right now
+
+export default async function ClosedSprintHeader({
   boardId,
   sprint,
   accessToken,
   cloudId,
-}: PreviousSprintHeaderProps) {
+}: ClosedSprintHeaderProps) {
   const estimatedEffort = await getEstimatedEffort(boardId, sprint, accessToken, cloudId);
   const actualEffort = await getActualEffort(boardId, sprint, accessToken, cloudId);
 
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center mb-5">
       <div>
         <Title className="text-2xl">Sprint: {sprint.name}</Title>
         <div className="text-sm text-gray-500">

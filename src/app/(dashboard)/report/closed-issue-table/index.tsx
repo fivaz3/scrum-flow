@@ -1,60 +1,28 @@
-import { Issue, IssueWithTimeSpent } from '@/lib/issue/issue.service';
-import { convertToDuration } from '@/lib/issue/issue-time-spent.service';
+import {
+  convertToDuration,
+  getIssuesFromSprintWithTimeSpent,
+} from '@/lib/issue/issue-time-spent.service';
 import { Sprint } from '@/lib/sprint.service';
-import { calculateAccuracy, getSumOfEstimations } from '@/app/(dashboard)/report/sprint-effort';
-import { differenceInMilliseconds, formatDuration, intervalToDuration, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
-
-function getEstimationInTime(
-  issues: Issue[],
-  estimationInPoints: number | null,
-  sprint: Sprint
-): number {
-  if (!estimationInPoints) {
-    return 0;
-  }
-
-  const points = getSumOfEstimations(issues);
-
-  const sprintDurationInMilliseconds = differenceInMilliseconds(
-    parseISO(sprint.endDate),
-    parseISO(sprint.startDate)
-  );
-
-  const pointDurationInMilliseconds = sprintDurationInMilliseconds / points;
-
-  return estimationInPoints * pointDurationInMilliseconds;
-}
-
-function getEstimationInTimeFormatted(
-  issues: Issue[],
-  estimationInPoints: number | null,
-  sprint: Sprint
-): string {
-  const estimationInTime = getEstimationInTime(issues, estimationInPoints, sprint);
-  return formatEstimationInTime(estimationInTime);
-}
-
-function formatEstimationInTime(estimationInMilliseconds: number): string {
-  const pointDuration = intervalToDuration({ start: 0, end: estimationInMilliseconds });
-
-  return formatDuration(pointDuration, { format: ['days', 'hours', 'minutes'], locale: fr });
-}
-
-function getIssueAccuracy(issues: Issue[], issue: IssueWithTimeSpent, sprint: Sprint): string {
-  const estimationInMilliseconds = getEstimationInTime(issues, issue.estimation, sprint);
-  // console.log(estimationInMilliseconds);
-  const accuracyInPercentage = calculateAccuracy(estimationInMilliseconds, issue.timeSpent);
-  return `${accuracyInPercentage}%`;
-}
+import {
+  getEstimationInTimeFormatted,
+  getIssueAccuracy,
+} from '@/app/(dashboard)/report/closed-issue-table/service';
 
 interface IssueTableProps {
-  label: string;
-  issues: IssueWithTimeSpent[];
+  boardId: number | string;
   sprint: Sprint;
+  accessToken: string;
+  cloudId: string;
 }
 
-export default function ClosedIssueTable({ issues, sprint }: IssueTableProps) {
+export default async function ClosedIssueTable({
+  boardId,
+  sprint,
+  accessToken,
+  cloudId,
+}: IssueTableProps) {
+  const issues = await getIssuesFromSprintWithTimeSpent(boardId, sprint.id, accessToken, cloudId);
+
   return (
     <div className="flex flex-col">
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
