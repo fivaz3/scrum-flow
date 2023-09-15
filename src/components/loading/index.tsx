@@ -8,10 +8,10 @@ interface LoadingBarProps {
 
 export default function Loading({ title = 'Chargement...', className }: LoadingBarProps) {
   return (
-    <div className="h-96 grid justify-center items-center">
+    <div className={classNames(className, 'grid justify-center items-center')}>
       <div className="flex justify-center items-center gap-3">
         <ArrowPathIcon className="animate-spin h-5 w-5" />
-        <div className={classNames(className)}>{title}</div>
+        <div>{title}</div>
       </div>
     </div>
   );

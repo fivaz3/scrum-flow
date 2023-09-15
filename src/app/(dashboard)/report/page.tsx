@@ -9,6 +9,7 @@ import Loading from '@/components/loading';
 import EmptyState from '@/components/empty-state';
 import ClosedIssueTable from '@/app/(dashboard)/report/closed-issue-table';
 import ClosedSprintHeader from '@/app/(dashboard)/report/closed-sprint-header';
+import ClosedSprintHeaderSkeleton from '@/app/(dashboard)/report/closed-sprint-header/closed-sprint-header-skeleton';
 
 interface PreviousSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
@@ -48,7 +49,7 @@ export default async function SprintReportPage({ searchParams }: PreviousSprintP
       </Suspense>
       {sprints.map((sprint) => (
         <div key={sprint.id}>
-          <Suspense fallback={<Loading title="chargement des sprints..." />}>
+          <Suspense fallback={<ClosedSprintHeaderSkeleton />}>
             <ClosedSprintHeader
               boardId={boardId}
               sprint={sprint}

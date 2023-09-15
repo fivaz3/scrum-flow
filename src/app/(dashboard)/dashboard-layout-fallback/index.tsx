@@ -11,7 +11,7 @@ export default function DashboardLayoutFallback({}: DashBoardLayoutFallbackProps
         <NavBarSkeleton></NavBarSkeleton>
       </div>
       <Main pageTitle="Dashboard">
-        <Loading />
+        <Loading className="h-96" />
       </Main>
     </div>
   );
