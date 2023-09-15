@@ -191,19 +191,15 @@ export async function getDataForLineChart(
 }
 
 // A function that takes the estimated effort and the actual effort as parameters and returns the percentage of accuracy
-export function calculateAccuracy(estimatedEffort: number, actualEffort: number): number {
+export function calculateAccuracy(estimated: number, actual: number): number {
   // Check if the parameters are valid numbers
-  if (actualEffort === 0) {
+  if (actual === 0 || estimated === 0) {
+    return 0;
     // Throw an error if not
-    throw new Error('Invalid input');
+    // throw new Error('Invalid input');
   }
-  // Calculate the relative error
-  const relativeError = (estimatedEffort - actualEffort) / actualEffort;
-  // Take the absolute value of the relative error
-  const absoluteError = Math.abs(relativeError);
-  // Calculate the accuracy
-  const accuracy = 1 - absoluteError;
-  // Convert the accuracy to percentage
+  const difference = Math.abs(estimated - actual);
+  const accuracy = 1 - difference / Math.max(estimated, actual);
   const formattedAccuracy = parseFloat(accuracy.toFixed(2));
   // Return the percentage of accuracy
   return formattedAccuracy * 100;

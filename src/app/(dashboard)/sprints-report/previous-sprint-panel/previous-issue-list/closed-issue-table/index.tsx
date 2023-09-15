@@ -1,7 +1,10 @@
 import { Issue, IssueWithTimeSpent } from '@/lib/issue/issue.service';
 import { convertToDuration } from '@/lib/issue/issue-time-spent.service';
 import { Sprint } from '@/lib/sprint.service';
-import { getSumOfEstimations } from '@/app/(dashboard)/sprints-report/sprint-effort';
+import {
+  calculateAccuracy,
+  getSumOfEstimations,
+} from '@/app/(dashboard)/sprints-report/sprint-effort';
 import { differenceInMilliseconds, formatDuration, intervalToDuration, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -9,9 +12,9 @@ function getEstimationInTime(
   issues: Issue[],
   estimationInPoints: number | null,
   sprint: Sprint
-): string {
+): number {
   if (!estimationInPoints) {
-    return 'sans estimation';
+    return 0;
   }
 
   const points = getSumOfEstimations(issues);
@@ -23,11 +26,29 @@ function getEstimationInTime(
 
   const pointDurationInMilliseconds = sprintDurationInMilliseconds / points;
 
-  const issueEstimationInMilliseconds = estimationInPoints * pointDurationInMilliseconds;
+  return estimationInPoints * pointDurationInMilliseconds;
+}
 
-  const pointDuration = intervalToDuration({ start: 0, end: issueEstimationInMilliseconds });
+function getEstimationInTimeFormatted(
+  issues: Issue[],
+  estimationInPoints: number | null,
+  sprint: Sprint
+): string {
+  const estimationInTime = getEstimationInTime(issues, estimationInPoints, sprint);
+  return formatEstimationInTime(estimationInTime);
+}
+
+function formatEstimationInTime(estimationInMilliseconds: number): string {
+  const pointDuration = intervalToDuration({ start: 0, end: estimationInMilliseconds });
 
   return formatDuration(pointDuration, { format: ['days', 'hours', 'minutes'], locale: fr });
+}
+
+function getIssueAccuracy(issues: Issue[], issue: IssueWithTimeSpent, sprint: Sprint): string {
+  const estimationInMilliseconds = getEstimationInTime(issues, issue.estimation, sprint);
+  console.log(estimationInMilliseconds);
+  const accuracyInPercentage = calculateAccuracy(estimationInMilliseconds, issue.timeSpent);
+  return `${accuracyInPercentage}%`;
 }
 
 export interface IssueTableProps {
@@ -48,14 +69,17 @@ export default function ClosedIssueTable({ issues, sprint }: IssueTableProps) {
                   <th scope="col" className="w-5/12 px-6 py-3 text-left">
                     Name
                   </th>
-                  <th scope="col" className="w-2/12 px-6 py-3 text-center">
+                  <th scope="col" className="w-1/12 px-6 py-3 text-center">
                     Estimation (s. points)
                   </th>
                   <th scope="col" className="w-2/12 px-6 py-3 text-center">
                     Estimation (temps)
                   </th>
-                  <th scope="col" className="w-3/12 px-6 py-3 text-right">
+                  <th scope="col" className="w-2/12 px-6 py-3 text-center">
                     Temps passé
+                  </th>
+                  <th scope="col" className="w-2/12 px-6 py-3 text-right">
+                    Précision individuel
                   </th>
                 </tr>
               </thead>
@@ -65,15 +89,18 @@ export default function ClosedIssueTable({ issues, sprint }: IssueTableProps) {
                     <td className="w-5/12 max-w-0 px-6 py-4 text-gray-900 capitalize truncate">
                       {issue.key} - {issue.fields.summary}
                     </td>
-                    <td className="w-2/12 px-6 py-4 text-gray-500 text-center">
+                    <td className="w-1/12 px-6 py-4 text-gray-500 text-center">
                       {issue.estimation || <span className={'text-red-500'}>sans estimation</span>}
                     </td>
                     <td className="w-2/12 px-6 py-4 text-gray-500 text-center">
-                      {getEstimationInTime(issues, issue.estimation, sprint)}
+                      {getEstimationInTimeFormatted(issues, issue.estimation, sprint)}
                     </td>
-                    <td className="w-3/12 px-6 py-4 text-right">
+                    <td className="w-2/12 px-6 py-4 text-center">
                       {issue.key === 'SCRUM-15' && `-${issue.timeSpent}-`}
                       {convertToDuration(issue.timeSpent, issue.key === 'SCRUM-15')}
+                    </td>
+                    <td className="w-2/12 px-6 py-4 text-right">
+                      {getIssueAccuracy(issues, issue, sprint)}
                     </td>
                   </tr>
                 ))}
