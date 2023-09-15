@@ -1,13 +1,10 @@
 import { Card, Title } from '@tremor/react';
-import { IssueWithTimeSpent } from '@/lib/issue/issue.service';
-import { convertToDuration } from '@/lib/issue/issue-time-spent.service';
 
-interface IssueTableProps {
+interface ActiveIssueTableSkeletonProps {
   label: string;
-  issues: IssueWithTimeSpent[];
 }
 
-export default function IssueTable({ issues, label }: IssueTableProps) {
+export default function ActiveIssueTableSkeleton({ label }: ActiveIssueTableSkeletonProps) {
   return (
     <Card>
       <Title className="mb-2">{label}</Title>
@@ -30,17 +27,17 @@ export default function IssueTable({ issues, label }: IssueTableProps) {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 whitespace-nowrap text-sm font-medium">
-                  {issues.map((issue) => (
-                    <tr key={issue.id}>
+                  {[0, 1, 2].map((index) => (
+                    <tr key={index}>
                       <td className="max-w-0 px-6 py-4 text-gray-900 capitalize truncate">
-                        {issue.key} - {issue.fields.summary}
+                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 w-[100px] mb-2.5" />
                       </td>
                       <td className="w-2/12 px-6 py-4 text-gray-500 text-center">
-                        {issue.estimation || (
-                          <span className={'text-red-500'}>sans estimation</span>
-                        )}
+                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 w-[100px] mb-2.5" />
                       </td>
-                      <td className="px-6 py-4 text-right">{convertToDuration(issue.timeSpent)}</td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 w-[100px] mb-2.5" />
+                      </td>
                     </tr>
                   ))}
                 </tbody>

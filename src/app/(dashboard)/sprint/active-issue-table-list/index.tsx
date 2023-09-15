@@ -1,5 +1,4 @@
-import { Grid } from '@tremor/react';
-import IssueTable from './issue-table';
+import ActiveIssueTable from './active-issue-table';
 import { getIssuesFromSprintWithTimeSpent } from '@/lib/issue/issue-time-spent.service';
 
 interface CurrentIssueListProps {
@@ -9,7 +8,7 @@ interface CurrentIssueListProps {
   cloudId: string;
 }
 
-export default async function CurrentIssueList({
+export default async function ActiveIssueTableList({
   boardId,
   sprintId,
   accessToken,
@@ -27,10 +26,10 @@ export default async function CurrentIssueList({
   const doneIssues = issues.filter((issue) => issue.fields.status.statusCategory.name === 'Done');
 
   return (
-    <Grid className="gap-6 mt-4">
-      <IssueTable label="To Do" issues={toDoIssues}></IssueTable>
-      <IssueTable label="Doing" issues={doingIssues}></IssueTable>
-      <IssueTable label="Done" issues={doneIssues}></IssueTable>
-    </Grid>
+    <div className="flex flex-col gap-6 mt-4">
+      <ActiveIssueTable label="To Do" issues={toDoIssues}></ActiveIssueTable>
+      <ActiveIssueTable label="Doing" issues={doingIssues}></ActiveIssueTable>
+      <ActiveIssueTable label="Done" issues={doneIssues}></ActiveIssueTable>
+    </div>
   );
 }

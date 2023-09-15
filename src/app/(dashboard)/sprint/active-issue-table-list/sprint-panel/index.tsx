@@ -1,9 +1,9 @@
 import { Title } from '@tremor/react';
 import { format, parseISO } from 'date-fns';
-import { Sprint } from '@/lib/sprint.service';
+import { ActiveSprint } from '@/lib/sprint.service';
 
 interface SprintPanelProps {
-  sprint: Sprint;
+  sprint: ActiveSprint;
 }
 
 export default function SprintPanel({ sprint }: SprintPanelProps) {

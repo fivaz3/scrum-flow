@@ -1,14 +1,13 @@
 import { getBoards } from '@/lib/board.service';
-import { getActiveSprint } from '@/lib/sprint.service';
-import { Flex, Title } from '@tremor/react';
 import { Suspense } from 'react';
-import SprintPanelLoading from '@/app/(dashboard)/sprint/current-issue-list/sprint-panel/sprint-panel-loading';
-import SprintPanel from './current-issue-list/sprint-panel';
-import BoardSelector from '../../../components/board-selector';
-import Loading from '../../../components/loading';
 import AlertForSchedules from '@/components/AlertForSchedules';
 import { getAuthData } from '@/lib/jira.service';
-import CurrentIssueList from '@/app/(dashboard)/sprint/current-issue-list';
+import EmptyState from '@/components/empty-state';
+import { getActiveSprint } from '@/lib/sprint.service';
+import SprintPanel from '@/app/(dashboard)/sprint/active-issue-table-list/sprint-panel';
+import BoardSelector from '@/components/board-selector';
+import ActiveIssueTableListSkeleton from '@/app/(dashboard)/sprint/active-issue-table-list-skeleton';
+import ActiveIssueTableList from '@/app/(dashboard)/sprint/active-issue-table-list';
 
 interface ActiveSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
@@ -17,51 +16,46 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
   const { accessToken, cloudId } = await getAuthData();
   const boards = await getBoards(accessToken, cloudId);
 
-  // TODO add this board to part of the top head of the layout at the right of the name of the page
   if (boards.length === 0) {
     return (
-      <div>
-        <Title>Vous n&apos;avez pas encore créé un board de type Scrum</Title>
-      </div>
+      <EmptyState
+        title="Aucun board trouvé"
+        description="Vous n'avez pas encore créé un board de type Scrum sur votre projet Jira"
+      />
     );
   }
 
   const boardId = searchParams.boardId || boards[0].id;
 
-  const currentSprint = await getActiveSprint(boardId, accessToken, cloudId);
+  const sprint = await getActiveSprint(boardId, accessToken, cloudId);
 
-  if (!currentSprint) {
+  if (!sprint) {
     return (
-      <div>
-        <Title>Il n&apos;y a pas encore de sprint actives</Title>
-      </div>
+      <EmptyState
+        title="Aucun sprint active trouvé"
+        description="Vous n'avez pas encore démarré votre sprint sur Jira"
+      />
     );
   }
 
   return (
     <>
-      <Suspense fallback={<></>}>
-        <AlertForSchedules />
-      </Suspense>
-      <Flex className="content-start">
-        <Suspense fallback={<SprintPanelLoading />}>
-          <SprintPanel sprint={currentSprint} />
-          <BoardSelector boardId={`${boardId}`} boards={boards} />
-        </Suspense>
-      </Flex>
-      <Suspense
-        fallback={
-          <div>
-            chargement des tickets...
-            <Loading />
-          </div>
-        }>
-        <CurrentIssueList
+      <div className="flex justify-between items-center">
+        <SprintPanel sprint={sprint} />
+        <BoardSelector boardId={`${boardId}`} boards={boards} />
+      </div>
+
+      <Suspense fallback={<ActiveIssueTableListSkeleton />}>
+        <ActiveIssueTableList
           boardId={boardId}
-          sprintId={currentSprint.id}
+          sprintId={sprint.id}
           accessToken={accessToken}
           cloudId={cloudId}
         />
+      </Suspense>
+
+      <Suspense fallback={<></>}>
+        <AlertForSchedules />
       </Suspense>
     </>
   );

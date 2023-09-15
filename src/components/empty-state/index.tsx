@@ -5,7 +5,7 @@ interface EmptyStateProps {
 
 export default function EmptyState({ title, description }: EmptyStateProps) {
   return (
-    <div className="text-center">
+    <div className="h-96 flex flex-col justify-center items-center">
       <svg
         className="mx-auto h-12 w-12 text-gray-400"
         fill="none"

@@ -31,9 +31,6 @@ export default async function SprintReportPage({ searchParams }: PreviousSprintP
 
   return (
     <div className="flex flex-col gap-5">
-      <Suspense fallback={<></>}>
-        <AlertForSchedules />
-      </Suspense>
       <div className="flex justify-end">
         <BoardSelector boardId={`${boardId}`} boards={boards} />
       </div>
@@ -54,6 +51,10 @@ export default async function SprintReportPage({ searchParams }: PreviousSprintP
           cloudId={cloudId}
         />
       ))}
+
+      <Suspense fallback={<></>}>
+        <AlertForSchedules />
+      </Suspense>
     </div>
   );
 }
