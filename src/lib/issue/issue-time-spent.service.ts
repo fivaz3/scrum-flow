@@ -7,7 +7,7 @@ import {
   getMemberSchedule,
   getSchedulesServer,
   Schedule,
-} from '@/app/(dashboard)/settings/Calendar/schedule.service';
+} from '@/app/(dashboard)/schedules/Calendar/schedule.service';
 import {
   differenceInMilliseconds,
   eachDayOfInterval,

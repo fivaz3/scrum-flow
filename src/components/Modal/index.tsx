@@ -1,7 +1,7 @@
 import { Dispatch, Fragment, ReactNode, SetStateAction } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-export interface ModalProps {
+interface ModalProps {
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   children: ReactNode;

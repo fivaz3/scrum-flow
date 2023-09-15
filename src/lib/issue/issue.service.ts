@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { MemberSchema } from '@/app/(dashboard)/settings/Calendar/member.service';
+import { MemberSchema } from '@/app/(dashboard)/schedules/Calendar/member.service';
 import { callApi, validateData } from '@/lib/jira.service';
 import { getBoardConfiguration } from '@/lib/board.service';
 

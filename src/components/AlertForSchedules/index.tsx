@@ -1,7 +1,7 @@
 import BannerWithNavigation from '@/components/BannerWithNavigation';
-import { getSchedulesServer } from '@/app/(dashboard)/settings/Calendar/schedule.service';
+import { getSchedulesServer } from '@/app/(dashboard)/schedules/Calendar/schedule.service';
 
-export interface AlertForSchedulesProps {}
+interface AlertForSchedulesProps {}
 
 export default async function AlertForSchedules({}: AlertForSchedulesProps) {
   const schedules = await getSchedulesServer();

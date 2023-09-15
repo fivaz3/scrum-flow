@@ -2,7 +2,7 @@
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
 
-export interface LoginButtonProps {}
+interface LoginButtonProps {}
 
 export default function LoginButton({}: LoginButtonProps) {
   return (

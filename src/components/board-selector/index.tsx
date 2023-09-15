@@ -5,7 +5,7 @@ import { Board } from '@/lib/board.service';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 
-export interface BoardSelectorProps {
+interface BoardSelectorProps {
   boardId: string;
   boards: Board[];
 }

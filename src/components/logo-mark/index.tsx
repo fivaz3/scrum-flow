@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import classNames from 'classnames';
 
-export interface LogoMarkProps {
+interface LogoMarkProps {
   className?: string;
 }
 

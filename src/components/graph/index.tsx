@@ -1,10 +1,10 @@
 'use client';
 import { Card, LineChart, Title } from '@tremor/react';
-import { MaturitySprintDataSet } from '@/app/(dashboard)/sprints-report/sprint-effort';
+import { MaturitySprintDataSet } from '@/app/(dashboard)/report/sprint-effort';
 
 const dataFormatter = (number: number) => `${Intl.NumberFormat('us').format(number).toString()}%`;
 
-export interface GraphProps {
+interface GraphProps {
   data: MaturitySprintDataSet;
 }
 

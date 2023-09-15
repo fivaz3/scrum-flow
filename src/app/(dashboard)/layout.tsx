@@ -1,11 +1,11 @@
 import { ReactNode, Suspense } from 'react';
-import NavBarServer from '../nav-server';
-import NavBarFallback from '@/app/nav-server/nav-bar-fallback';
+import DashboardLayoutServer from './dashboard-layout-server';
+import DashboardLayoutFallback from '@/app/(dashboard)/dashboard-layout-fallback';
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   return (
-    <Suspense fallback={<NavBarFallback />}>
-      <NavBarServer>{children}</NavBarServer>
+    <Suspense fallback={<DashboardLayoutFallback />}>
+      <DashboardLayoutServer>{children}</DashboardLayoutServer>
     </Suspense>
   );
 }
