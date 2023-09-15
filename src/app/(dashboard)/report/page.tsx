@@ -1,15 +1,13 @@
 import { getBoards } from '@/lib/board.service';
 import { Suspense } from 'react';
 import BoardSelector from '../../../components/board-selector';
-import { getPreviousSprints } from '@/lib/sprint.service';
+import { getClosedSprints } from '@/lib/sprint.service';
 import AlertForSchedules from '@/components/AlertForSchedules';
 import { getAuthData } from '@/lib/jira.service';
 import SprintAccuracyChart from './sprint-accuracy-chart';
 import Loading from '@/components/loading';
 import EmptyState from '@/components/empty-state';
-import ClosedIssueTable from '@/app/(dashboard)/report/closed-issue-table';
-import ClosedSprintHeader from '@/app/(dashboard)/report/closed-sprint-header';
-import ClosedSprintHeaderSkeleton from '@/app/(dashboard)/report/closed-sprint-header/closed-sprint-header-skeleton';
+import ClosedSprintPanel from '@/app/(dashboard)/report/closed-sprint-panel';
 
 interface PreviousSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
@@ -29,14 +27,14 @@ export default async function SprintReportPage({ searchParams }: PreviousSprintP
 
   const boardId = searchParams.boardId || boards[0].id;
 
-  const sprints = await getPreviousSprints(boardId, accessToken, cloudId);
+  const sprints = await getClosedSprints(boardId, accessToken, cloudId);
 
   return (
     <div className="flex flex-col gap-5">
       <Suspense fallback={<></>}>
         <AlertForSchedules />
       </Suspense>
-      <div className="ml-auto">
+      <div className="flex justify-end">
         <BoardSelector boardId={`${boardId}`} boards={boards} />
       </div>
       <Suspense fallback={<Loading title="chargement du graphique..."></Loading>}>
@@ -48,25 +46,13 @@ export default async function SprintReportPage({ searchParams }: PreviousSprintP
         />
       </Suspense>
       {sprints.map((sprint) => (
-        <div key={sprint.id}>
-          <Suspense fallback={<ClosedSprintHeaderSkeleton />}>
-            <ClosedSprintHeader
-              boardId={boardId}
-              sprint={sprint}
-              accessToken={accessToken}
-              cloudId={cloudId}
-            />
-          </Suspense>
-
-          <Suspense fallback={<Loading title="chargement des tickets..." />}>
-            <ClosedIssueTable
-              boardId={boardId}
-              sprint={sprint}
-              accessToken={accessToken}
-              cloudId={cloudId}
-            />
-          </Suspense>
-        </div>
+        <ClosedSprintPanel
+          key={sprint.id}
+          boardId={boardId}
+          sprint={sprint}
+          accessToken={accessToken}
+          cloudId={cloudId}
+        />
       ))}
     </div>
   );

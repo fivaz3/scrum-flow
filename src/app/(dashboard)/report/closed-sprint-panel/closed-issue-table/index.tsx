@@ -6,7 +6,7 @@ import { Sprint } from '@/lib/sprint.service';
 import {
   getEstimationInTimeFormatted,
   getIssueAccuracy,
-} from '@/app/(dashboard)/report/closed-issue-table/service';
+} from '@/app/(dashboard)/report/closed-sprint-panel/closed-issue-table/service';
 
 interface IssueTableProps {
   boardId: number | string;

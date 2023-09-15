@@ -13,11 +13,19 @@ export const SprintSchema = z.object({
 
 export type Sprint = z.infer<typeof SprintSchema>;
 
+const ActiveSprintSchema = SprintSchema.omit({ completeDate: true });
+
+export type ActiveSprint = z.infer<typeof ActiveSprintSchema>;
+
+const ClosedSprintSchema = SprintSchema.merge(z.object({ completeDate: z.string() }));
+
+export type ClosedSprint = z.infer<typeof ClosedSprintSchema>;
+
 export async function getActiveSprint(
   boardId: string | number,
   accessToken: string,
   cloudId: string
-): Promise<Sprint | undefined> {
+): Promise<ActiveSprint | undefined> {
   const response = await callApi(
     `/rest/agile/1.0/board/${boardId}/sprint`,
     { state: 'active' },
@@ -29,7 +37,7 @@ export async function getActiveSprint(
     maxResults: z.number(),
     startAt: z.number(),
     isLast: z.boolean(),
-    values: z.array(SprintSchema.omit({ completeDate: true })),
+    values: z.array(ActiveSprintSchema),
   });
 
   const validatedResponse = validateData(JiraResponseSchema, response);
@@ -37,11 +45,11 @@ export async function getActiveSprint(
   return validatedResponse.values[0];
 }
 
-export async function getPreviousSprints(
+export async function getClosedSprints(
   boardId: string | number,
   accessToken: string,
   cloudId: string
-): Promise<Sprint[]> {
+): Promise<ClosedSprint[]> {
   const response = await callApi(
     `/rest/agile/1.0/board/${boardId}/sprint`,
     { state: 'closed' },
@@ -53,12 +61,12 @@ export async function getPreviousSprints(
     maxResults: z.number(),
     startAt: z.number(),
     isLast: z.boolean(),
-    values: z.array(SprintSchema.merge(z.object({ completeDate: z.string() }))),
+    values: z.array(ClosedSprintSchema),
   });
 
   const { values: sprints } = validateData(JiraResponseSchema, response);
 
-  const sprintsWithIssuesOrNull: Array<Sprint | null> = await Promise.all(
+  const sprintsWithIssuesOrNull: Array<ClosedSprint | null> = await Promise.all(
     sprints.map(async (sprint) => {
       if (await hasIssues(boardId, sprint.id, accessToken, cloudId)) {
         return sprint;
@@ -67,7 +75,7 @@ export async function getPreviousSprints(
     })
   );
 
-  return sprintsWithIssuesOrNull.filter((sprint): sprint is Sprint => sprint !== null);
+  return sprintsWithIssuesOrNull.filter((sprint): sprint is ClosedSprint => sprint !== null);
 }
 
 export async function hasIssues(
