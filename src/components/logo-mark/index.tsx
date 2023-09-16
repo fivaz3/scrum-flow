@@ -1,16 +1,16 @@
-import Image from 'next/image';
 import classNames from 'classnames';
+import LogoMark from '@/components/logo';
 
 interface LogoMarkProps {
   className?: string;
 }
 
-export default function LogoMark({ className }: LogoMarkProps) {
+export default function LogoType({ className }: LogoMarkProps) {
   return (
     <div
       className={classNames(className, 'flex gap-2 items-center justify-between w-full md:w-auto')}>
       <span className="sr-only">Scrum Flow</span>
-      <Image className="h-8 w-auto" src="/logo.svg" alt="scrum flow logo" width={40} height={40} />
+      <LogoMark className="h-8 w-auto" />
       <span className="text-2xl font-bold">Scrum Flow</span>
     </div>
   );

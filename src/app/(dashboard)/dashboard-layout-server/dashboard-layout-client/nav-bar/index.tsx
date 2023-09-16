@@ -1,5 +1,5 @@
 import { Disclosure } from '@headlessui/react';
-import Logo from '../../../../../components/layout/navbar/logo';
+import NavBarLogo from '../../../../../components/layout/navbar/logo';
 import NavLinks from '../../../../../components/layout/navbar/nav-links';
 import MobileMenuButton from '../../../../../components/layout/navbar/mobile-menu-button';
 import { Session } from 'next-auth';
@@ -20,7 +20,7 @@ export default function NavBar({ session, pathname }: NavBarCoreProps) {
             <div className="border-b border-gray-700">
               <div className="flex items-center justify-between h-16 px-4 sm:px-0">
                 <div className="flex items-center">
-                  <Logo />
+                  <NavBarLogo />
                   <NavLinks pathname={pathname} />
                 </div>
                 <UserInfo session={session} />

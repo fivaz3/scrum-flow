@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import DashboardLayoutClient from './index';
 import { session } from '@/seeds/session';
+import { navigation } from '@/app/(dashboard)/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
 
 const meta = {
   component: DashboardLayoutClient,
@@ -10,7 +11,7 @@ const meta = {
     nextjs: {
       appDirectory: true,
       navigation: {
-        pathname: '/settings',
+        pathname: navigation[3].href,
       },
     },
   },

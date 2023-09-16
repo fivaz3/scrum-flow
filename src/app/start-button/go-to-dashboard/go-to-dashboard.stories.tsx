@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import NavBarLogo from './index';
+import GoToDashboardButton from './index';
 
 const meta = {
-  component: NavBarLogo,
+  component: GoToDashboardButton,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
   argTypes: {},
-} satisfies Meta<typeof NavBarLogo>;
+} satisfies Meta<typeof GoToDashboardButton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

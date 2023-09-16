@@ -4,6 +4,7 @@ import { Fragment } from 'react';
 import classNames from 'classnames';
 import { signOut } from 'next-auth/react';
 import { Session } from 'next-auth';
+import { navigation } from '@/app/(dashboard)/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
 
 interface UserInfoProps {
   session: Session | null;
@@ -42,7 +43,7 @@ export default function UserInfo({ session }: UserInfoProps) {
                       { 'bg-gray-100': active },
                       'block px-4 py-2 text-sm text-gray-700'
                     )}
-                    onClick={() => signOut({ callbackUrl: '/' })}>
+                    onClick={() => signOut({ callbackUrl: navigation[0].href })}>
                     Déconnexion
                   </button>
                 )}

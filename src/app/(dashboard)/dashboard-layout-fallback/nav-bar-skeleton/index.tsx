@@ -1,4 +1,4 @@
-import Logo from '../../../../components/layout/navbar/logo';
+import NavBarLogo from '../../../../components/layout/navbar/logo';
 import NavLinks from '../../../../components/layout/navbar/nav-links';
 import UserInfoSkeleton from './user-info-skeleton';
 import MobileMenuButton from '../../../../components/layout/navbar/mobile-menu-button';
@@ -13,7 +13,7 @@ export default function NavBarSkeleton({}: NavBarSkeletonProps) {
           <div className="border-b border-gray-700">
             <div className="flex items-center justify-between h-16 px-4 sm:px-0">
               <div className="flex items-center">
-                <Logo />
+                <NavBarLogo />
                 <NavLinks pathname={null} />
               </div>
               <UserInfoSkeleton session={null} />

@@ -4,7 +4,10 @@ import Link from 'next/link';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { signOut } from 'next-auth/react';
-import { getPrivateLinks } from '@/app/(dashboard)/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
+import {
+  getPrivateLinks,
+  navigation,
+} from '@/app/(dashboard)/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
 
 interface MobileMenuProps {
   pathname: string | null;
@@ -72,7 +75,7 @@ function MobileUserInfo({ session }: MobileUserInfoProps) {
       </div>
       <div className="mt-3 space-y-1">
         <Disclosure.Button
-          onClick={() => signOut({ callbackUrl: '/' })}
+          onClick={() => signOut({ callbackUrl: navigation[0].href })}
           className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">
           Déconnexion
         </Disclosure.Button>

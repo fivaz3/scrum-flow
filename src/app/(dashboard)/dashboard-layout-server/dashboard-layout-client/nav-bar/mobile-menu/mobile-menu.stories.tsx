@@ -20,12 +20,9 @@ type Story = StoryObj<typeof meta>;
 
 function MobileMenuWrapper({ session }: { session: Session }) {
   return (
-    /* Render a `div` for the root `Disclosure` component */
     <Disclosure as="div">
-      {/* Render a `Fragment` for the `Disclosure.Button` component */}
       <MobileMenu pathname={navigation[1].href} session={session}></MobileMenu>
 
-      {/* Render a `ul` for the `Disclosure.Panel` component */}
       <Disclosure.Panel as="ul">
         <li>HTML</li>
         <li>CSS</li>

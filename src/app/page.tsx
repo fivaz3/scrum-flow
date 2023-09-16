@@ -1,6 +1,8 @@
 import { CalendarIcon, ChartBarIcon, DocumentCheckIcon } from '@heroicons/react/24/outline';
-import LoginButton from '@/components/login-button';
-import LogoMark from '@/components/logo-mark';
+import LogoType from '@/components/logo-mark';
+import StartButton from '@/app/start-button';
+import { Suspense } from 'react';
+import LoginButton from '@/app/start-button/login-button';
 
 const features = [
   {
@@ -45,7 +47,7 @@ export default function LandingPage() {
                 className="relative flex items-center justify-between sm:h-10 lg:justify-start"
                 aria-label="Global">
                 <div className="flex items-center flex-grow flex-shrink-0 lg:flex-grow-0">
-                  <LogoMark className="text-3xl sm:h-10" />
+                  <LogoType className="text-3xl sm:h-10" />
                 </div>
               </nav>
             </div>
@@ -62,7 +64,9 @@ export default function LandingPage() {
                 </p>
                 <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                   <div className="rounded-md shadow">
-                    <LoginButton />
+                    <Suspense fallback={<LoginButton />}>
+                      <StartButton />
+                    </Suspense>
                   </div>
                 </div>
               </div>
