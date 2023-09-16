@@ -14,7 +14,6 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { EventClickArg } from '@fullcalendar/core';
-import { useSession } from 'next-auth/react';
 import MembersList from '../DevList';
 import { Member } from '@/app/(dashboard)/schedules/Calendar/member.service';
 
@@ -38,9 +37,16 @@ type RecurringEvent = {
 interface CalendarProps {
   members: Member[];
   currentSchedules: Schedule[];
+  accessToken: string;
+  cloudId: string;
 }
 
-export default function Calendar({ members, currentSchedules }: CalendarProps) {
+export default function Calendar({
+  members,
+  currentSchedules,
+  accessToken,
+  cloudId,
+}: CalendarProps) {
   const [schedules, setSchedules] = useState<Schedule[]>(currentSchedules);
 
   const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>(
@@ -57,39 +63,31 @@ export default function Calendar({ members, currentSchedules }: CalendarProps) {
     }
   };
 
-  const { data: session } = useSession();
-
   async function handleAddOrEditSchedule(data: ScheduleIn) {
-    if (!session?.access_token) {
-      throw "Vous n'est pas connecté";
-    }
     if (selectedSchedule) {
-      await handleEditSchedule(data, selectedSchedule.id, session.access_token);
+      await handleEditSchedule(data, selectedSchedule.id, accessToken);
     } else {
-      await handleAddSchedule(data, session.access_token);
+      await handleAddSchedule(data, accessToken);
     }
     setShowDialog(false);
     setSelectedSchedule(null);
   }
 
   async function handleAddSchedule(scheduleIn: ScheduleIn, accessToken: string) {
-    const schedule = await addSchedule(scheduleIn, accessToken);
+    const schedule = await addSchedule(scheduleIn, accessToken, cloudId);
     setSchedules((previousSchedules) => [...previousSchedules, schedule]);
   }
 
   async function handleEditSchedule(scheduleIn: ScheduleIn, id: string, accessToken: string) {
-    const editedSchedule = await editSchedule(scheduleIn, id, accessToken);
+    const editedSchedule = await editSchedule(scheduleIn, id, accessToken, cloudId);
     setSchedules(
       schedules.map((schedule) => (schedule.id === editedSchedule.id ? editedSchedule : schedule))
     );
   }
 
   async function handleDeleteSchedule() {
-    if (!session?.access_token) {
-      throw "Vous n'est pas connecté";
-    }
     if (selectedSchedule) {
-      await deleteSchedule(selectedSchedule.id, session.access_token);
+      await deleteSchedule(selectedSchedule.id, accessToken, cloudId);
       setSchedules(schedules.filter((schedule) => schedule.id !== selectedSchedule.id));
       setShowDialog(false);
       setSelectedSchedule(null);

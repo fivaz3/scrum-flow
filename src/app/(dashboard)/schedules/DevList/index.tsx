@@ -6,6 +6,7 @@ interface DevListProps {
   selectedMemberIds: string[];
   handleMemberSelect: (_memberId: string) => void;
   openForm: () => void;
+  loading?: boolean;
 }
 
 export default function MembersList({
@@ -13,10 +14,14 @@ export default function MembersList({
   selectedMemberIds,
   openForm,
   handleMemberSelect,
+  loading = false,
 }: DevListProps) {
   return (
     <>
-      <button className="bg-indigo-600 text-white px-4 py-2 rounded-md mb-4" onClick={openForm}>
+      <button
+        className="bg-indigo-600 text-white px-4 py-2 rounded-md mb-4"
+        onClick={openForm}
+        disabled={loading}>
         Add Schedule
       </button>
       <ul>

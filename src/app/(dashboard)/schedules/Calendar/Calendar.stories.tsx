@@ -33,5 +33,7 @@ export const Primary: Story = {
         daysOfWeek: [],
       },
     ],
+    accessToken: '',
+    cloudId: '',
   },
 };

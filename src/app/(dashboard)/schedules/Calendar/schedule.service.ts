@@ -1,5 +1,5 @@
 import { deleteBackEnd, getBackEnd, postBackEnd, putBackEnd } from '@/lib/backend.service';
-import { getAccessToken, validateData } from '@/lib/jira.service';
+import { getAuthData, validateData } from '@/lib/jira.service';
 import { z } from 'zod';
 import { Issue } from '@/lib/issue/issue.service';
 
@@ -42,22 +42,25 @@ export const ScheduleInSchema = ScheduleSchema.omit({ id: true }).refine(
 
 const PATH = '/api/schedule';
 
-export async function addSchedule(data: ScheduleIn, accessToken: string): Promise<Schedule> {
-  // return { ...data, id: Math.random().toString() };
-  const response = await postBackEnd(PATH, data, accessToken);
+export async function addSchedule(
+  data: ScheduleIn,
+  accessToken: string,
+  cloudId: string
+): Promise<Schedule> {
+  const response = await postBackEnd(PATH, data, accessToken, cloudId);
 
   return validateData(ScheduleSchema, response);
 }
 
 export async function getSchedulesServer(): Promise<Schedule[]> {
-  const accessToken = await getAccessToken();
-  const response = await getBackEnd(PATH, accessToken);
+  const { accessToken, cloudId } = await getAuthData();
+  const response = await getBackEnd(PATH, accessToken, cloudId);
 
   return validateData(z.array(ScheduleSchema), response);
 }
 
-export async function getSchedules(accessToken: string): Promise<Schedule[]> {
-  const response = await getBackEnd(PATH, accessToken);
+export async function getSchedules(accessToken: string, cloudId: string): Promise<Schedule[]> {
+  const response = await getBackEnd(PATH, accessToken, cloudId);
 
   return validateData(z.array(ScheduleSchema), response);
 }
@@ -65,15 +68,20 @@ export async function getSchedules(accessToken: string): Promise<Schedule[]> {
 export async function editSchedule(
   data: ScheduleIn,
   id: string,
-  accessToken: string
+  accessToken: string,
+  cloudId: string
 ): Promise<Schedule> {
-  const response = await putBackEnd(`${PATH}/${id}`, data, accessToken);
+  const response = await putBackEnd(`${PATH}/${id}`, data, accessToken, cloudId);
 
   return validateData(ScheduleSchema, response);
 }
 
-export async function deleteSchedule(id: string, accessToken: string): Promise<void> {
-  const response = await deleteBackEnd(`${PATH}/${id}`, accessToken);
+export async function deleteSchedule(
+  id: string,
+  accessToken: string,
+  cloudId: string
+): Promise<void> {
+  const response = await deleteBackEnd(`${PATH}/${id}`, accessToken, cloudId);
 
   const ResponseSchema = z.object({
     success: z.boolean(),
