@@ -1,6 +1,7 @@
 import { Card, Title } from '@tremor/react';
 import { IssueWithTimeSpent } from '@/lib/issue/issue.service';
 import { convertToDuration } from '@/lib/issue/issue-time-spent.service';
+import React from 'react';
 
 interface IssueTableProps {
   label: string;

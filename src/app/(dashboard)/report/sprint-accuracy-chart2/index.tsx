@@ -1,21 +1,21 @@
 import { getDataForLineChart } from '@/app/(dashboard)/report/sprint-effort';
+import SprintAccuracyChart2Client from '@/app/(dashboard)/report/sprint-accuracy-chart2/sprint-accuracy-chart2-client';
 import { Sprint } from '@/lib/sprint.service';
-import SprintAccuracyChartClient from '@/app/(dashboard)/report/sprint-accuracy-chart/sprint-accuracy-chart-client';
 
-interface SprintAccuracyChartProps {
+interface SprintAccuracyChart2Props {
   boardId: string | number;
   sprints: Sprint[];
   accessToken: string;
   cloudId: string;
 }
 
-export default async function SprintAccuracyChart({
+export default async function SprintAccuracyChart2({
   boardId,
   sprints,
   accessToken,
   cloudId,
-}: SprintAccuracyChartProps) {
+}: SprintAccuracyChart2Props) {
   const data = await getDataForLineChart(boardId, sprints, accessToken, cloudId);
 
-  return <SprintAccuracyChartClient data={data} />;
+  return <SprintAccuracyChart2Client data={data}></SprintAccuracyChart2Client>;
 }

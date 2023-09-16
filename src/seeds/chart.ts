@@ -21,4 +21,8 @@ export const sprintAccuracyData: SprintAccuracyChartData = [
     precision: 40,
     sprintName: 'sprintName 5',
   },
+  {
+    precision: 100,
+    sprintName: 'sprintName 6',
+  },
 ];

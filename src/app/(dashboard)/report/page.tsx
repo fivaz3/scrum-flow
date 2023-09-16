@@ -2,11 +2,11 @@ import { getBoards } from '@/lib/board.service';
 import { Suspense } from 'react';
 import BoardSelector from '../../../components/board-selector';
 import { getClosedSprints } from '@/lib/sprint.service';
-import AlertForSchedules from '@/components/AlertForSchedules';
 import { getAuthData } from '@/lib/jira.service';
-import SprintAccuracyChart from './sprint-accuracy-chart';
 import Loading from '@/components/loading';
 import EmptyState from '@/components/empty-state';
+import SprintAccuracyChart2 from '@/app/(dashboard)/report/sprint-accuracy-chart2';
+import AlertForSchedules from '@/components/AlertForSchedules';
 import ClosedSprintPanel from '@/app/(dashboard)/report/closed-sprint-panel';
 
 interface PreviousSprintPageProps {
@@ -35,7 +35,7 @@ export default async function SprintReportPage({ searchParams }: PreviousSprintP
         <BoardSelector boardId={`${boardId}`} boards={boards} />
       </div>
       <Suspense fallback={<Loading title="chargement du graphique..."></Loading>}>
-        <SprintAccuracyChart
+        <SprintAccuracyChart2
           boardId={boardId}
           sprints={sprints}
           accessToken={accessToken}
