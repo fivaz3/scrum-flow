@@ -1,4 +1,4 @@
-import { Card, Title } from '@tremor/react';
+import React from 'react';
 
 interface ActiveIssueTableSkeletonProps {
   label: string;
@@ -6,8 +6,8 @@ interface ActiveIssueTableSkeletonProps {
 
 export default function ActiveIssueTableSkeleton({ label }: ActiveIssueTableSkeletonProps) {
   return (
-    <Card>
-      <Title className="mb-2">{label}</Title>
+    <div className="p-6 border border-gray-200 rounded-lg shadow bg-gray-100">
+      <h3 className="text-lg leading-6 font-medium text-gray-900 mb-2">{label}</h3>
       <div className="flex flex-col">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
@@ -46,6 +46,6 @@ export default function ActiveIssueTableSkeleton({ label }: ActiveIssueTableSkel
           </div>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }

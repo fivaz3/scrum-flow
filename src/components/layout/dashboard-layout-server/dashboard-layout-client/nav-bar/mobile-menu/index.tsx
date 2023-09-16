@@ -7,7 +7,7 @@ import { signOut } from 'next-auth/react';
 import {
   getPrivateLinks,
   navigation,
-} from '@/app/(dashboard)/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
+} from '@/components/layout/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
 
 interface MobileMenuProps {
   pathname: string | null;

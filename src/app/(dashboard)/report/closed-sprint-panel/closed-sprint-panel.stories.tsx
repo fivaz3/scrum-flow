@@ -17,7 +17,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    boardId: '1',
+    boardId: 1,
     sprint: closedSprint,
     accessToken: '',
     cloudId: '',

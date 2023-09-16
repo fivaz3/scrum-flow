@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth/next';
 import authOptions from '@/app/api/auth/[...nextauth]/auth-options';
 import { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
-import DashboardLayoutClient from '@/app/(dashboard)/dashboard-layout-server/dashboard-layout-client';
+import DashboardLayoutClient from '@/components/layout/dashboard-layout-server/dashboard-layout-client';
 
 interface DashboardLayoutServerProps {
   children: ReactNode;

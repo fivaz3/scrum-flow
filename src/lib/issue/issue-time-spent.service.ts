@@ -158,7 +158,7 @@ async function getTimeInProgress(
 }
 
 export async function getIssuesFromSprintWithTimeSpent(
-  boardId: string | number,
+  boardId: number,
   sprintId: number,
   accessToken: string,
   cloudId: string

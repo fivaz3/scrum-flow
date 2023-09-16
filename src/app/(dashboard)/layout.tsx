@@ -1,6 +1,6 @@
 import { ReactNode, Suspense } from 'react';
-import DashboardLayoutServer from './dashboard-layout-server';
-import DashboardLayoutFallback from '@/app/(dashboard)/dashboard-layout-fallback';
+import DashboardLayoutServer from '../../components/layout/dashboard-layout-server';
+import DashboardLayoutFallback from '../../components/layout/dashboard-layout-fallback';
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   return (

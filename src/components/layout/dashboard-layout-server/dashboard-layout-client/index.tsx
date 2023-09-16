@@ -3,9 +3,9 @@ import { usePathname } from 'next/navigation';
 import { ReactNode, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
 import { Session } from 'next-auth';
-import Main from '../../../../components/layout/main';
-import { getPrivateLinks } from '@/app/(dashboard)/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
-import NavBar from '@/app/(dashboard)/dashboard-layout-server/dashboard-layout-client/nav-bar';
+import Main from '../../main';
+import { getPrivateLinks } from '@/components/layout/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
+import NavBar from '@/components/layout/dashboard-layout-server/dashboard-layout-client/nav-bar';
 
 interface DashboardLayoutClientProps {
   session: Session;

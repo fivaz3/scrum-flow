@@ -1,4 +1,4 @@
-import { getBoards } from '@/lib/board.service';
+import { getBoards, getCurrentBoard } from '@/lib/board.service';
 import { Suspense } from 'react';
 import AlertForSchedules from '@/components/AlertForSchedules';
 import { getAuthData } from '@/lib/jira.service';
@@ -15,8 +15,9 @@ interface ActiveSprintPageProps {
 export default async function ActiveSprintPage({ searchParams }: ActiveSprintPageProps) {
   const { accessToken, cloudId } = await getAuthData();
   const boards = await getBoards(accessToken, cloudId);
+  const board = getCurrentBoard(boards, searchParams.boardId);
 
-  if (boards.length === 0) {
+  if (!board) {
     return (
       <EmptyState
         title="Aucun board trouvé"
@@ -25,9 +26,7 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
     );
   }
 
-  const boardId = searchParams.boardId || boards[0].id;
-
-  const sprint = await getActiveSprint(boardId, accessToken, cloudId);
+  const sprint = await getActiveSprint(board.id, accessToken, cloudId);
 
   if (!sprint) {
     return (
@@ -42,12 +41,12 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
     <>
       <div className="flex justify-between items-center">
         <SprintPanel sprint={sprint} />
-        <BoardSelector boardId={`${boardId}`} boards={boards} />
+        <BoardSelector currentBoard={board} boards={boards} />
       </div>
 
       <Suspense fallback={<ActiveIssueTableListSkeleton />}>
         <ActiveIssueTableList
-          boardId={boardId}
+          boardId={board.id}
           sprintId={sprint.id}
           accessToken={accessToken}
           cloudId={cloudId}

@@ -4,7 +4,7 @@ import { ClosedSprint } from '@/lib/sprint.service';
 
 interface ClosedSprintPanelProps {
   sprint: ClosedSprint;
-  boardId: number | string;
+  boardId: number;
   accessToken: string;
   cloudId: string;
 }

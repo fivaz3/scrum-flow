@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import classNames from 'classnames';
-import { getPrivateLinks } from '@/app/(dashboard)/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
+import { getPrivateLinks } from '@/components/layout/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
 
 interface NavLinksProps {
   pathname: string | null;

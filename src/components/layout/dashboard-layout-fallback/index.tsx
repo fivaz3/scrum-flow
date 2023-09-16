@@ -1,5 +1,5 @@
-import Main from '../../../components/layout/main';
-import NavBarSkeleton from '@/app/(dashboard)/dashboard-layout-fallback/nav-bar-skeleton';
+import Main from '../main';
+import NavBarSkeleton from '@/components/layout/dashboard-layout-fallback/nav-bar-skeleton';
 import Loading from '@/components/loading';
 
 interface DashBoardLayoutFallbackProps {}

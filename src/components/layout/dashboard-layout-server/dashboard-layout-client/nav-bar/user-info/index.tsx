@@ -4,7 +4,7 @@ import { Fragment } from 'react';
 import classNames from 'classnames';
 import { signOut } from 'next-auth/react';
 import { Session } from 'next-auth';
-import { navigation } from '@/app/(dashboard)/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
+import { navigation } from '@/components/layout/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
 
 interface UserInfoProps {
   session: Session | null;

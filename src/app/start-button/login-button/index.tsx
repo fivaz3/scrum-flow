@@ -1,7 +1,7 @@
 'use client';
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
-import { navigation } from '@/app/(dashboard)/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
+import { navigation } from '@/components/layout/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
 
 interface LoginButtonProps {}
 

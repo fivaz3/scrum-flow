@@ -60,7 +60,7 @@ const IssueWithChangeLogSchema = IssueSchema.merge(
 export type IssueWithChangeLog = z.infer<typeof IssueWithChangeLogSchema>;
 
 export async function addEstimationToIssuesWithChangeLog(
-  boardId: string | number,
+  boardId: number,
   issuesPaginated: unknown,
   accessToken: string,
   cloudId: string
@@ -95,7 +95,7 @@ export async function addEstimationToIssuesWithChangeLog(
 }
 
 export async function getIssuesWithChangelog(
-  boardId: string | number,
+  boardId: number,
   accessToken: string,
   cloudId: string
 ): Promise<IssueWithChangeLog[]> {
@@ -113,7 +113,7 @@ export async function getIssuesWithChangelog(
 }
 
 export async function getIssuesFromSprintWithChangelog(
-  boardId: string | number,
+  boardId: number,
   sprintId: number,
   accessToken: string,
   cloudId: string

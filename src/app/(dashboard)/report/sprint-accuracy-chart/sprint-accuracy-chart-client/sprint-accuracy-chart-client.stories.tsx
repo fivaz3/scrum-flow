@@ -6,7 +6,7 @@ import { sprintAccuracyData } from '@/seeds/chart';
 const meta = {
   component: SprintAccuracyChartClient,
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
   },
   tags: ['autodocs'],
   argTypes: {},

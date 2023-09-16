@@ -45,7 +45,7 @@ function wasNotAddedAfterSprintStart(issue: IssueWithChangeLog, sprint: Sprint):
 }
 
 async function getIssuesWereNotAddedAfterSprintStart(
-  boardId: number | string,
+  boardId: number,
   sprint: Sprint,
   accessToken: string,
   cloudId: string
@@ -109,7 +109,7 @@ async function filterIssuesAddedBeforeSprintStart(
 }
 
 async function getIssuesAddedBeforeSprintStart(
-  boardId: number | string,
+  boardId: number,
   sprint: Sprint,
   accessToken: string,
   cloudId: string
@@ -119,7 +119,7 @@ async function getIssuesAddedBeforeSprintStart(
 }
 
 export async function getIssuesFromBeforeSprintStart(
-  boardId: number | string,
+  boardId: number,
   sprint: Sprint,
   accessToken: string,
   cloudId: string
@@ -141,7 +141,7 @@ export async function getIssuesFromBeforeSprintStart(
 }
 
 export async function getEstimatedEffort(
-  boardId: number | string,
+  boardId: number,
   sprint: Sprint,
   accessToken: string,
   cloudId: string
@@ -157,7 +157,7 @@ export async function getEstimatedEffort(
 }
 
 export async function getActualEffort(
-  boardId: number | string,
+  boardId: number,
   sprint: Sprint,
   accessToken: string,
   cloudId: string
@@ -174,7 +174,7 @@ export function getSumOfEstimations(issues: Issue[]) {
 export type SprintAccuracyChartData = Array<{ precision: number; sprintName: string }>;
 
 async function getSprintAccuracy(
-  boardId: number | string,
+  boardId: number,
   sprint: Sprint,
   accessToken: string,
   cloudId: string
@@ -185,7 +185,7 @@ async function getSprintAccuracy(
 }
 
 export async function getDataForLineChart(
-  boardId: number | string,
+  boardId: number,
   sprints: Sprint[],
   accessToken: string,
   cloudId: string

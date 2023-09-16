@@ -3,7 +3,7 @@ import { Sprint } from '@/lib/sprint.service';
 import SprintAccuracyChartClient from '@/app/(dashboard)/report/sprint-accuracy-chart/sprint-accuracy-chart-client';
 
 interface SprintAccuracyChartProps {
-  boardId: string | number;
+  boardId: number;
   sprints: Sprint[];
   accessToken: string;
   cloudId: string;
@@ -17,5 +17,5 @@ export default async function SprintAccuracyChart({
 }: SprintAccuracyChartProps) {
   const data = await getDataForLineChart(boardId, sprints, accessToken, cloudId);
 
-  return <SprintAccuracyChartClient data={data} />;
+  return <SprintAccuracyChartClient data={data}></SprintAccuracyChartClient>;
 }

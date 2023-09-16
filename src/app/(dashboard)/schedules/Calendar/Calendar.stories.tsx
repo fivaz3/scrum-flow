@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import Calendar from './index';
-import { members } from '@/seeds/members';
+import { members } from '@/seeds/member';
 
 const meta = {
   component: Calendar,
@@ -20,7 +20,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    members,
+    members: members,
     currentSchedules: [
       {
         id: '3',

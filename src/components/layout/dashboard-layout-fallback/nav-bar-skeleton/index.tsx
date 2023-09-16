@@ -1,7 +1,7 @@
-import NavBarLogo from '../../../../components/layout/navbar/logo';
-import NavLinks from '../../../../components/layout/navbar/nav-links';
+import NavBarLogo from '../../navbar/logo';
+import NavLinks from '../../navbar/nav-links';
 import UserInfoSkeleton from './user-info-skeleton';
-import MobileMenuButton from '../../../../components/layout/navbar/mobile-menu-button';
+import MobileMenuButton from '../../navbar/mobile-menu-button';
 
 interface NavBarSkeletonProps {}
 

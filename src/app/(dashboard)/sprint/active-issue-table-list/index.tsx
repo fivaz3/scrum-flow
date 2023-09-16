@@ -2,7 +2,7 @@ import ActiveIssueTable from './active-issue-table';
 import { getIssuesFromSprintWithTimeSpent } from '@/lib/issue/issue-time-spent.service';
 
 interface CurrentIssueListProps {
-  boardId: number | string;
+  boardId: number;
   sprintId: number;
   accessToken: string;
   cloudId: string;

@@ -59,6 +59,21 @@ export async function getBoards(accessToken: string, cloudId: string): Promise<B
   return filterBoards(values, accessToken, cloudId);
 }
 
+export function getCurrentBoard(boards: Board[], boardIdString?: string): Board | undefined {
+  const [firstBoard] = boards;
+  if (!boardIdString) {
+    return firstBoard;
+  }
+
+  const currentBoard = boards.find(({ id }) => id === Number(boardIdString));
+
+  if (!currentBoard) {
+    return firstBoard;
+  }
+
+  return currentBoard;
+}
+
 const BoardConfigurationSchema = z.object({
   estimation: z.object({
     type: z.string(),
@@ -72,7 +87,7 @@ const BoardConfigurationSchema = z.object({
 type BoardConfiguration = z.infer<typeof BoardConfigurationSchema>;
 
 export async function getBoardConfiguration(
-  boardId: number | string,
+  boardId: number,
   accessToken: string,
   cloudId: string
 ): Promise<BoardConfiguration> {

@@ -22,7 +22,7 @@ const ClosedSprintSchema = SprintSchema.merge(z.object({ completeDate: z.string(
 export type ClosedSprint = z.infer<typeof ClosedSprintSchema>;
 
 export async function getActiveSprint(
-  boardId: string | number,
+  boardId: number,
   accessToken: string,
   cloudId: string
 ): Promise<ActiveSprint | undefined> {
@@ -46,7 +46,7 @@ export async function getActiveSprint(
 }
 
 export async function getClosedSprints(
-  boardId: string | number,
+  boardId: number,
   accessToken: string,
   cloudId: string
 ): Promise<ClosedSprint[]> {
@@ -79,7 +79,7 @@ export async function getClosedSprints(
 }
 
 export async function hasIssues(
-  boardId: string | number,
+  boardId: number,
   sprintId: number,
   accessToken: string,
   cloudId: string

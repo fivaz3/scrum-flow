@@ -8,7 +8,7 @@ import { getTimeByPoints } from '@/app/(dashboard)/report/closed-sprint-panel/cl
 
 interface ClosedSprintHeaderStatsProps {
   sprint: ClosedSprint;
-  boardId: number | string;
+  boardId: number;
   accessToken: string;
   cloudId: string;
 }

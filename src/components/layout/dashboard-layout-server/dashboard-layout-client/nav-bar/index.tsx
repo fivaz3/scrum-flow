@@ -1,10 +1,10 @@
 import { Disclosure } from '@headlessui/react';
-import NavBarLogo from '../../../../../components/layout/navbar/logo';
-import NavLinks from '../../../../../components/layout/navbar/nav-links';
-import MobileMenuButton from '../../../../../components/layout/navbar/mobile-menu-button';
+import NavBarLogo from '../../../navbar/logo';
+import NavLinks from '../../../navbar/nav-links';
+import MobileMenuButton from '../../../navbar/mobile-menu-button';
 import { Session } from 'next-auth';
-import UserInfo from '@/app/(dashboard)/dashboard-layout-server/dashboard-layout-client/nav-bar/user-info';
-import MobileMenu from '@/app/(dashboard)/dashboard-layout-server/dashboard-layout-client/nav-bar/mobile-menu';
+import UserInfo from '@/components/layout/dashboard-layout-server/dashboard-layout-client/nav-bar/user-info';
+import MobileMenu from '@/components/layout/dashboard-layout-server/dashboard-layout-client/nav-bar/mobile-menu';
 
 interface NavBarCoreProps {
   pathname: string | null;

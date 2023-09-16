@@ -1,22 +1,24 @@
-import { getBoards } from '@/lib/board.service';
+import { getBoards, getCurrentBoard } from '@/lib/board.service';
 import { Suspense } from 'react';
 import BoardSelector from '../../../components/board-selector';
 import { getClosedSprints } from '@/lib/sprint.service';
 import { getAuthData } from '@/lib/jira.service';
 import Loading from '@/components/loading';
 import EmptyState from '@/components/empty-state';
-import SprintAccuracyChart2 from '@/app/(dashboard)/report/sprint-accuracy-chart2';
 import AlertForSchedules from '@/components/AlertForSchedules';
 import ClosedSprintPanel from '@/app/(dashboard)/report/closed-sprint-panel';
+import SprintAccuracyChart from '@/app/(dashboard)/report/sprint-accuracy-chart';
 
 interface PreviousSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
 }
+
 export default async function SprintReportPage({ searchParams }: PreviousSprintPageProps) {
   const { accessToken, cloudId } = await getAuthData();
   const boards = await getBoards(accessToken, cloudId);
+  const board = getCurrentBoard(boards, searchParams.boardId);
 
-  if (boards.length === 0) {
+  if (!board) {
     return (
       <EmptyState
         title="Aucun board trouvé"
@@ -25,18 +27,18 @@ export default async function SprintReportPage({ searchParams }: PreviousSprintP
     );
   }
 
-  const boardId = searchParams.boardId || boards[0].id;
-
-  const sprints = await getClosedSprints(boardId, accessToken, cloudId);
+  const sprints = await getClosedSprints(board.id, accessToken, cloudId);
 
   return (
     <div className="flex flex-col gap-5">
       <div className="flex justify-end">
-        <BoardSelector boardId={`${boardId}`} boards={boards} />
+        <Suspense fallback={<></>}>
+          <BoardSelector currentBoard={board} boards={boards} />
+        </Suspense>
       </div>
       <Suspense fallback={<Loading title="chargement du graphique..."></Loading>}>
-        <SprintAccuracyChart2
-          boardId={boardId}
+        <SprintAccuracyChart
+          boardId={board.id}
           sprints={sprints}
           accessToken={accessToken}
           cloudId={cloudId}
@@ -45,7 +47,7 @@ export default async function SprintReportPage({ searchParams }: PreviousSprintP
       {sprints.map((sprint) => (
         <ClosedSprintPanel
           key={sprint.id}
-          boardId={boardId}
+          boardId={board.id}
           sprint={sprint}
           accessToken={accessToken}
           cloudId={cloudId}
