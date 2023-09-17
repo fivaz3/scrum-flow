@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import UserInfo from './index';
-import { session } from '@/seeds/session';
+import { seedSession } from '@/seeds/session';
 
 const meta = {
   component: UserInfo,
@@ -17,6 +17,6 @@ type Story = StoryObj<typeof meta>;
 
 export const LoggedIn: Story = {
   args: {
-    session,
+    session: seedSession,
   },
 };

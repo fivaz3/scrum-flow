@@ -1,38 +1,87 @@
 'use client';
-import React, { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import {
   addSchedule,
   deleteSchedule,
   editSchedule,
   Schedule,
   ScheduleIn,
-} from '@/app/(dashboard)/schedules/Calendar/schedule.service';
-import ScheduleForm from '../ScheduleForm';
+} from '@/app/(dashboard)/schedules/calendar/schedule.service';
+import ScheduleForm from '../schedule-form';
 import Modal from '@/components/Modal';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import { EventClickArg } from '@fullcalendar/core';
-import MembersList from '../DevList';
-import { Member } from '@/app/(dashboard)/schedules/Calendar/member.service';
+import MembersList from '../dev-list';
+import { Member } from '@/app/(dashboard)/schedules/calendar/member.service';
+import CalendarCore from '@/app/(dashboard)/schedules/calendar/calendar-core';
 
-type SingleEvent = {
-  id: string;
-  title: string;
-  start: string;
-  end: string;
-};
+function handleMemberSelect(
+  memberId: string,
+  selectedMemberIds: string[],
+  setSelectedMemberIds: Dispatch<SetStateAction<string[]>>
+) {
+  if (selectedMemberIds.includes(memberId)) {
+    setSelectedMemberIds(selectedMemberIds.filter((id) => id !== memberId));
+  } else {
+    setSelectedMemberIds([...selectedMemberIds, memberId]);
+  }
+}
 
-type RecurringEvent = {
-  id: string;
-  title: string;
-  daysOfWeek: number[];
-  startTime: string;
-  endTime: string;
-  startRecur: string;
-  endRecur: string;
-};
+async function handleAddOrEditSchedule(
+  data: ScheduleIn,
+  selectedScheduleId: string | undefined,
+  setSelectedSchedule: Dispatch<SetStateAction<Schedule | null>>,
+  setSchedules: Dispatch<SetStateAction<Schedule[]>>,
+  setShowDialog: Dispatch<SetStateAction<boolean>>,
+  accessToken: string,
+  cloudId: string
+) {
+  if (selectedScheduleId) {
+    await handleEditSchedule(data, selectedScheduleId, accessToken, cloudId, setSchedules);
+  } else {
+    await handleAddSchedule(data, accessToken, cloudId, setSchedules);
+  }
+  setSelectedSchedule(null);
+  setShowDialog(false);
+}
+
+async function handleAddSchedule(
+  scheduleIn: ScheduleIn,
+  accessToken: string,
+  cloudId: string,
+  setSchedules: Dispatch<SetStateAction<Schedule[]>>
+) {
+  const schedule = await addSchedule(scheduleIn, accessToken, cloudId);
+  setSchedules((previousSchedules) => [...previousSchedules, schedule]);
+}
+
+async function handleEditSchedule(
+  scheduleIn: ScheduleIn,
+  id: string,
+  accessToken: string,
+  cloudId: string,
+  setSchedules: Dispatch<SetStateAction<Schedule[]>>
+) {
+  const editedSchedule = await editSchedule(scheduleIn, id, accessToken, cloudId);
+  setSchedules((schedules) =>
+    schedules.map((schedule) => (schedule.id === editedSchedule.id ? editedSchedule : schedule))
+  );
+}
+
+async function handleDeleteSchedule(
+  selectedScheduleId: string | undefined,
+  accessToken: string,
+  cloudId: string,
+  setSchedules: Dispatch<SetStateAction<Schedule[]>>,
+  schedules: Schedule[],
+  setShowDialog: Dispatch<SetStateAction<boolean>>,
+  setSelectedSchedule: Dispatch<SetStateAction<Schedule | null>>
+) {
+  if (selectedScheduleId) {
+    await deleteSchedule(selectedScheduleId, accessToken, cloudId);
+    setSchedules(schedules.filter((schedule) => schedule.id !== selectedScheduleId));
+    setShowDialog(false);
+    setSelectedSchedule(null);
+  }
+}
 
 interface CalendarProps {
   members: Member[];
@@ -55,88 +104,6 @@ export default function Calendar({
   const [showDialog, setShowDialog] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
 
-  const handleMemberSelect = (memberId: string) => {
-    if (selectedMemberIds.includes(memberId)) {
-      setSelectedMemberIds(selectedMemberIds.filter((id) => id !== memberId));
-    } else {
-      setSelectedMemberIds([...selectedMemberIds, memberId]);
-    }
-  };
-
-  async function handleAddOrEditSchedule(data: ScheduleIn) {
-    if (selectedSchedule) {
-      await handleEditSchedule(data, selectedSchedule.id, accessToken);
-    } else {
-      await handleAddSchedule(data, accessToken);
-    }
-    setShowDialog(false);
-    setSelectedSchedule(null);
-  }
-
-  async function handleAddSchedule(scheduleIn: ScheduleIn, accessToken: string) {
-    const schedule = await addSchedule(scheduleIn, accessToken, cloudId);
-    setSchedules((previousSchedules) => [...previousSchedules, schedule]);
-  }
-
-  async function handleEditSchedule(scheduleIn: ScheduleIn, id: string, accessToken: string) {
-    const editedSchedule = await editSchedule(scheduleIn, id, accessToken, cloudId);
-    setSchedules(
-      schedules.map((schedule) => (schedule.id === editedSchedule.id ? editedSchedule : schedule))
-    );
-  }
-
-  async function handleDeleteSchedule() {
-    if (selectedSchedule) {
-      await deleteSchedule(selectedSchedule.id, accessToken, cloudId);
-      setSchedules(schedules.filter((schedule) => schedule.id !== selectedSchedule.id));
-      setShowDialog(false);
-      setSelectedSchedule(null);
-    }
-  }
-
-  function handleEventClick(info: EventClickArg) {
-    const schedule = schedules.find((schedule) => schedule.id === info.event.id);
-    if (schedule) {
-      setSelectedSchedule(schedule);
-      setShowDialog(true);
-    }
-  }
-
-  function convertScheduleToEvent() {
-    function convertScheduleToSingleEvent(schedule: Schedule): SingleEvent {
-      const member = members.find((member) => member.accountId === schedule.memberId);
-      return {
-        id: schedule.id,
-        title: member?.displayName || 'member supprimé',
-        start: schedule.startDate + 'T' + schedule.startTime,
-        end: schedule.endDate + 'T' + schedule.endTime,
-      };
-    }
-
-    function convertScheduleToRecurringEvent(schedule: Schedule): RecurringEvent {
-      const member = members.find((member) => member.accountId === schedule.memberId);
-      return {
-        id: schedule.id,
-        title: member?.displayName || 'member supprimé',
-        daysOfWeek: schedule.daysOfWeek,
-        startTime: schedule.startTime,
-        endTime: schedule.endTime,
-        startRecur: schedule.startDate,
-        endRecur: schedule.endDate,
-      };
-    }
-
-    return schedules
-      .filter((schedule) => selectedMemberIds.includes(schedule.memberId))
-      .map((schedule) => {
-        if (schedule.isRecurring) {
-          return convertScheduleToRecurringEvent(schedule);
-        } else {
-          return convertScheduleToSingleEvent(schedule);
-        }
-      });
-  }
-
   return (
     <>
       <div className="flex">
@@ -148,20 +115,18 @@ export default function Calendar({
               setSelectedSchedule(null);
               setShowDialog(true);
             }}
-            handleMemberSelect={handleMemberSelect}
+            handleMemberSelect={(memberId) =>
+              handleMemberSelect(memberId, selectedMemberIds, setSelectedMemberIds)
+            }
           />
         </div>
         <div className="w-4/5">
-          <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            initialView="timeGridWeek"
-            headerToolbar={{
-              left: 'prev,next',
-              center: 'title',
-              right: 'dayGridMonth,timeGridWeek,timeGridDay',
-            }}
-            events={convertScheduleToEvent()}
-            eventClick={handleEventClick}
+          <CalendarCore
+            schedules={schedules}
+            members={members}
+            selectedMemberIds={selectedMemberIds}
+            setSelectedSchedule={setSelectedSchedule}
+            setShowDialog={setShowDialog}
           />
         </div>
       </div>
@@ -169,8 +134,28 @@ export default function Calendar({
         <ScheduleForm
           members={members}
           selectedSchedule={selectedSchedule}
-          onSubmit={handleAddOrEditSchedule}
-          onDelete={handleDeleteSchedule}
+          onSubmit={(data) =>
+            handleAddOrEditSchedule(
+              data,
+              selectedSchedule?.id,
+              setSelectedSchedule,
+              setSchedules,
+              setShowDialog,
+              accessToken,
+              cloudId
+            )
+          }
+          onDelete={() =>
+            handleDeleteSchedule(
+              selectedSchedule?.id,
+              accessToken,
+              cloudId,
+              setSchedules,
+              schedules,
+              setShowDialog,
+              setSelectedSchedule
+            )
+          }
         />
       </Modal>
     </>

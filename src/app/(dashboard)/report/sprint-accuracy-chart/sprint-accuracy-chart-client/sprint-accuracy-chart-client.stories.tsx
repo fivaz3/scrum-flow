@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import SprintAccuracyChartClient from './index';
-import { sprintAccuracyData } from '@/seeds/chart';
+import { seedSprintAccuracyData } from '@/seeds/chart';
 
 const meta = {
   component: SprintAccuracyChartClient,
@@ -17,6 +17,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    data: sprintAccuracyData,
+    data: seedSprintAccuracyData,
   },
 };

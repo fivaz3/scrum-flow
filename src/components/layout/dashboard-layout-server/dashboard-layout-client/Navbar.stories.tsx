@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import DashboardLayoutClient from './index';
-import { session } from '@/seeds/session';
+import { seedSession } from '@/seeds/session';
 import { navigation } from '@/components/layout/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
 
 const meta = {
@@ -23,7 +23,7 @@ type Story = StoryObj<typeof meta>;
 
 export const LoggedIn: Story = {
   args: {
-    session,
+    session: seedSession,
     children: <p>Test</p>,
   },
 };

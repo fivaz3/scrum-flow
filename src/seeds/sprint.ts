@@ -1,7 +1,7 @@
 import { ActiveSprint, ClosedSprint } from '@/lib/sprint.service';
 import { addDays } from 'date-fns';
 
-export const activeSprint: ActiveSprint = {
+export const seedActiveSprint: ActiveSprint = {
   id: 2,
   name: 'Sprint 2',
   startDate: new Date().toISOString(),
@@ -10,7 +10,7 @@ export const activeSprint: ActiveSprint = {
   originBoardId: 1,
 };
 
-export const closedSprint: ClosedSprint = {
+export const seedClosedSprint: ClosedSprint = {
   id: 1,
   name: 'Sprint 1',
   startDate: new Date().toISOString(),

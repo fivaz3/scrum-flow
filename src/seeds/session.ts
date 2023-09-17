@@ -1,4 +1,4 @@
-export const session = {
+export const seedSession = {
   user: {
     name: 'Stefane Fivaz',
     email: 'stefan@fivaz.com',

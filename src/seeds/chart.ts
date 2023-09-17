@@ -1,6 +1,6 @@
 import { SprintAccuracyChartData } from '@/app/(dashboard)/report/sprint-effort';
 
-export const sprintAccuracyData: SprintAccuracyChartData = [
+export const seedSprintAccuracyData: SprintAccuracyChartData = [
   {
     precision: 10,
     sprintName: 'sprintName 1',

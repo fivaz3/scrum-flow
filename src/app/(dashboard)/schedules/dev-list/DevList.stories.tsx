@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import MembersList from './index';
-import { members } from '@/seeds/member';
+import { seedMembers } from '@/seeds/member';
 
 const meta = {
   component: MembersList,
@@ -17,7 +17,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    members: members,
+    members: seedMembers,
     selectedMemberIds: [],
     handleMemberSelect: () => console.log('member was selected'),
     openForm: () => console.log('opening schedule form'),

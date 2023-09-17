@@ -144,7 +144,6 @@ async function getTimeInProgress(
   const memberSchedule = getMemberSchedule(issue, workingSchedules);
 
   const historiesOfStatus = getStatusHistory(issue.changelog.histories);
-
   let inProgressStart: Date | null = null;
   let totalTimeSpentInProgressInMilliseconds = 0;
 

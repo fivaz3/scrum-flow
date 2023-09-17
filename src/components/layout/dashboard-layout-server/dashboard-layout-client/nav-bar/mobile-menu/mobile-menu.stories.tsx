@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import MobileMenu from './index';
-import { session } from '@/seeds/session';
+import { seedSession } from '@/seeds/session';
 import { navigation } from '@/components/layout/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
 import { Disclosure } from '@headlessui/react';
 import { Session } from 'next-auth';
@@ -34,7 +34,7 @@ function MobileMenuWrapper({ session }: { session: Session }) {
 export const LoggedIn: Story = {
   args: {
     pathname: navigation[1].href,
-    session,
+    session: seedSession,
   },
-  render: () => <MobileMenuWrapper session={session}></MobileMenuWrapper>,
+  render: () => <MobileMenuWrapper session={seedSession}></MobileMenuWrapper>,
 };

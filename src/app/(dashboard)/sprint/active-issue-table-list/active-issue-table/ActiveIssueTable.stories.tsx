@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import ActiveIssueTable from './index';
-import { doingIssues, doneIssues, toDoIssues } from '@/seeds/issue';
+import { seedDoingIssues, seedDoneIssues, seedToDoIssues } from '@/seeds/issue';
 
 const meta = {
   component: ActiveIssueTable,
@@ -18,20 +18,20 @@ type Story = StoryObj<typeof meta>;
 export const ToDo: Story = {
   args: {
     label: 'To Do',
-    issues: toDoIssues,
+    issues: seedToDoIssues,
   },
 };
 
 export const Doing: Story = {
   args: {
     label: 'Doing',
-    issues: doingIssues,
+    issues: seedDoingIssues,
   },
 };
 
 export const Done: Story = {
   args: {
     label: 'Done',
-    issues: doneIssues,
+    issues: seedDoneIssues,
   },
 };

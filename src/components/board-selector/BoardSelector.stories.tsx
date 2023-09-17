@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import BoardSelector from './index';
-import { boards } from '@/seeds/board';
+import { seedBoards } from '@/seeds/board';
 
 const meta = {
   component: BoardSelector,
@@ -20,7 +20,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    boards,
-    currentBoard: boards[0],
+    boards: seedBoards,
+    currentBoard: seedBoards[0],
   },
 };

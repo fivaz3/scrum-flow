@@ -1,6 +1,6 @@
 import { Board } from '@/lib/board.service';
 
-export const boards: Board[] = [
+export const seedBoards: Board[] = [
   {
     id: 2,
     name: 'SCRUM board',

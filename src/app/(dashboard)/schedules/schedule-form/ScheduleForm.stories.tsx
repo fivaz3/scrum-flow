@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import ScheduleForm from './index';
-import { members } from '@/seeds/member';
+import { seedMembers } from '@/seeds/member';
 
 const meta = {
   component: ScheduleForm,
@@ -27,6 +27,6 @@ export const Primary: Story = {
     },
     onDelete: () => Promise.resolve(console.log('form closed')),
     selectedSchedule: null,
-    members: members,
+    members: seedMembers,
   },
 };

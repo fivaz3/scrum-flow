@@ -1,6 +1,6 @@
 import { IssueWithTimeSpent } from '@/lib/issue/issue.service';
 
-export const toDoIssues: IssueWithTimeSpent[] = [
+export const seedToDoIssues: IssueWithTimeSpent[] = [
   {
     id: '2',
     key: 'SCRUM-1',
@@ -57,7 +57,7 @@ export const toDoIssues: IssueWithTimeSpent[] = [
   },
 ];
 
-export const doingIssues: IssueWithTimeSpent[] = [
+export const seedDoingIssues: IssueWithTimeSpent[] = [
   {
     id: '3',
     key: 'SCRUM-1',
@@ -115,7 +115,7 @@ export const doingIssues: IssueWithTimeSpent[] = [
   },
 ];
 
-export const doneIssues: IssueWithTimeSpent[] = [
+export const seedDoneIssues: IssueWithTimeSpent[] = [
   {
     id: '4',
     key: 'SCRUM-1',
@@ -172,4 +172,4 @@ export const doneIssues: IssueWithTimeSpent[] = [
   },
 ];
 
-export const issues = [...toDoIssues, ...doingIssues, ...doneIssues];
+export const seedIssues = [...seedToDoIssues, ...seedDoingIssues, ...seedDoneIssues];
