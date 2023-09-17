@@ -17,7 +17,14 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    onSubmit: () => Promise.resolve(console.log('form submitted')),
+    onSubmit: (data) => {
+      console.log('data', data);
+      const startDateTime = new Date(`${data.startDate}T${data.startTime}`);
+      const endDateTime = new Date(`${data.endDate}T${data.endTime}`);
+      console.log('startDateTime', startDateTime.toISOString());
+      console.log('endDateTime', endDateTime.toISOString());
+      return Promise.resolve(console.log('form submitted'));
+    },
     onDelete: () => Promise.resolve(console.log('form closed')),
     selectedSchedule: null,
     members: members,

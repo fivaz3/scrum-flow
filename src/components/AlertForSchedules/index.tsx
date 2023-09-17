@@ -1,5 +1,5 @@
 import BannerWithNavigation from '@/components/BannerWithNavigation';
-import { getSchedulesServer } from '@/app/(dashboard)/schedules/Calendar/schedule.service';
+import { getSchedulesServer } from '@/app/(dashboard)/schedules/calendar/schedule.service';
 import { navigation } from '@/components/layout/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
 
 interface AlertForSchedulesProps {}

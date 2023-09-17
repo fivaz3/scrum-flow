@@ -1,5 +1,5 @@
 import React from 'react';
-import { Member } from '@/app/(dashboard)/schedules/Calendar/member.service';
+import { Member } from '@/app/(dashboard)/schedules/calendar/member.service';
 
 interface DevListProps {
   members: Member[];

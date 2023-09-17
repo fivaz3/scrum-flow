@@ -7,7 +7,7 @@ import {
   getMemberSchedule,
   getSchedulesServer,
   Schedule,
-} from '@/app/(dashboard)/schedules/Calendar/schedule.service';
+} from '@/app/(dashboard)/schedules/calendar/schedule.service';
 import {
   differenceInMilliseconds,
   eachDayOfInterval,
@@ -65,22 +65,40 @@ async function hasLeftInProgress(
   );
 }
 
+function isWithinSchedule(date: Date, schedule: Schedule, debug = false): boolean {
+  const isInTheScheduleInterval = isWithinInterval(date, {
+    start: new Date(schedule.startDate),
+    end: new Date(schedule.endDate),
+  });
+
+  if (debug) {
+    // console.log('date', date.toISOString());
+    // console.log('schedule.startDate', schedule.startDate);
+    // console.log('schedule.endDate', schedule.endDate);
+    // console.log('isInTheScheduleInterval', isInTheScheduleInterval);
+    // console.log('isSameDay', isSameDay(date, new Date(schedule.startDate)));
+  }
+
+  if (schedule.isRecurring) {
+    return isInTheScheduleInterval && schedule.daysOfWeek.includes(getDay(date));
+  } else {
+    return isInTheScheduleInterval;
+  }
+}
+
 function calculateTimeInMilliseconds(
   workingSchedules: Schedule[],
   taskStartedAt: Date,
-  taskEndedAt: Date
+  taskEndedAt: Date,
+  debug = false
 ): number {
   let totalMilliseconds = 0;
 
-  eachDayOfInterval({ start: taskStartedAt, end: taskEndedAt }).forEach((day) => {
+  const intervalOfTaskDuration = eachDayOfInterval({ start: taskStartedAt, end: taskEndedAt });
+
+  intervalOfTaskDuration.forEach((day) => {
     workingSchedules.forEach((schedule) => {
-      if (
-        isWithinInterval(day, {
-          start: new Date(schedule.startDate),
-          end: new Date(schedule.endDate),
-        }) &&
-        schedule.daysOfWeek.includes(getDay(day))
-      ) {
+      if (isWithinSchedule(day, schedule, debug)) {
         const [startHour, startMinute] = schedule.startTime.split(':').map(Number);
         const [endHour, endMinute] = schedule.endTime.split(':').map(Number);
         const startOfWork = set(day, { hours: startHour, minutes: startMinute });
@@ -134,12 +152,24 @@ async function getTimeInProgress(
     for (const item of history.items) {
       if (!inProgressStart && (await hasMovedToInProgress(item, accessToken, cloudId))) {
         inProgressStart = parseISO(history.created); // start tracking time
+        if (issue.key === 'SCRUM-54') {
+          console.log('inProgressStart', inProgressStart);
+          console.log('history.created', history.created);
+        }
       } else if (inProgressStart && (await hasLeftInProgress(item, accessToken, cloudId))) {
+        inProgressStart = parseISO(history.created); // stop tracking time
+
         totalTimeSpentInProgressInMilliseconds += calculateTimeInMilliseconds(
           memberSchedule,
           inProgressStart,
-          parseISO(history.created)
+          parseISO(history.created),
+          issue.key === 'SCRUM-54'
         );
+        // if (issue.key === 'SCRUM-54')
+        //   console.log(
+        //     'totalTimeSpentInProgressInMilliseconds',
+        //     totalTimeSpentInProgressInMilliseconds
+        //   );
         inProgressStart = null; // stop tracking time
       }
     }
@@ -150,7 +180,8 @@ async function getTimeInProgress(
     totalTimeSpentInProgressInMilliseconds += calculateTimeInMilliseconds(
       memberSchedule,
       inProgressStart,
-      new Date()
+      new Date(),
+      issue.key === 'SCRUM-54'
     );
   }
 

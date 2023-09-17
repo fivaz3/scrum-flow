@@ -1,6 +1,6 @@
-import { getSchedules } from '@/app/(dashboard)/schedules/Calendar/schedule.service';
-import Calendar from '@/app/(dashboard)/schedules/Calendar';
-import { getMembers } from '@/app/(dashboard)/schedules/Calendar/member.service';
+import { getSchedules } from '@/app/(dashboard)/schedules/calendar/schedule.service';
+import Calendar from '@/app/(dashboard)/schedules/calendar';
+import { getMembers } from '@/app/(dashboard)/schedules/calendar/member.service';
 import { getAuthData } from '@/lib/jira.service';
 
 interface ActiveSprintPageProps {}

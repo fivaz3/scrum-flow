@@ -3,12 +3,12 @@ import {
   Schedule,
   ScheduleIn,
   ScheduleInSchema,
-} from '@/app/(dashboard)/schedules/Calendar/schedule.service';
+} from '@/app/(dashboard)/schedules/calendar/schedule.service';
 import React, { useEffect } from 'react';
 import { format } from 'date-fns';
 import classNames from 'classnames';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Member } from '@/app/(dashboard)/schedules/Calendar/member.service';
+import { Member } from '@/app/(dashboard)/schedules/calendar/member.service';
 
 interface ScheduleFormProps {
   members: Member[];
