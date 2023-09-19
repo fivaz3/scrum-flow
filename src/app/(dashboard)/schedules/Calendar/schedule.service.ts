@@ -2,6 +2,7 @@ import { deleteBackEnd, getBackEnd, postBackEnd, putBackEnd } from '@/lib/backen
 import { getAuthData, validateData } from '@/lib/jira.service';
 import { z } from 'zod';
 import { Issue } from '@/lib/issue/issue.service';
+import { convertToISODate } from '@/app/(dashboard)/schedules/schedule-form/service';
 
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 const dateErrorMessage = 'Format de date invalide. Le format attendu est yyyy-MM-dd';
@@ -9,23 +10,18 @@ const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)(:[0-5]\d)?$/;
 const timeErrorMessage = "Format d'heure invalide. Le format attendu est hh:mm ou hh:mm:ss";
 
 export const SingleScheduleSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   memberId: z.string(),
   start: z.string(),
   end: z.string(),
   duration: z.null(),
-  rrule: z.object({
-    freq: z.null(),
-    byweekday: z.null(),
-    dtstart: z.null(),
-    until: z.null(),
-  }),
+  rrule: z.null(),
 });
 
 export type SingleSchedule = z.infer<typeof SingleScheduleSchema>;
 
 export const RecurringScheduleSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   memberId: z.string(),
   start: z.null(),
   end: z.null(),
@@ -55,21 +51,65 @@ export const ScheduleInSchema = z
     byweekday: z.array(z.string()),
     until: z.string(),
   })
-  .refine(({ isRecurring, byweekday }) => !(isRecurring && byweekday.length === 0), {
-    message: 'Il faut avoir sélectionné au moins 1 jour de la semaine',
-    path: ['byweekday'],
-  })
-  .refine(({ isRecurring, until }) => !(isRecurring && !dateRegex.test(until)), {
-    message: dateErrorMessage,
-    path: ['until'],
-  });
+  .refine(
+    ({ isRecurring, byweekday }) => {
+      if (!isRecurring) {
+        return true;
+      }
+
+      return byweekday.length !== 0;
+    },
+    {
+      message: 'Il faut avoir sélectionné au moins 1 jour de la semaine',
+      path: ['byweekday'],
+    }
+  )
+  .refine(
+    ({ isRecurring, until }) => {
+      if (!isRecurring) {
+        return true;
+      }
+
+      return dateRegex.test(until);
+    },
+    {
+      message: dateErrorMessage,
+      path: ['until'],
+    }
+  )
+  .refine(
+    ({ startDate, startTime, endDate, endTime }) => {
+      const start = convertToISODate(startDate, startTime);
+      const end = convertToISODate(endDate, endTime);
+      return start < end;
+    },
+    {
+      message: 'Le début doit être avant la fin',
+      path: ['endDate'],
+    }
+  )
+  .refine(
+    ({ isRecurring, startDate, startTime, until }) => {
+      if (!isRecurring) {
+        return true;
+      }
+
+      const start = convertToISODate(startDate, startTime);
+      const end = new Date(until);
+      return start < end;
+    },
+    {
+      message: 'La recurrence ne peut pas finir avant la date début',
+      path: ['until'],
+    }
+  );
 
 export type ScheduleIn = z.infer<typeof ScheduleInSchema>;
 
-const PATH = '/api/schedule';
+const PATH = '/api/schedules';
 
 export async function addSchedule(
-  data: ScheduleIn,
+  data: Omit<Schedule, 'id'>,
   accessToken: string,
   cloudId: string
 ): Promise<Schedule> {
@@ -80,9 +120,7 @@ export async function addSchedule(
 
 export async function getSchedulesServer(): Promise<Schedule[]> {
   const { accessToken, cloudId } = await getAuthData();
-  const response = await getBackEnd(PATH, accessToken, cloudId);
-
-  return validateData(z.array(ScheduleSchema), response);
+  return getSchedules(accessToken, cloudId);
 }
 
 export async function getSchedules(accessToken: string, cloudId: string): Promise<Schedule[]> {
@@ -92,8 +130,8 @@ export async function getSchedules(accessToken: string, cloudId: string): Promis
 }
 
 export async function editSchedule(
-  data: ScheduleIn,
-  id: number,
+  data: Omit<Schedule, 'id'>,
+  id: string,
   accessToken: string,
   cloudId: string
 ): Promise<Schedule> {
@@ -103,7 +141,7 @@ export async function editSchedule(
 }
 
 export async function deleteSchedule(
-  id: number,
+  id: string,
   accessToken: string,
   cloudId: string
 ): Promise<void> {

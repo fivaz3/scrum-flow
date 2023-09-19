@@ -5,9 +5,8 @@ import {
   deleteSchedule,
   editSchedule,
   Schedule,
-  ScheduleIn,
 } from '@/app/(dashboard)/schedules/calendar/schedule.service';
-import Modal from '@/components/Modal';
+import Modal from '../../../../components/modal';
 import MembersList from '../dev-list';
 import { Member } from '@/app/(dashboard)/schedules/calendar/member.service';
 import CalendarCore from '@/app/(dashboard)/schedules/calendar/calendar-core';
@@ -26,48 +25,49 @@ function handleMemberSelect(
 }
 
 async function handleAddOrEditSchedule(
-  data: ScheduleIn,
-  selectedScheduleId: number | undefined,
+  schedule: Omit<Schedule, 'id'>,
+  selectedScheduleId: string | undefined,
   setSelectedSchedule: Dispatch<SetStateAction<Schedule | null>>,
   setSchedules: Dispatch<SetStateAction<Schedule[]>>,
   setShowDialog: Dispatch<SetStateAction<boolean>>,
   accessToken: string,
   cloudId: string
 ) {
+  console.log('after', schedule);
   if (selectedScheduleId) {
-    await handleEditSchedule(data, selectedScheduleId, accessToken, cloudId, setSchedules);
+    await handleEditSchedule(schedule, selectedScheduleId, accessToken, cloudId, setSchedules);
   } else {
-    await handleAddSchedule(data, accessToken, cloudId, setSchedules);
+    await handleAddSchedule(schedule, accessToken, cloudId, setSchedules);
   }
   setSelectedSchedule(null);
   setShowDialog(false);
 }
 
 async function handleAddSchedule(
-  scheduleIn: ScheduleIn,
+  data: Omit<Schedule, 'id'>,
   accessToken: string,
   cloudId: string,
   setSchedules: Dispatch<SetStateAction<Schedule[]>>
 ) {
-  const schedule = await addSchedule(scheduleIn, accessToken, cloudId);
+  const schedule = await addSchedule(data, accessToken, cloudId);
   setSchedules((previousSchedules) => [...previousSchedules, schedule]);
 }
 
 async function handleEditSchedule(
-  scheduleIn: ScheduleIn,
-  id: number,
+  data: Omit<Schedule, 'id'>,
+  id: string,
   accessToken: string,
   cloudId: string,
   setSchedules: Dispatch<SetStateAction<Schedule[]>>
 ) {
-  const editedSchedule = await editSchedule(scheduleIn, id, accessToken, cloudId);
+  const editedSchedule = await editSchedule(data, id, accessToken, cloudId);
   setSchedules((schedules) =>
     schedules.map((schedule) => (schedule.id === editedSchedule.id ? editedSchedule : schedule))
   );
 }
 
 async function handleDeleteSchedule(
-  selectedScheduleId: number | undefined,
+  selectedScheduleId: string | undefined,
   accessToken: string,
   cloudId: string,
   setSchedules: Dispatch<SetStateAction<Schedule[]>>,

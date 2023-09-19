@@ -21,6 +21,7 @@ export const Primary: Story = {
   args: {
     placeholder: 'Placeholder',
     label: 'Select',
+    disabled: false,
     value: seedBoards[0].id,
     onChange: (value) => console.log('new value: ' + value),
     children: (

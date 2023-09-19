@@ -2,7 +2,7 @@ import { Schedule } from '@/app/(dashboard)/schedules/calendar/schedule.service'
 
 export const seedSchedules: Schedule[] = [
   {
-    id: 20,
+    id: '20',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: null,
     end: null,
@@ -15,7 +15,7 @@ export const seedSchedules: Schedule[] = [
     },
   },
   {
-    id: 21,
+    id: '21',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: null,
     end: null,
@@ -28,7 +28,7 @@ export const seedSchedules: Schedule[] = [
     },
   },
   {
-    id: 22,
+    id: '22',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: null,
     end: null,
@@ -41,7 +41,7 @@ export const seedSchedules: Schedule[] = [
     },
   },
   {
-    id: 23,
+    id: '23',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: null,
     end: null,
@@ -54,7 +54,7 @@ export const seedSchedules: Schedule[] = [
     },
   },
   {
-    id: 24,
+    id: '24',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: null,
     end: null,
@@ -67,7 +67,7 @@ export const seedSchedules: Schedule[] = [
     },
   },
   {
-    id: 25,
+    id: '25',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: null,
     end: null,
@@ -80,7 +80,7 @@ export const seedSchedules: Schedule[] = [
     },
   },
   {
-    id: 26,
+    id: '26',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: null,
     end: null,
@@ -93,7 +93,7 @@ export const seedSchedules: Schedule[] = [
     },
   },
   {
-    id: 27,
+    id: '27',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: null,
     end: null,
@@ -106,7 +106,7 @@ export const seedSchedules: Schedule[] = [
     },
   },
   {
-    id: 28,
+    id: '28',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: null,
     end: null,
@@ -119,7 +119,7 @@ export const seedSchedules: Schedule[] = [
     },
   },
   {
-    id: 29,
+    id: '29',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: null,
     end: null,
@@ -132,7 +132,7 @@ export const seedSchedules: Schedule[] = [
     },
   },
   {
-    id: 31,
+    id: '31',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: null,
     end: null,
@@ -145,72 +145,47 @@ export const seedSchedules: Schedule[] = [
     },
   },
   {
-    id: 32,
+    id: '32',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: '2023-09-15T07:00:00Z',
     end: '2023-09-15T11:00:00Z',
     duration: null,
-    rrule: {
-      freq: null,
-      byweekday: null,
-      dtstart: null,
-      until: null,
-    },
+    rrule: null,
   },
   {
-    id: 33,
+    id: '33',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: '2023-09-15T07:00:00Z',
     end: '2023-09-15T11:00:00Z',
     duration: null,
-    rrule: {
-      freq: null,
-      byweekday: null,
-      dtstart: null,
-      until: null,
-    },
+    rrule: null,
   },
   {
-    id: 34,
+    id: '34',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: '2023-09-15T07:00:00Z',
     end: '2023-09-15T11:00:00Z',
     duration: null,
-    rrule: {
-      freq: null,
-      byweekday: null,
-      dtstart: null,
-      until: null,
-    },
+    rrule: null,
   },
   {
-    id: 35,
+    id: '35',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: '2023-09-15T07:00:00Z',
     end: '2023-09-15T11:00:00Z',
     duration: null,
-    rrule: {
-      freq: null,
-      byweekday: null,
-      dtstart: null,
-      until: null,
-    },
+    rrule: null,
   },
   {
-    id: 36,
+    id: '36',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: '2023-09-15T07:00:00Z',
     end: '2023-09-15T11:00:00Z',
     duration: null,
-    rrule: {
-      freq: null,
-      byweekday: null,
-      dtstart: null,
-      until: null,
-    },
+    rrule: null,
   },
   {
-    id: 37,
+    id: '37',
     memberId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
     start: null,
     end: null,

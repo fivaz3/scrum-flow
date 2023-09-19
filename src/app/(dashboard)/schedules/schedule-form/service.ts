@@ -15,11 +15,15 @@ import {
   SingleSchedule,
 } from '@/app/(dashboard)/schedules/calendar/schedule.service';
 
-function convertToISO(dateString: string, timeString: string): string {
+export function convertToISODate(dateString: string, timeString: string): Date {
   const date = parseISO(dateString);
   const [hours, minutes] = timeString.split(':').map(Number);
-  const dateTime = set(date, { hours: hours, minutes: minutes });
-  return formatISO(dateTime);
+  return set(date, { hours: hours, minutes: minutes });
+}
+
+export function convertToISOString(dateString: string, timeString: string): string {
+  const date = convertToISODate(dateString, timeString);
+  return formatISO(date);
 }
 
 function getDuration(
@@ -28,8 +32,8 @@ function getDuration(
   endDate: string,
   endTime: string
 ): string {
-  const start = parseISO(convertToISO(startDate, startTime));
-  const end = parseISO(convertToISO(endDate, endTime));
+  const start = convertToISODate(startDate, startTime);
+  const end = convertToISODate(endDate, endTime);
   const durationInMinutes = differenceInMinutes(end, start);
   const hours = Math.floor(durationInMinutes / 60);
   const minutes = durationInMinutes % 60;
@@ -39,15 +43,10 @@ function getDuration(
 function convertScheduleInToSingleSchedule(data: ScheduleIn): Omit<SingleSchedule, 'id'> {
   return {
     memberId: data.memberId,
-    start: convertToISO(data.startDate, data.startTime),
-    end: convertToISO(data.endDate, data.endTime),
+    start: convertToISOString(data.startDate, data.startTime),
+    end: convertToISOString(data.endDate, data.endTime),
     duration: null,
-    rrule: {
-      freq: null,
-      dtstart: null,
-      until: null,
-      byweekday: null,
-    },
+    rrule: null,
   };
 }
 
@@ -59,7 +58,7 @@ function convertScheduleInToRecurringSchedule(data: ScheduleIn): Omit<RecurringS
     duration: getDuration(data.startDate, data.startTime, data.endDate, data.endTime),
     rrule: {
       freq: 'weekly',
-      dtstart: convertToISO(data.startDate, data.startTime),
+      dtstart: convertToISOString(data.startDate, data.startTime),
       until: data.until,
       byweekday: data.byweekday,
     },
@@ -67,6 +66,7 @@ function convertScheduleInToRecurringSchedule(data: ScheduleIn): Omit<RecurringS
 }
 
 export function convertScheduleInToSchedule(data: ScheduleIn): Omit<Schedule, 'id'> {
+  console.log('before', data);
   if (data.isRecurring) {
     return convertScheduleInToRecurringSchedule(data);
   } else {

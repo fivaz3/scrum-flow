@@ -2,6 +2,7 @@ import { Listbox } from '@headlessui/react';
 import { Children, Fragment, ReactElement, ReactNode } from 'react';
 import { SelectItemProps } from '@/components/select-item';
 import { ChevronUpDownIcon } from '@heroicons/react/24/solid';
+import classNames from 'classnames';
 
 interface SelectProps {
   label: string;
@@ -12,9 +13,17 @@ interface SelectProps {
   placeholder?: string;
 }
 
-function getChildrenMap(children: ReactElement[] | ReactElement) {
+function getContent(
+  map: Map<string | number, ReactNode>,
+  value: string | number,
+  placeholder: string
+): ReactNode {
+  return value && map.get(value) ? map.get(value) : placeholder;
+}
+
+function getMapValue(children: ReactElement[] | ReactElement): Map<string | number, ReactNode> {
   if (!Array.isArray(children) && children.type === Fragment) {
-    return getChildrenMap(children.props.children);
+    return getMapValue(children.props.children);
   } else {
     const valueToItemMapping = new Map<string | number, ReactNode>();
     Children.map(children, (child: ReactElement<SelectItemProps>) => {
@@ -32,7 +41,7 @@ export default function Select({
   disabled,
   placeholder = 'Rien sélectionné',
 }: SelectProps) {
-  const map = getChildrenMap(children);
+  const map = getMapValue(children);
 
   return (
     <Listbox value={value} onChange={onChange} as="div" disabled={disabled}>
@@ -40,8 +49,12 @@ export default function Select({
         {label}
       </Listbox.Label>
       <div className="relative">
-        <Listbox.Button className="relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-          {value ? map.get(value) : placeholder}
+        <Listbox.Button
+          className={classNames(
+            disabled ? 'bg-gray-50' : 'bg-white',
+            'relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+          )}>
+          {getContent(map, value, placeholder)}
           <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
             <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
           </span>

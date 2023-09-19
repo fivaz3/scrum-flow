@@ -57,9 +57,9 @@ function convertScheduleToEvent(
 
   return selectedSchedules.map((schedule) => {
     const member = members.find((member) => member.accountId === schedule.memberId);
+    // TODO make this member.displayName replacement be added in the back
     return {
       ...schedule,
-      id: schedule.id.toString(),
       title: member?.displayName || 'member supprimé',
     };
   });
@@ -93,7 +93,6 @@ export default function CalendarCore({
   setSelectedSchedule,
   setShowDialog,
 }: CalendarCoreProps) {
-  console.log(members);
   return (
     <FullCalendar
       // timeZone="UTC"
