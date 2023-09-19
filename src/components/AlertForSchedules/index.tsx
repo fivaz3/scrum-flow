@@ -1,11 +1,14 @@
 import BannerWithNavigation from '@/components/BannerWithNavigation';
-import { getSchedulesServer } from '@/app/(dashboard)/schedules/calendar/schedule.service';
+import { getSchedules } from '@/app/(dashboard)/schedules/calendar/schedule.service';
 import { navigation } from '@/components/layout/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
 
-interface AlertForSchedulesProps {}
+interface AlertForSchedulesProps {
+  accessToken: string;
+  cloudId: string;
+}
 
-export default async function AlertForSchedules({}: AlertForSchedulesProps) {
-  const schedules = await getSchedulesServer();
+export default async function AlertForSchedules({ accessToken, cloudId }: AlertForSchedulesProps) {
+  const schedules = await getSchedules(accessToken, cloudId);
 
   const link = navigation[3];
 

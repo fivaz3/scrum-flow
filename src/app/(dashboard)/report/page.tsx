@@ -55,7 +55,7 @@ export default async function SprintReportPage({ searchParams }: PreviousSprintP
       ))}
 
       <Suspense fallback={<></>}>
-        <AlertForSchedules />
+        <AlertForSchedules accessToken={accessToken} cloudId={cloudId} />
       </Suspense>
     </div>
   );

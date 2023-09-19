@@ -7,11 +7,11 @@ import {
   Schedule,
   ScheduleIn,
 } from '@/app/(dashboard)/schedules/calendar/schedule.service';
-import ScheduleForm from '../schedule-form';
 import Modal from '@/components/Modal';
 import MembersList from '../dev-list';
 import { Member } from '@/app/(dashboard)/schedules/calendar/member.service';
 import CalendarCore from '@/app/(dashboard)/schedules/calendar/calendar-core';
+import ScheduleForm from '../schedule-form';
 
 function handleMemberSelect(
   memberId: string,
@@ -27,7 +27,7 @@ function handleMemberSelect(
 
 async function handleAddOrEditSchedule(
   data: ScheduleIn,
-  selectedScheduleId: string | undefined,
+  selectedScheduleId: number | undefined,
   setSelectedSchedule: Dispatch<SetStateAction<Schedule | null>>,
   setSchedules: Dispatch<SetStateAction<Schedule[]>>,
   setShowDialog: Dispatch<SetStateAction<boolean>>,
@@ -55,7 +55,7 @@ async function handleAddSchedule(
 
 async function handleEditSchedule(
   scheduleIn: ScheduleIn,
-  id: string,
+  id: number,
   accessToken: string,
   cloudId: string,
   setSchedules: Dispatch<SetStateAction<Schedule[]>>
@@ -67,7 +67,7 @@ async function handleEditSchedule(
 }
 
 async function handleDeleteSchedule(
-  selectedScheduleId: string | undefined,
+  selectedScheduleId: number | undefined,
   accessToken: string,
   cloudId: string,
   setSchedules: Dispatch<SetStateAction<Schedule[]>>,

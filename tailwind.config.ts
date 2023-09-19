@@ -6,5 +6,8 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    // for ScheduleForm, tailwind ui Checkout Forms
+    require('@tailwindcss/forms'),
+  ],
 } satisfies Config;

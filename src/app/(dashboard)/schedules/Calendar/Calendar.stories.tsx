@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import Calendar from './index';
 import { seedMembers } from '@/seeds/member';
+import { seedSchedules } from '@/seeds/schedule';
 
 const meta = {
   component: Calendar,
@@ -21,18 +22,7 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   args: {
     members: seedMembers,
-    currentSchedules: [
-      {
-        id: '3',
-        memberId: '1',
-        startDate: '2023-09-08',
-        endDate: '2023-09-08',
-        startTime: '14:00',
-        endTime: '17:00',
-        isRecurring: false,
-        daysOfWeek: [],
-      },
-    ],
+    currentSchedules: seedSchedules,
     accessToken: '',
     cloudId: '',
   },

@@ -3,42 +3,68 @@ import { getAuthData, validateData } from '@/lib/jira.service';
 import { z } from 'zod';
 import { Issue } from '@/lib/issue/issue.service';
 
-export type Schedule = {
-  id: string;
-  memberId: string;
-  startDate: string;
-  endDate: string;
-  startTime: string;
-  endTime: string;
-  daysOfWeek: number[];
-  isRecurring: boolean;
-};
-
-export type ScheduleIn = Omit<Schedule, 'id'>;
-
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-const dateErrorMessage = 'Format de date invalide. Le format attendu est YYYY-MM-DD';
+const dateErrorMessage = 'Format de date invalide. Le format attendu est yyyy-MM-dd';
 const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)(:[0-5]\d)?$/;
 const timeErrorMessage = "Format d'heure invalide. Le format attendu est hh:mm ou hh:mm:ss";
 
-export const ScheduleSchema = z.object({
-  id: z.string(),
+export const SingleScheduleSchema = z.object({
+  id: z.number(),
   memberId: z.string(),
-  startDate: z.string().regex(dateRegex, dateErrorMessage),
-  endDate: z.string().regex(dateRegex, dateErrorMessage),
-  startTime: z.string().regex(timeRegex, timeErrorMessage),
-  endTime: z.string().regex(timeRegex, timeErrorMessage),
-  isRecurring: z.boolean(),
-  daysOfWeek: z.array(z.number()),
+  start: z.string(),
+  end: z.string(),
+  duration: z.null(),
+  rrule: z.object({
+    freq: z.null(),
+    byweekday: z.null(),
+    dtstart: z.null(),
+    until: z.null(),
+  }),
 });
 
-export const ScheduleInSchema = ScheduleSchema.omit({ id: true }).refine(
-  (data) => !(data.isRecurring && data.daysOfWeek.length === 0),
-  {
-    message: 'Il faut avoir sélectionner au moins 1 jour de la semaine',
-    path: ['daysOfWeek'],
-  }
-);
+export type SingleSchedule = z.infer<typeof SingleScheduleSchema>;
+
+export const RecurringScheduleSchema = z.object({
+  id: z.number(),
+  memberId: z.string(),
+  start: z.null(),
+  end: z.null(),
+  duration: z.string(),
+  rrule: z.object({
+    freq: z.string(),
+    byweekday: z.array(z.string()),
+    dtstart: z.string(),
+    until: z.string(),
+  }),
+});
+
+export type RecurringSchedule = z.infer<typeof RecurringScheduleSchema>;
+
+export const ScheduleSchema = RecurringScheduleSchema.or(SingleScheduleSchema);
+
+export type Schedule = z.infer<typeof ScheduleSchema>;
+
+export const ScheduleInSchema = z
+  .object({
+    memberId: z.string(),
+    startDate: z.string().regex(dateRegex, dateErrorMessage),
+    startTime: z.string().regex(timeRegex, timeErrorMessage),
+    endDate: z.string().regex(dateRegex, dateErrorMessage),
+    endTime: z.string(),
+    isRecurring: z.boolean(),
+    byweekday: z.array(z.string()),
+    until: z.string(),
+  })
+  .refine(({ isRecurring, byweekday }) => !(isRecurring && byweekday.length === 0), {
+    message: 'Il faut avoir sélectionné au moins 1 jour de la semaine',
+    path: ['byweekday'],
+  })
+  .refine(({ isRecurring, until }) => !(isRecurring && !dateRegex.test(until)), {
+    message: dateErrorMessage,
+    path: ['until'],
+  });
+
+export type ScheduleIn = z.infer<typeof ScheduleInSchema>;
 
 const PATH = '/api/schedule';
 
@@ -67,7 +93,7 @@ export async function getSchedules(accessToken: string, cloudId: string): Promis
 
 export async function editSchedule(
   data: ScheduleIn,
-  id: string,
+  id: number,
   accessToken: string,
   cloudId: string
 ): Promise<Schedule> {
@@ -77,7 +103,7 @@ export async function editSchedule(
 }
 
 export async function deleteSchedule(
-  id: string,
+  id: number,
   accessToken: string,
   cloudId: string
 ): Promise<void> {

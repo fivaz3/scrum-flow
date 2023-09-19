@@ -7,7 +7,7 @@ import { seedMembers } from '@/seeds/member';
 const meta = {
   component: CalendarCore,
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
   },
   tags: ['autodocs'],
   argTypes: {},

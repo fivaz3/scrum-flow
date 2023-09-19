@@ -54,7 +54,7 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
       </Suspense>
 
       <Suspense fallback={<></>}>
-        <AlertForSchedules />
+        <AlertForSchedules accessToken={accessToken} cloudId={cloudId} />
       </Suspense>
     </>
   );

@@ -18,51 +18,50 @@ export type SingleEvent = {
 export type RecurringEvent = {
   id: string;
   title: string;
-  daysOfWeek: number[];
-  startTime: string;
-  endTime: string;
-  startRecur: string;
-  endRecur: string;
+  duration: string;
+  rrule: {
+    freq: string;
+    byweekday: string[];
+    dtstart: string;
+    until: string;
+  };
 };
 
 function convertScheduleToEvent(
   schedules: Schedule[],
   members: Member[],
   selectedMemberIds: string[]
-) {
-  function convertScheduleToSingleEvent(schedule: Schedule, members: Member[]): SingleEvent {
-    const member = members.find((member) => member.accountId === schedule.memberId);
-    return {
-      id: schedule.id,
-      title: member?.displayName || 'member supprimé',
-      start: new Date(`${schedule.startDate}T${schedule.startTime}`).toISOString(),
-      end: new Date(`${schedule.endDate}T${schedule.endTime}`).toISOString(),
-    };
-  }
-
-  function convertScheduleToRecurringEvent(schedule: Schedule, members: Member[]): RecurringEvent {
-    const member = members.find((member) => member.accountId === schedule.memberId);
-    return {
-      id: schedule.id,
-      title: member?.displayName || 'member supprimé',
-      daysOfWeek: schedule.daysOfWeek,
-      startTime: schedule.startTime,
-      endTime: schedule.endTime,
-      startRecur: schedule.startDate,
-      endRecur: schedule.endDate,
-    };
-  }
+): Array<SingleEvent | RecurringEvent> {
+  // return [
+  //   // Unique event
+  //   {
+  //     title: 'Unique Event',
+  //     start: '2023-09-17T07:00:00.004Z',
+  //     end: '2023-09-17T10:00:00.004Z',
+  //   },
+  //   {
+  //     title: 'my recurring event',
+  //     duration: '03:00',
+  //     rrule: {
+  //       freq: 'weekly',
+  //       byweekday: ['mo', 'tu', 'we', 'th', 'fr'],
+  //       dtstart: '2023-09-17T07:00:00.004Z', // will also accept '20120201T103000'
+  //       until: '2023-09-30', // will also accept '20120201'
+  //     },
+  //   },
+  // ];
 
   const selectedSchedules = schedules.filter((schedule) =>
     selectedMemberIds.includes(schedule.memberId)
   );
 
   return selectedSchedules.map((schedule) => {
-    if (schedule.isRecurring) {
-      return convertScheduleToRecurringEvent(schedule, members);
-    } else {
-      return convertScheduleToSingleEvent(schedule, members);
-    }
+    const member = members.find((member) => member.accountId === schedule.memberId);
+    return {
+      ...schedule,
+      id: schedule.id.toString(),
+      title: member?.displayName || 'member supprimé',
+    };
   });
 }
 
@@ -72,7 +71,7 @@ function handleEventClick(
   setSelectedSchedule: Dispatch<SetStateAction<Schedule | null>>,
   setShowDialog: Dispatch<SetStateAction<boolean>>
 ) {
-  const schedule = schedules.find((schedule) => schedule.id === info.event.id);
+  const schedule = schedules.find((schedule) => schedule.id.toString() === info.event.id);
   if (schedule) {
     setSelectedSchedule(schedule);
     setShowDialog(true);
@@ -97,6 +96,7 @@ export default function CalendarCore({
   console.log(members);
   return (
     <FullCalendar
+      // timeZone="UTC"
       plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, rrulePlugin]}
       initialView="timeGridWeek"
       headerToolbar={{
