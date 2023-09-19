@@ -46,7 +46,6 @@ export function getIssueAccuracy(
   sprint: Sprint
 ): string {
   const estimationInMilliseconds = getEstimationInTime(issues, issue.estimation, sprint);
-  // console.log(estimationInMilliseconds);
   const accuracyInPercentage = calculateAccuracy(estimationInMilliseconds, issue.timeSpent);
   return `${accuracyInPercentage}%`;
 }

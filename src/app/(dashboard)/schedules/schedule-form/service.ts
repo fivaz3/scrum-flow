@@ -66,7 +66,6 @@ function convertScheduleInToRecurringSchedule(data: ScheduleIn): Omit<RecurringS
 }
 
 export function convertScheduleInToSchedule(data: ScheduleIn): Omit<Schedule, 'id'> {
-  console.log('before', data);
   if (data.isRecurring) {
     return convertScheduleInToRecurringSchedule(data);
   } else {

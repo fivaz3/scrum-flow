@@ -5,18 +5,15 @@ import {
 } from '@/lib/issue/issue.service';
 import {
   getMemberSchedule,
-  getSchedulesServer,
+  getSchedules,
   RecurringSchedule,
   Schedule,
   SingleSchedule,
 } from '@/app/(dashboard)/schedules/calendar/schedule.service';
 import {
-  differenceInMilliseconds,
-  eachDayOfInterval,
   format,
   formatDuration,
   intervalToDuration,
-  isSameDay,
   isWithinInterval,
   parseISO,
   set,
@@ -24,6 +21,11 @@ import {
 import { getInProgressStatuses } from '@/lib/project.service';
 import { fr } from 'date-fns/locale';
 import { rrulestr } from 'rrule';
+import {
+  calculateTotalMinutesInEvents,
+  expandRecurringEvents,
+  parseDuration,
+} from '@/lib/issue/test2';
 
 function getStatusHistory(histories: IssueWithChangeLog['changelog']['histories']) {
   // sort histories by date
@@ -40,12 +42,10 @@ function getStatusHistory(histories: IssueWithChangeLog['changelog']['histories'
   return remainingHistories.filter((history) => history.items.length > 0);
 }
 
-async function hasMovedToInProgress(
+function hasMovedToInProgress(
   item: IssueWithChangeLog['changelog']['histories'][0]['items'][0],
-  accessToken: string,
-  cloudId: string
+  inProgressColumns: string[]
 ) {
-  const inProgressColumns = await getInProgressStatuses(accessToken, cloudId);
   return !!(
     item.fromString &&
     !inProgressColumns.includes(item.fromString) &&
@@ -54,12 +54,10 @@ async function hasMovedToInProgress(
   );
 }
 
-async function hasLeftInProgress(
+function hasLeftInProgress(
   item: IssueWithChangeLog['changelog']['histories'][0]['items'][0],
-  accessToken: string,
-  cloudId: string
+  inProgressColumns: string[]
 ) {
-  const inProgressColumns = await getInProgressStatuses(accessToken, cloudId);
   return !!(
     item.fromString &&
     inProgressColumns.includes(item.fromString) &&
@@ -90,15 +88,11 @@ function isWithinRecurringSchedule(date: Date, schedule: RecurringSchedule): boo
 
 function isWithinSchedule(date: Date, schedule: Schedule, debug = false): boolean {
   if (schedule.start !== null) {
-    console.log('date', date);
-    console.log('start', parseISO(schedule.start));
-    console.log('end', parseISO(schedule.end));
     const a = isWithinInterval(date, {
       start: parseISO(schedule.start),
       end: parseISO(schedule.end),
     });
 
-    console.log('a', a);
     return a;
 
     // return isWithinSingleSchedule(date, schedule);
@@ -146,86 +140,40 @@ export function getStartAndEndOfWork(day: Date, schedule: Schedule) {
   return [startOfWork, endOfWork];
 }
 
-export function calculateTimeInMilliseconds(
-  schedules: Schedule[],
-  taskStartedAt: Date,
-  taskEndedAt: Date,
-  debug = false
-): number {
-  let totalMilliseconds = 0;
-
-  console.log('taskStartedAt', taskStartedAt);
-  console.log('taskEndedAt', taskEndedAt);
-
-  const intervalOfTaskDuration = eachDayOfInterval({ start: taskStartedAt, end: taskEndedAt });
-  console.log('intervalOfTaskDuration', intervalOfTaskDuration);
-
-  intervalOfTaskDuration.forEach((day) => {
-    console.log('day', day);
-    schedules.forEach((schedule) => {
-      if (isWithinSchedule(day, schedule, debug)) {
-        console.log('yes');
-        const [startOfWork, endOfWork] = getStartAndEndOfWork(day, schedule);
-        if (isSameDay(day, taskStartedAt)) {
-          console.log('first if');
-          if (taskStartedAt < endOfWork) {
-            const difference = differenceInMilliseconds(
-              Math.min(endOfWork.getTime(), taskEndedAt.getTime()),
-              Math.max(startOfWork.getTime(), taskStartedAt.getTime())
-            );
-            totalMilliseconds += difference;
-          }
-        } else if (isSameDay(day, taskEndedAt)) {
-          if (taskEndedAt > startOfWork) {
-            const difference = differenceInMilliseconds(
-              Math.min(endOfWork.getTime(), taskEndedAt.getTime()),
-              Math.max(startOfWork.getTime(), taskStartedAt.getTime())
-            );
-            totalMilliseconds += difference;
-          }
-        } else {
-          const difference = differenceInMilliseconds(endOfWork, startOfWork);
-          totalMilliseconds += difference;
-        }
-      }
-    });
-  });
-
-  return totalMilliseconds;
-}
-
-async function getTimeInProgress(
+export function getTimeInProgress(
   issue: IssueWithChangeLog,
   workingSchedules: Schedule[],
-  accessToken: string,
-  cloudId: string
-): Promise<number> {
+  inProgressColumns: string[]
+): number {
   if (workingSchedules.length === 0) {
     return -1;
   }
 
   const memberSchedule = getMemberSchedule(issue, workingSchedules);
+  // console.log(memberSchedule);
+
+  const expandedSchedules = expandRecurringEvents(memberSchedule);
+  // console.log(expandedSchedules);
 
   const historiesOfStatus = getStatusHistory(issue.changelog.histories);
+  // console.log(JSON.stringify(historiesOfStatus));
   let inProgressStart: Date | null = null;
   let totalTimeSpentInProgressInMilliseconds = 0;
 
   for (const history of historiesOfStatus) {
     for (const item of history.items) {
-      if (!inProgressStart && (await hasMovedToInProgress(item, accessToken, cloudId))) {
+      if (!inProgressStart && hasMovedToInProgress(item, inProgressColumns)) {
+        console.log('if');
         inProgressStart = parseISO(history.created); // start tracking time
-        if (issue.key === 'SCRUM-54') {
-          console.log('inProgressStart', inProgressStart);
-          console.log('history.created', history.created);
-        }
-      } else if (inProgressStart && (await hasLeftInProgress(item, accessToken, cloudId))) {
-        inProgressStart = parseISO(history.created); // stop tracking time
+      } else if (inProgressStart && hasLeftInProgress(item, inProgressColumns)) {
+        console.log('else if');
+        // inProgressStart = parseISO(history.created); // stop tracking time
 
-        totalTimeSpentInProgressInMilliseconds += calculateTimeInMilliseconds(
-          memberSchedule,
-          inProgressStart,
-          parseISO(history.created),
-          issue.key === 'SCRUM-54'
+        // TODO remove parseISO(toISOString) later
+        totalTimeSpentInProgressInMilliseconds += calculateTotalMinutesInEvents(
+          expandedSchedules,
+          inProgressStart.toISOString(),
+          parseISO(history.created).toISOString()
         );
         // if (issue.key === 'SCRUM-54')
         //   console.log(
@@ -239,11 +187,10 @@ async function getTimeInProgress(
 
   if (inProgressStart && issue.fields.status.statusCategory.name === 'In Progress') {
     // issue is still in progress
-    totalTimeSpentInProgressInMilliseconds += calculateTimeInMilliseconds(
-      memberSchedule,
-      inProgressStart,
-      new Date(),
-      issue.key === 'SCRUM-54'
+    totalTimeSpentInProgressInMilliseconds += calculateTotalMinutesInEvents(
+      expandedSchedules,
+      inProgressStart.toISOString(),
+      new Date().toISOString()
     );
   }
 
@@ -262,14 +209,27 @@ export async function getIssuesFromSprintWithTimeSpent(
     accessToken,
     cloudId
   );
-  const schedules = await getSchedulesServer();
 
-  return await Promise.all(
-    issuesWithChangeLog.map(async (issue) => ({
-      ...issue,
-      timeSpent: await getTimeInProgress(issue, schedules, accessToken, cloudId),
-    }))
-  );
+  if (sprintId === 19) {
+    console.log('issuesWithChangeLog', JSON.stringify(issuesWithChangeLog));
+  }
+
+  const schedules = await getSchedules(accessToken, cloudId);
+
+  if (sprintId === 19) {
+    console.log('schedules', JSON.stringify(schedules));
+  }
+
+  const inProgressColumns = await getInProgressStatuses(accessToken, cloudId);
+
+  if (sprintId === 19) {
+    console.log('inProgressColumns', JSON.stringify(inProgressColumns));
+  }
+
+  return issuesWithChangeLog.map((issue) => ({
+    ...issue,
+    timeSpent: getTimeInProgress(issue, schedules, inProgressColumns),
+  }));
 }
 
 export function convertToDuration(milliseconds: number, debug = false): string {
@@ -278,8 +238,6 @@ export function convertToDuration(milliseconds: number, debug = false): string {
   }
 
   const duration = intervalToDuration({ start: 0, end: milliseconds });
-
-  if (debug) console.log(duration);
 
   return formatDuration(duration, { format: ['hours', 'minutes'], locale: fr });
 }

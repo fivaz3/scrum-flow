@@ -63,8 +63,6 @@ async function getIssuesWereNotAddedAfterSprintStart(
 function wasAddedBeforeSprintStart(issue: IssueWithChangeLog, sprint: Sprint): boolean {
   const historiesOfStatus = getSprintHistory(issue.changelog.histories);
 
-  // console.log('sprint', sprint);
-
   const startDate = parseISO(sprint.startDate);
 
   let wasAddedBeforeStart = false;
@@ -73,18 +71,8 @@ function wasAddedBeforeSprintStart(issue: IssueWithChangeLog, sprint: Sprint): b
     for (const item of history.items) {
       if (item.to === `${sprint.id}`) {
         if (isBefore(parseISO(history.created), startDate)) {
-          // console.log(`first if - ${parseISO(history.created)} is before ${startDate}`);
-          // console.log(
-          //   'for issue key',
-          //   issue.key,
-          //   'item.to is ',
-          //   item.to,
-          //   ' and item.field is ',
-          //   item.field
-          // );
           wasAddedBeforeStart = true;
         } else {
-          // console.log(`first if - ${parseISO(history.created)} is not before ${startDate}`);
         }
       }
       if (wasAddedBeforeStart && item.from === `${sprint.id}`) {

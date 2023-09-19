@@ -1,4 +1,4 @@
-import { isBefore, isAfter, isEqual, parseISO, differenceInMinutes, max, min } from 'date-fns';
+import { isBefore, isAfter, isEqual, parseISO, max, min, differenceInMilliseconds } from 'date-fns';
 
 import {
   RecurringSchedule,
@@ -35,7 +35,7 @@ function calculateMinutesInEvent(
   const overlapStart = max([eventStart, parseISO(startDate)]);
   const overlapEnd = min([eventEnd, parseISO(endDate)]);
 
-  return differenceInMinutes(overlapEnd, overlapStart);
+  return differenceInMilliseconds(overlapEnd, overlapStart);
 }
 
 // Function to expand recurring events into multiple single events
@@ -75,7 +75,7 @@ function convertScheduleToRRule(schedule: RecurringSchedule): RRule {
 export function convertRecurringEventIntoSingle(recurring: RecurringSchedule): SingleSchedule[] {
   const rrule = convertScheduleToRRule(recurring);
   const occurrences = rrule.all();
-  console.log(occurrences);
+  // console.log(occurrences);
   return occurrences.map((occurrence, index) => ({
     id: (Number(recurring.id) + index).toString(),
     memberId: recurring.memberId,

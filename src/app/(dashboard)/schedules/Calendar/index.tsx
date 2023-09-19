@@ -33,7 +33,6 @@ async function handleAddOrEditSchedule(
   accessToken: string,
   cloudId: string
 ) {
-  console.log('after', schedule);
   if (selectedScheduleId) {
     await handleEditSchedule(schedule, selectedScheduleId, accessToken, cloudId, setSchedules);
   } else {
