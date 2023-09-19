@@ -88,17 +88,18 @@ function isWithinRecurringSchedule(date: Date, schedule: RecurringSchedule): boo
   return isInTheInterval && isInTheWeek;
 }
 
-function parseDuration(duration: string): number {
-  const [hours, minutes] = duration.split(':').map(Number);
-  return (hours * 60 * 60 + minutes * 60) * 1000;
-}
-
 function isWithinSchedule(date: Date, schedule: Schedule, debug = false): boolean {
   if (schedule.start !== null) {
-    return isWithinInterval(date, {
+    console.log('date', date);
+    console.log('start', parseISO(schedule.start));
+    console.log('end', parseISO(schedule.end));
+    const a = isWithinInterval(date, {
       start: parseISO(schedule.start),
       end: parseISO(schedule.end),
     });
+
+    console.log('a', a);
+    return a;
 
     // return isWithinSingleSchedule(date, schedule);
   } else {
@@ -153,14 +154,20 @@ export function calculateTimeInMilliseconds(
 ): number {
   let totalMilliseconds = 0;
 
+  console.log('taskStartedAt', taskStartedAt);
+  console.log('taskEndedAt', taskEndedAt);
+
   const intervalOfTaskDuration = eachDayOfInterval({ start: taskStartedAt, end: taskEndedAt });
+  console.log('intervalOfTaskDuration', intervalOfTaskDuration);
 
   intervalOfTaskDuration.forEach((day) => {
+    console.log('day', day);
     schedules.forEach((schedule) => {
       if (isWithinSchedule(day, schedule, debug)) {
+        console.log('yes');
         const [startOfWork, endOfWork] = getStartAndEndOfWork(day, schedule);
-
         if (isSameDay(day, taskStartedAt)) {
+          console.log('first if');
           if (taskStartedAt < endOfWork) {
             const difference = differenceInMilliseconds(
               Math.min(endOfWork.getTime(), taskEndedAt.getTime()),

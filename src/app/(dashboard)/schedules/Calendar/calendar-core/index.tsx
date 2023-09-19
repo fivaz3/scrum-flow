@@ -27,11 +27,13 @@ export type RecurringEvent = {
   };
 };
 
+export type Event = SingleEvent | RecurringEvent;
+
 function convertScheduleToEvent(
   schedules: Schedule[],
   members: Member[],
   selectedMemberIds: string[]
-): Array<SingleEvent | RecurringEvent> {
+): Event[] {
   // return [
   //   // Unique event
   //   {
