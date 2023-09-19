@@ -2,6 +2,7 @@ import {
   addDays,
   addHours,
   addMinutes,
+  differenceInDays,
   differenceInMinutes,
   format,
   formatISO,
@@ -11,9 +12,87 @@ import {
 import {
   RecurringSchedule,
   Schedule,
-  ScheduleIn,
   SingleSchedule,
 } from '@/app/(dashboard)/schedules/calendar/schedule.service';
+import { z } from 'zod';
+
+const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+const dateErrorMessage = 'Format de date invalide. Le format attendu est yyyy-MM-dd';
+const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)(:[0-5]\d)?$/;
+const timeErrorMessage = "Format d'heure invalide. Le format attendu est hh:mm ou hh:mm:ss";
+
+export const ScheduleInSchema = z
+  .object({
+    memberId: z.string(),
+    startDate: z.string().regex(dateRegex, dateErrorMessage),
+    startTime: z.string().regex(timeRegex, timeErrorMessage),
+    endDistance: z.number(),
+    endTime: z.string(),
+    isRecurring: z.boolean(),
+    byweekday: z.array(z.string()),
+    until: z.string(),
+  })
+  .refine(
+    ({ isRecurring, byweekday }) => {
+      if (!isRecurring) {
+        return true;
+      }
+
+      return byweekday.length !== 0;
+    },
+    {
+      message: 'Il faut avoir sélectionné au moins 1 jour de la semaine',
+      path: ['byweekday'],
+    }
+  )
+  .refine(
+    ({ isRecurring, until }) => {
+      if (!isRecurring) {
+        return true;
+      }
+
+      return dateRegex.test(until);
+    },
+    {
+      message: dateErrorMessage,
+      path: ['until'],
+    }
+  )
+  .refine(
+    ({ startDate, startTime, endDistance, endTime }) => {
+      const start = convertToISODate(startDate, startTime);
+      const end = getEndDate(startDate, endDistance, endTime);
+      return start < end;
+    },
+    {
+      message: 'Le début doit être avant la fin',
+      path: ['endDistance'],
+    }
+  )
+  .refine(
+    ({ isRecurring, startDate, startTime, until }) => {
+      if (!isRecurring) {
+        return true;
+      }
+
+      const start = convertToISODate(startDate, startTime);
+      const end = new Date(until);
+      return start < end;
+    },
+    {
+      message: 'La recurrence ne peut pas finir avant la date début',
+      path: ['until'],
+    }
+  );
+
+export type ScheduleIn = z.infer<typeof ScheduleInSchema>;
+
+function getEndDate(startDate: string, endDate: number, endTime: string) {
+  const startDateObject = parseISO(startDate);
+  const endDateObject = addDays(startDateObject, endDate);
+  const [hours, minutes] = endTime.split(':').map(Number);
+  return set(endDateObject, { hours: hours, minutes: minutes });
+}
 
 export function convertToISODate(dateString: string, timeString: string): Date {
   const date = parseISO(dateString);
@@ -29,11 +108,11 @@ export function convertToISOString(dateString: string, timeString: string): stri
 function getDuration(
   startDate: string,
   startTime: string,
-  endDate: string,
+  endDistance: number,
   endTime: string
 ): string {
   const start = convertToISODate(startDate, startTime);
-  const end = convertToISODate(endDate, endTime);
+  const end = getEndDate(startDate, endDistance, endTime);
   const durationInMinutes = differenceInMinutes(end, start);
   const hours = Math.floor(durationInMinutes / 60);
   const minutes = durationInMinutes % 60;
@@ -44,7 +123,7 @@ function convertScheduleInToSingleSchedule(data: ScheduleIn): Omit<SingleSchedul
   return {
     memberId: data.memberId,
     start: convertToISOString(data.startDate, data.startTime),
-    end: convertToISOString(data.endDate, data.endTime),
+    end: getEndDate(data.startDate, data.endDistance, data.endTime).toISOString(),
     duration: null,
     rrule: null,
   };
@@ -55,7 +134,7 @@ function convertScheduleInToRecurringSchedule(data: ScheduleIn): Omit<RecurringS
     memberId: data.memberId,
     start: null,
     end: null,
-    duration: getDuration(data.startDate, data.startTime, data.endDate, data.endTime),
+    duration: getDuration(data.startDate, data.startTime, data.endDistance, data.endTime),
     rrule: {
       freq: 'weekly',
       dtstart: convertToISOString(data.startDate, data.startTime),
@@ -72,16 +151,6 @@ export function convertScheduleInToSchedule(data: ScheduleIn): Omit<Schedule, 'i
     return convertScheduleInToSingleSchedule(data);
   }
 }
-export function dayAfter(date: string) {
-  try {
-    const startDate = new Date(date);
-    const dayAfter = addDays(startDate, 1);
-    return format(dayAfter, 'yyyy-MM-dd');
-  } catch {
-    return '';
-  }
-}
-
 function convertFromISO(dateString: string): [string, string] {
   const date = parseISO(dateString);
   // TODO check if when I format this date to only yyyy-MM-dd and hh:mm I don't lose my timezone
@@ -98,14 +167,22 @@ function getFromDuration(startString: string, duration: string): [string, string
   return [format(endDateTime, 'yyyy-MM-dd'), format(endDateTime, 'HH:mm')];
 }
 
+function getDistance(start: string, end: string): number {
+  const startDate = parseISO(start);
+  const endDate = parseISO(end);
+  return differenceInDays(endDate, startDate);
+}
+
 export function convertSingleScheduleToScheduleIn(schedule: SingleSchedule): ScheduleIn {
   const [startDate, startTime] = convertFromISO(schedule.start);
   const [endDate, endTime] = convertFromISO(schedule.end);
+  const endDistance = getDistance(startDate, endDate);
+
   return {
     memberId: schedule.memberId,
     startDate,
     startTime,
-    endDate,
+    endDistance,
     endTime,
     isRecurring: false,
     byweekday: [],
@@ -115,11 +192,12 @@ export function convertSingleScheduleToScheduleIn(schedule: SingleSchedule): Sch
 export function convertRecurringScheduleToScheduleIn(schedule: RecurringSchedule): ScheduleIn {
   const [startDate, startTime] = convertFromISO(schedule.rrule.dtstart);
   const [endDate, endTime] = getFromDuration(schedule.rrule.dtstart, schedule.duration);
+  const endDistance = getDistance(startDate, endDate);
   return {
     memberId: schedule.memberId,
     startDate,
     startTime,
-    endDate,
+    endDistance,
     endTime,
     isRecurring: true,
     byweekday: schedule.rrule.byweekday,

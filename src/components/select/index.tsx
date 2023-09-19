@@ -13,14 +13,6 @@ interface SelectProps {
   placeholder?: string;
 }
 
-function getContent(
-  map: Map<string | number, ReactNode>,
-  value: string | number,
-  placeholder: string
-): ReactNode {
-  return value && map.get(value) ? map.get(value) : placeholder;
-}
-
 function getMapValue(children: ReactElement[] | ReactElement): Map<string | number, ReactNode> {
   if (!Array.isArray(children) && children.type === Fragment) {
     return getMapValue(children.props.children);
@@ -54,7 +46,7 @@ export default function Select({
             disabled ? 'bg-gray-50' : 'bg-white',
             'relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
           )}>
-          {getContent(map, value, placeholder)}
+          {map.get(value) || placeholder}
           <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
             <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
           </span>

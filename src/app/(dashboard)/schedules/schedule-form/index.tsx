@@ -6,15 +6,12 @@ import classNames from 'classnames';
 import Select from '@/components/select';
 import SelectItem from '@/components/select-item';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Schedule,
-  ScheduleIn,
-  ScheduleInSchema,
-} from '@/app/(dashboard)/schedules/calendar/schedule.service';
+import { Schedule } from '@/app/(dashboard)/schedules/calendar/schedule.service';
 import {
   convertScheduleInToSchedule,
   convertScheduleToScheduleIn,
-  dayAfter,
+  ScheduleIn,
+  ScheduleInSchema,
   weekDays,
 } from '@/app/(dashboard)/schedules/schedule-form/service';
 
@@ -45,14 +42,13 @@ export default function ScheduleForm({
       memberId: members[0].accountId,
       startDate: format(new Date(), 'yyyy-MM-dd'),
       startTime: '',
-      endDate: format(new Date(), 'yyyy-MM-dd'),
+      endDistance: 0,
       endTime: '',
       isRecurring: false,
       byweekday: [],
       until: '',
     },
   });
-
   const watchStartDate = watch('startDate');
 
   return (
@@ -123,7 +119,7 @@ export default function ScheduleForm({
           <div className="col-span-3">
             <Controller
               control={control}
-              name="endDate"
+              name="endDistance"
               render={({ field: { onChange, value } }) => (
                 <Select
                   value={value}
@@ -131,10 +127,10 @@ export default function ScheduleForm({
                   label="Fin"
                   placeholder="Saississez début"
                   disabled={!watchStartDate}>
-                  <SelectItem key={1} value={watchStartDate}>
+                  <SelectItem key={1} value={0}>
                     Le même jour
                   </SelectItem>
-                  <SelectItem key={2} value={dayAfter(watchStartDate)}>
+                  <SelectItem key={2} value={1}>
                     Le jour suivant
                   </SelectItem>
                 </Select>
@@ -152,7 +148,7 @@ export default function ScheduleForm({
           </div>
         </div>
 
-        {errors.endDate && <p className="text-sm text-red-600">{errors.endDate.message}</p>}
+        {errors.endDistance && <p className="text-sm text-red-600">{errors.endDistance.message}</p>}
         {errors.endTime && <p className="text-sm text-red-600">{errors.endTime.message}</p>}
 
         <div className={classNames('flex flex-col gap-3', { hidden: !watch('isRecurring') })}>
