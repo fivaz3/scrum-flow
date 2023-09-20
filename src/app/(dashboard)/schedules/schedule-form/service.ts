@@ -87,9 +87,9 @@ export const ScheduleInSchema = z
 
 export type ScheduleIn = z.infer<typeof ScheduleInSchema>;
 
-function getEndDate(startDate: string, endDate: number, endTime: string) {
+function getEndDate(startDate: string, endDuration: number, endTime: string) {
   const startDateObject = parseISO(startDate);
-  const endDateObject = addDays(startDateObject, endDate);
+  const endDateObject = addDays(startDateObject, endDuration);
   const [hours, minutes] = endTime.split(':').map(Number);
   return set(endDateObject, { hours: hours, minutes: minutes });
 }
@@ -152,7 +152,12 @@ export function convertScheduleInToSchedule(data: ScheduleIn): Omit<Schedule, 'i
   }
 }
 function convertFromISO(dateString: string): [string, string] {
+  console.log('dateString', dateString);
   const date = parseISO(dateString);
+  console.log('datetime format in date and time', [
+    format(date, 'yyyy-MM-dd'),
+    format(date, 'HH:mm'),
+  ]);
   // TODO check if when I format this date to only yyyy-MM-dd and hh:mm I don't lose my timezone
   return [format(date, 'yyyy-MM-dd'), format(date, 'HH:mm')];
 }

@@ -29,6 +29,7 @@ export const Primary: Story = {
         }}
         onDelete={() => Promise.resolve(console.log('schedule deleted'))}
         selectedSchedule={null}
+        isLoading={null}
       />
     ),
   },

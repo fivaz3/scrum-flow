@@ -30,9 +30,11 @@ async function handleAddOrEditSchedule(
   setSelectedSchedule: Dispatch<SetStateAction<Schedule | null>>,
   setSchedules: Dispatch<SetStateAction<Schedule[]>>,
   setShowDialog: Dispatch<SetStateAction<boolean>>,
+  setFormLoading: Dispatch<SetStateAction<'delete' | 'save' | null>>,
   accessToken: string,
   cloudId: string
 ) {
+  setFormLoading('save');
   if (selectedScheduleId) {
     await handleEditSchedule(schedule, selectedScheduleId, accessToken, cloudId, setSchedules);
   } else {
@@ -40,6 +42,7 @@ async function handleAddOrEditSchedule(
   }
   setSelectedSchedule(null);
   setShowDialog(false);
+  setFormLoading(null);
 }
 
 async function handleAddSchedule(
@@ -67,19 +70,21 @@ async function handleEditSchedule(
 
 async function handleDeleteSchedule(
   selectedScheduleId: string | undefined,
-  accessToken: string,
-  cloudId: string,
+  setSelectedSchedule: Dispatch<SetStateAction<Schedule | null>>,
   setSchedules: Dispatch<SetStateAction<Schedule[]>>,
-  schedules: Schedule[],
   setShowDialog: Dispatch<SetStateAction<boolean>>,
-  setSelectedSchedule: Dispatch<SetStateAction<Schedule | null>>
+  setFormLoading: Dispatch<SetStateAction<'delete' | 'save' | null>>,
+  accessToken: string,
+  cloudId: string
 ) {
+  setFormLoading('delete');
   if (selectedScheduleId) {
     await deleteSchedule(selectedScheduleId, accessToken, cloudId);
-    setSchedules(schedules.filter((schedule) => schedule.id !== selectedScheduleId));
+    setSchedules((schedules) => schedules.filter((schedule) => schedule.id !== selectedScheduleId));
     setShowDialog(false);
     setSelectedSchedule(null);
   }
+  setFormLoading(null);
 }
 
 interface CalendarProps {
@@ -95,6 +100,7 @@ export default function Calendar({
   accessToken,
   cloudId,
 }: CalendarProps) {
+  const [isFormLoading, setFormLoading] = useState<'delete' | 'save' | null>(null);
   const [schedules, setSchedules] = useState<Schedule[]>(currentSchedules);
 
   const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>(
@@ -133,6 +139,7 @@ export default function Calendar({
         <ScheduleForm
           members={members}
           selectedSchedule={selectedSchedule}
+          isLoading={isFormLoading}
           onSubmit={(data) =>
             handleAddOrEditSchedule(
               data,
@@ -140,6 +147,7 @@ export default function Calendar({
               setSelectedSchedule,
               setSchedules,
               setShowDialog,
+              setFormLoading,
               accessToken,
               cloudId
             )
@@ -147,12 +155,12 @@ export default function Calendar({
           onDelete={() =>
             handleDeleteSchedule(
               selectedSchedule?.id,
-              accessToken,
-              cloudId,
+              setSelectedSchedule,
               setSchedules,
-              schedules,
               setShowDialog,
-              setSelectedSchedule
+              setFormLoading,
+              accessToken,
+              cloudId
             )
           }
         />

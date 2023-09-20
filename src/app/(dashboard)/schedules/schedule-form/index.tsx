@@ -14,12 +14,14 @@ import {
   ScheduleInSchema,
   weekDays,
 } from '@/app/(dashboard)/schedules/schedule-form/service';
+import { ArrowPathIcon } from '@heroicons/react/24/solid';
 
 interface ScheduleFormProps {
   members: Member[];
   selectedSchedule: Schedule | null;
   onSubmit: (_data: Omit<Schedule, 'id'>) => Promise<void>;
   onDelete: () => Promise<void>;
+  isLoading: 'delete' | 'save' | null;
 }
 
 export default function ScheduleForm({
@@ -27,6 +29,7 @@ export default function ScheduleForm({
   selectedSchedule,
   onSubmit,
   onDelete,
+  isLoading,
 }: ScheduleFormProps) {
   const scheduleIn = convertScheduleToScheduleIn(selectedSchedule);
 
@@ -195,14 +198,30 @@ export default function ScheduleForm({
             <button
               type="button"
               onClick={() => onDelete()}
-              className="rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:w-auto sm:text-sm">
+              disabled={!!isLoading}
+              className={classNames(
+                isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-700',
+                isLoading === 'delete'
+                  ? 'ps-3 pe-4 outline-none ring-2 ring-offset-2 ring-red-500'
+                  : 'ps-4 pe-4',
+                'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 text-white flex justify-center gap-1 py-2 rounded-md border border-transparent shadow-sm text-base font-medium sm:w-auto sm:text-sm'
+              )}>
+              {isLoading === 'delete' && <ArrowPathIcon className="animate-spin h-5 w-5" />}
               Supprimer
             </button>
           )}
         </div>
         <button
           type="submit"
-          className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          disabled={!!isLoading}
+          className={classNames(
+            isLoading ? 'bg-indigo-500' : 'bg-indigo-600 hover:bg-indigo-700',
+            isLoading === 'save'
+              ? 'ps-3 pe-4 outline-none ring-2 ring-offset-2 ring-indigo-500'
+              : 'ps-4 pe-4',
+            'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-white flex justify-center gap-1 py-2 rounded-md border border-transparent shadow-sm text-base font-medium sm:w-auto sm:text-sm'
+          )}>
+          {isLoading === 'save' && <ArrowPathIcon className="animate-spin h-5 w-5" />}
           {scheduleIn ? 'Modifier' : 'Ajouter'}
         </button>
       </div>

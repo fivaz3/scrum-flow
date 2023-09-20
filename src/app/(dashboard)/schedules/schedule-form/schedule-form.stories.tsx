@@ -25,6 +25,7 @@ export const Add: Story = {
     },
     onDelete: () => Promise.resolve(console.log('schedule deleted')),
     selectedSchedule: null,
+    isLoading: 'save',
   },
 };
 
@@ -37,5 +38,6 @@ export const Edit: Story = {
     },
     onDelete: () => Promise.resolve(console.log('schedule deleted')),
     selectedSchedule: seedSchedules[0],
+    isLoading: 'delete',
   },
 };
