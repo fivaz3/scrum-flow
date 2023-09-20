@@ -8,6 +8,7 @@ import {
 import { getIssuesFromBeforeSprintStart } from '@/app/(dashboard)/report/sprint-effort';
 import { isBefore, parseISO } from 'date-fns';
 import { addTimeSpentToIssues } from '@/lib/issue/issue-time-spent.service';
+import { Board } from '@/lib/board.service';
 
 export type SprintBreakThrough = ClosedSprint & {
   estimatedIssues: IssueWithTimeSpent[];
@@ -53,29 +54,34 @@ async function getActualIssuesFromClosedSprint(
 
 async function getClosedSprintBreakThrough(
   sprint: ClosedSprint,
-  boardId: number,
+  board: Board,
   accessToken: string,
   cloudId: string
 ): Promise<SprintBreakThrough> {
   const estimatedIssues = await getIssuesFromBeforeSprintStart(
-    boardId,
+    board.id,
     sprint,
     accessToken,
     cloudId
   );
 
   const estimatedIssuesWithTimeSpent = await addTimeSpentToIssues(
-    boardId,
+    board,
     sprint,
     estimatedIssues,
     accessToken,
     cloudId
   );
 
-  const actualIssues = await getActualIssuesFromClosedSprint(boardId, sprint, accessToken, cloudId);
+  const actualIssues = await getActualIssuesFromClosedSprint(
+    board.id,
+    sprint,
+    accessToken,
+    cloudId
+  );
 
   const actualIssuesWithTimeSpent = await addTimeSpentToIssues(
-    boardId,
+    board,
     sprint,
     actualIssues,
     accessToken,
@@ -91,11 +97,11 @@ async function getClosedSprintBreakThrough(
 
 export async function getClosedSprintsBreakThrough(
   sprints: ClosedSprint[],
-  boardId: number,
+  board: Board,
   accessToken: string,
   cloudId: string
 ): Promise<SprintBreakThrough[]> {
   return Promise.all(
-    sprints.map((sprint) => getClosedSprintBreakThrough(sprint, boardId, accessToken, cloudId))
+    sprints.map((sprint) => getClosedSprintBreakThrough(sprint, board, accessToken, cloudId))
   );
 }

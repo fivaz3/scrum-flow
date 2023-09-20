@@ -2,7 +2,7 @@ import { Issue, IssueWithTimeSpent } from '@/lib/issue/issue.service';
 import { Sprint } from '@/lib/sprint.service';
 import { calculateAccuracy, getSumOfEstimations } from '@/app/(dashboard)/report/sprint-effort';
 import { differenceInMilliseconds, parseISO } from 'date-fns';
-import { formatMilliseconds } from '@/lib/issue/issue-time-spent.service';
+import { formatMilliseconds } from '@/lib/formatters';
 
 function getEstimationInTime(
   issues: Issue[],

@@ -152,13 +152,7 @@ export function convertScheduleInToSchedule(data: ScheduleIn): Omit<Schedule, 'i
   }
 }
 function convertFromISO(dateString: string): [string, string] {
-  console.log('dateString', dateString);
   const date = parseISO(dateString);
-  console.log('datetime format in date and time', [
-    format(date, 'yyyy-MM-dd'),
-    format(date, 'HH:mm'),
-  ]);
-  // TODO check if when I format this date to only yyyy-MM-dd and hh:mm I don't lose my timezone
   return [format(date, 'yyyy-MM-dd'), format(date, 'HH:mm')];
 }
 
@@ -168,7 +162,6 @@ function getFromDuration(startString: string, duration: string): [string, string
 
   const endDate = addHours(start, hours);
   const endDateTime = addMinutes(endDate, minutes);
-  // TODO check if when I format this date to only yyyy-MM-dd and hh:mm I don't lose my timezone
   return [format(endDateTime, 'yyyy-MM-dd'), format(endDateTime, 'HH:mm')];
 }
 

@@ -14,7 +14,6 @@ const preview: Preview = {
     },
   },
 
-  // TODO fix this type error later
   decorators: [
     // Adds theme switching support.
     // NOTE: requires setting "darkMode" to "class" in your tailwind config

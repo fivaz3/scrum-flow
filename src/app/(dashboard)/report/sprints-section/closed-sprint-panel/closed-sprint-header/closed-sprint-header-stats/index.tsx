@@ -1,5 +1,6 @@
 import { calculateAccuracy, getSumOfEstimations } from '@/app/(dashboard)/report/sprint-effort';
 import { SprintBreakThrough } from '@/app/(dashboard)/report/sprints-section/service';
+import { getTimeByPoints } from '@/app/(dashboard)/report/sprints-section/closed-sprint-panel/closed-sprint-header/closed-sprint-header-stats/service';
 
 interface ClosedSprintHeaderStatsProps {
   sprint: SprintBreakThrough;
@@ -18,8 +19,7 @@ export default function ClosedSprintHeaderStats({ sprint }: ClosedSprintHeaderSt
         </span>
       </div>
       <div>précision: {calculateAccuracy(estimatedEffort, actualEffort)} %</div>
-      {/*TODO add this later*/}
-      {/*<div>temps par points {getTimeByPoints(actualEffort, sprint)}</div>*/}
+      <div>temps par points {getTimeByPoints(actualEffort, sprint)}</div>
     </div>
   );
 }

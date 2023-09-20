@@ -11,8 +11,8 @@ import {
   Schedule,
 } from '@/app/(dashboard)/schedules/calendar/schedule.service';
 import { seedMembers } from '@/seeds/member';
-import { formatDuration, intervalToDuration, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { parseISO } from 'date-fns';
+import { formatMilliseconds } from '@/lib/formatters';
 
 test('getTimeInProgressInSprint', () => {
   const issue38 = {
@@ -413,9 +413,7 @@ test('getTimeInProgressInSprint', () => {
     goal: '',
   };
 
-  const duration = intervalToDuration({ start: 0, end: 4663529 });
-
-  console.log(formatDuration(duration, { format: ['hours', 'minutes'], locale: fr }));
+  console.log(formatMilliseconds(4663529));
 
   const result = getTimeInProgressInSprint(sprint, issue38, schedules, inProgressColumns);
 

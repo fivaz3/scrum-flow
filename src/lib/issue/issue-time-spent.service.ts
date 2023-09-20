@@ -12,18 +12,10 @@ import {
   Schedule,
   SingleSchedule,
 } from '@/app/(dashboard)/schedules/calendar/schedule.service';
-import {
-  differenceInMilliseconds,
-  intervalToDuration,
-  isAfter,
-  isBefore,
-  isEqual,
-  max,
-  min,
-  parseISO,
-} from 'date-fns';
+import { differenceInMilliseconds, isAfter, isBefore, isEqual, max, min, parseISO } from 'date-fns';
 import { getInProgressStatuses } from '@/lib/project.service';
 import { Sprint } from '@/lib/sprint.service';
+import { Board } from '@/lib/board.service';
 
 function hasMovedToInProgress(
   item: IssueWithChangeLog['changelog']['histories'][0]['items'][0],
@@ -145,7 +137,7 @@ export function getTimeInProgress(
 }
 
 export async function addTimeSpentToIssues(
-  boardId: number,
+  board: Board,
   sprint: Sprint,
   issues: IssueWithChangeLog[],
   accessToken: string,
@@ -153,7 +145,11 @@ export async function addTimeSpentToIssues(
 ) {
   const schedules = await getSchedules(accessToken, cloudId);
 
-  const inProgressColumns = await getInProgressStatuses(accessToken, cloudId);
+  const inProgressColumns = await getInProgressStatuses(
+    board.location.projectId,
+    accessToken,
+    cloudId
+  );
 
   return issues.map((issue) => ({
     ...issue,
@@ -162,38 +158,14 @@ export async function addTimeSpentToIssues(
 }
 
 export async function getIssuesFromSprintWithTimeSpent(
-  boardId: number,
+  board: Board,
   sprint: Sprint,
   accessToken: string,
   cloudId: string
 ): Promise<IssueWithTimeSpent[]> {
-  const issues = await getIssuesFromSprintWithChangelog(boardId, sprint.id, accessToken, cloudId);
+  const issues = await getIssuesFromSprintWithChangelog(board.id, sprint.id, accessToken, cloudId);
 
-  return addTimeSpentToIssues(boardId, sprint, issues, accessToken, cloudId);
-}
-
-export function formatMilliseconds(milliseconds: number): string {
-  if (milliseconds < 1) {
-    return '0 min';
-  }
-
-  const duration = intervalToDuration({ start: 0, end: milliseconds });
-
-  let formattedDuration = '';
-
-  if (duration.days) {
-    formattedDuration += `${duration.days} j `;
-  }
-
-  if (duration.hours) {
-    formattedDuration += `${duration.hours} h `;
-  }
-
-  if (duration.minutes) {
-    formattedDuration += `${duration.minutes} min`;
-  }
-
-  return formattedDuration.trim();
+  return addTimeSpentToIssues(board, sprint, issues, accessToken, cloudId);
 }
 
 export function doEventsOverlap(schedule: SingleSchedule, startDate: Date, endDate: Date): boolean {

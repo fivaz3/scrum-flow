@@ -1,6 +1,6 @@
 import { IssueWithTimeSpent } from '@/lib/issue/issue.service';
-import { formatMilliseconds } from '@/lib/issue/issue-time-spent.service';
 import React from 'react';
+import { formatMilliseconds } from '@/lib/formatters';
 
 interface IssueTableProps {
   label: string;

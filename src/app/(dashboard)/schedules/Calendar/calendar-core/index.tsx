@@ -34,32 +34,12 @@ function convertScheduleToEvent(
   members: Member[],
   selectedMemberIds: string[]
 ): Event[] {
-  // return [
-  //   // Unique event
-  //   {
-  //     title: 'Unique Event',
-  //     start: '2023-09-17T07:00:00.004Z',
-  //     end: '2023-09-17T10:00:00.004Z',
-  //   },
-  //   {
-  //     title: 'my recurring event',
-  //     duration: '03:00',
-  //     rrule: {
-  //       freq: 'weekly',
-  //       byweekday: ['mo', 'tu', 'we', 'th', 'fr'],
-  //       dtstart: '2023-09-17T07:00:00.004Z', // will also accept '20120201T103000'
-  //       until: '2023-09-30', // will also accept '20120201'
-  //     },
-  //   },
-  // ];
-
   const selectedSchedules = schedules.filter((schedule) =>
     selectedMemberIds.includes(schedule.memberId)
   );
 
   return selectedSchedules.map((schedule) => {
     const member = members.find((member) => member.accountId === schedule.memberId);
-    // TODO make this member.displayName replacement be added in the back
     return {
       ...schedule,
       title: member?.displayName || 'member supprimé',

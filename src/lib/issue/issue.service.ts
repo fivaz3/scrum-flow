@@ -5,9 +5,7 @@ import { getBoardConfiguration } from '@/lib/board.service';
 import { Sprint } from '@/lib/sprint.service';
 import { isAfter, isBefore, parseISO } from 'date-fns';
 
-// TODO add a eslint plugin that will fix my imports merging them possible
 // // TODO add  pagination
-// // TODO these issues have too many useless attributes, I should request only those I need
 
 export const IssueSchema = z.object({
   id: z.string(),

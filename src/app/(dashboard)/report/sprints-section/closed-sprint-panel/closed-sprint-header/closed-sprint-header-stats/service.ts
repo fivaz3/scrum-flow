@@ -1,6 +1,6 @@
 import { Sprint } from '@/lib/sprint.service';
-import { differenceInMilliseconds, formatDuration, intervalToDuration, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { differenceInMilliseconds, intervalToDuration, parseISO } from 'date-fns';
+import { formatMilliseconds, myFormatDuration } from '@/lib/formatters';
 
 export function formatSprintDuration(sprint: Sprint): string {
   const duration = intervalToDuration({
@@ -14,7 +14,7 @@ export function formatSprintDuration(sprint: Sprint): string {
     duration.minutes = undefined;
   }
 
-  return formatDuration(duration, { format: ['days', 'hours', 'minutes'], locale: fr });
+  return myFormatDuration(duration);
 }
 
 export function getTimeByPoints(points: number, sprint: Sprint): string {
@@ -29,7 +29,5 @@ export function getTimeByPoints(points: number, sprint: Sprint): string {
 
   const pointDurationInMilliseconds = sprintDurationInMilliseconds / points;
 
-  const pointDuration = intervalToDuration({ start: 0, end: pointDurationInMilliseconds });
-
-  return formatDuration(pointDuration, { format: ['days', 'hours', 'minutes'], locale: fr });
+  return formatMilliseconds(pointDurationInMilliseconds);
 }

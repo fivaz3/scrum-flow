@@ -38,7 +38,7 @@ export default async function SprintReportPage({ searchParams }: PreviousSprintP
 
       <Suspense fallback={<SprintsSectionSkeleton />}>
         <SprintsSection
-          boardId={board.id}
+          board={board}
           sprints={sprints}
           accessToken={accessToken}
           cloudId={cloudId}

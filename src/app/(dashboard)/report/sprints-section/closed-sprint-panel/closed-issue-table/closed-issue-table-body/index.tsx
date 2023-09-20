@@ -1,4 +1,3 @@
-import { formatMilliseconds } from '@/lib/issue/issue-time-spent.service';
 import {
   getEstimationInTimeFormatted,
   getIssueAccuracy,
@@ -7,6 +6,7 @@ import { SprintBreakThrough } from '@/app/(dashboard)/report/sprints-section/ser
 import { CalendarIcon } from '@heroicons/react/24/outline';
 import classNames from 'classnames';
 import { CheckIcon } from '@heroicons/react/24/solid';
+import { formatMilliseconds } from '@/lib/formatters';
 
 type IssueBreakThrough = SprintBreakThrough['actualIssues'][number] & {
   isEstimated: boolean;

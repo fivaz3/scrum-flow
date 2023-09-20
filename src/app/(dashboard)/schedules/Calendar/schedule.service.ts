@@ -86,7 +86,6 @@ export function getMemberSchedule(issue: Issue, schedules: Schedule[]): Schedule
 }
 
 function convertScheduleToRRule(schedule: RecurringSchedule): RRule {
-  // TODO later const DaySchema = z.enum(['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su']); in zod Schema
   const dayToNumber: any = { mo: 0, tu: 1, we: 2, th: 3, fr: 4, sa: 5, su: 6 } as const;
   const numbers: number[] = schedule.rrule.byweekday.map((day) => dayToNumber[day]);
 
