@@ -4,10 +4,10 @@ import { isAfter, isBefore, parseISO } from 'date-fns';
 import {
   getIssuesFromSprintWithChangelog,
   getIssuesWithChangelog,
+  getStatusHistory,
   Issue,
   IssueWithChangeLog,
 } from '@/lib/issue/issue.service';
-import { getIssuesFromSprintWithTimeSpent } from '@/lib/issue/issue-time-spent.service';
 
 function getSprintHistory(histories: IssueWithChangeLog['changelog']['histories']) {
   // sort histories by date
@@ -25,16 +25,17 @@ function getSprintHistory(histories: IssueWithChangeLog['changelog']['histories'
 }
 
 function wasNotAddedAfterSprintStart(issue: IssueWithChangeLog, sprint: Sprint): boolean {
-  const historiesOfStatus = getSprintHistory(issue.changelog.histories);
+  const historiesOfSprint = getSprintHistory(issue.changelog.histories);
 
-  const startDate = parseISO(sprint.startDate);
+  const sprintStart = parseISO(sprint.startDate);
 
   let wasNotAddedAfterStart = true;
 
-  for (const history of historiesOfStatus) {
+  for (const history of historiesOfSprint) {
     for (const item of history.items) {
       if (item.to === `${sprint.id}`) {
-        if (isAfter(parseISO(history.created), startDate)) {
+        const issueAddedToSprint = parseISO(history.created);
+        if (isAfter(issueAddedToSprint, sprintStart)) {
           wasNotAddedAfterStart = false;
         }
       }
@@ -61,39 +62,30 @@ async function getIssuesWereNotAddedAfterSprintStart(
 }
 
 function wasAddedBeforeSprintStart(issue: IssueWithChangeLog, sprint: Sprint): boolean {
-  const historiesOfStatus = getSprintHistory(issue.changelog.histories);
+  const historiesOfSprint = getSprintHistory(issue.changelog.histories);
 
-  const startDate = parseISO(sprint.startDate);
+  const sprintStart = parseISO(sprint.startDate);
 
   let wasAddedBeforeStart = false;
 
-  for (const history of historiesOfStatus) {
+  for (const history of historiesOfSprint) {
     for (const item of history.items) {
       if (item.to === `${sprint.id}`) {
-        if (isBefore(parseISO(history.created), startDate)) {
+        const issueAddedToSprint = parseISO(history.created);
+        if (isBefore(issueAddedToSprint, sprintStart)) {
           wasAddedBeforeStart = true;
-        } else {
         }
       }
       if (wasAddedBeforeStart && item.from === `${sprint.id}`) {
-        if (isBefore(parseISO(history.created), startDate)) {
-          // console.log(`second if - ${parseISO(history.created)} is before ${startDate}`);
+        const issueLeftSprint = parseISO(history.created);
+        if (isBefore(issueLeftSprint, sprintStart)) {
           wasAddedBeforeStart = false;
-        } else {
-          // console.log(`second if - ${parseISO(history.created)} is not before ${startDate}`);
         }
       }
     }
   }
 
   return wasAddedBeforeStart;
-}
-
-async function filterIssuesAddedBeforeSprintStart(
-  issues: IssueWithChangeLog[],
-  sprint: Sprint
-): Promise<IssueWithChangeLog[]> {
-  return issues.filter((issue) => wasAddedBeforeSprintStart(issue, sprint));
 }
 
 async function getIssuesAddedBeforeSprintStart(
@@ -103,7 +95,7 @@ async function getIssuesAddedBeforeSprintStart(
   cloudId: string
 ): Promise<IssueWithChangeLog[]> {
   const issues = await getIssuesWithChangelog(boardId, accessToken, cloudId);
-  return await filterIssuesAddedBeforeSprintStart(issues, sprint);
+  return issues.filter((issue) => wasAddedBeforeSprintStart(issue, sprint));
 }
 
 export async function getIssuesFromBeforeSprintStart(
@@ -119,13 +111,21 @@ export async function getIssuesFromBeforeSprintStart(
 
   const mergedList: IssueWithChangeLog[] = [...issuesWereNotAddedAfterSprintStart];
 
-  issuesAddedBeforeSprintStart.forEach((item2) => {
-    if (!issuesWereNotAddedAfterSprintStart.some((item1) => item1.id === item2.id)) {
-      mergedList.push(item2);
+  issuesAddedBeforeSprintStart.forEach((issueAddedBefore) => {
+    if (
+      !issuesWereNotAddedAfterSprintStart.some(
+        (issueNotAddedAfter) => issueNotAddedAfter.id === issueAddedBefore.id
+      )
+    ) {
+      mergedList.push(issueAddedBefore);
     }
   });
 
   return mergedList;
+}
+
+export function getSumOfEstimations(issues: Issue[]) {
+  return issues.reduce((total, issue) => total + (issue.estimation || 0), 0);
 }
 
 export async function getEstimatedEffort(
@@ -136,12 +136,33 @@ export async function getEstimatedEffort(
 ): Promise<number> {
   const issues = await getIssuesFromBeforeSprintStart(boardId, sprint, accessToken, cloudId);
 
-  // console.log(
-  //   'estimated issues',
-  //   issues.map((issue) => issue.key)
-  // );
+  return getSumOfEstimations(issues);
+}
 
-  return issues.reduce((total, issue) => total + (issue.estimation || 0), 0);
+function wasIssueDoneBeforeSprintEnd(sprint: Sprint, issue: IssueWithChangeLog): boolean {
+  if (issue.fields.status.statusCategory.name !== 'Done') {
+    return false;
+  }
+
+  const historiesOfStatus = getStatusHistory(issue.changelog.histories);
+
+  const historiesDesc = historiesOfStatus.sort(
+    (a, b) => parseISO(b.created).valueOf() - parseISO(a.created).valueOf()
+  );
+
+  const sprintEnd = parseISO(sprint.endDate);
+
+  for (const history of historiesDesc) {
+    for (const item of history.items) {
+      if (item.toString === 'Done') {
+        const issueWasComplete = parseISO(history.created);
+        return isBefore(issueWasComplete, sprintEnd);
+      }
+    }
+  }
+
+  // fallback, the code shouldn't ever need to come here
+  return true;
 }
 
 export async function getActualEffort(
@@ -150,13 +171,11 @@ export async function getActualEffort(
   accessToken: string,
   cloudId: string
 ): Promise<number> {
-  const issues = await getIssuesFromSprintWithTimeSpent(boardId, sprint.id, accessToken, cloudId);
+  const issues = await getIssuesFromSprintWithChangelog(boardId, sprint.id, accessToken, cloudId);
 
-  return getSumOfEstimations(issues);
-}
+  const issuesDone = issues.filter((issue) => wasIssueDoneBeforeSprintEnd(sprint, issue));
 
-export function getSumOfEstimations(issues: Issue[]) {
-  return issues.reduce((total, issue) => total + (issue.estimation || 0), 0);
+  return getSumOfEstimations(issuesDone);
 }
 
 export type SprintAccuracyChartData = Array<{ precision: number; sprintName: string }>;

@@ -18,6 +18,10 @@ export function formatSprintDuration(sprint: Sprint): string {
 }
 
 export function getTimeByPoints(points: number, sprint: Sprint): string {
+  if (points === 0) {
+    return '0 minutes';
+  }
+
   const sprintDurationInMilliseconds = differenceInMilliseconds(
     parseISO(sprint.endDate),
     parseISO(sprint.startDate)

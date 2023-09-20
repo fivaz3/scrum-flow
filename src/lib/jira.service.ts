@@ -87,6 +87,8 @@ export async function callApi(
   });
 
   if (!res.ok) {
+    console.log('res.status', res.status);
+    console.log('res.statusText', res.statusText);
     console.error(`failed fetch from ${url}`, await res.text());
     throw Error(`Failed to fetch from ${path}`);
   }

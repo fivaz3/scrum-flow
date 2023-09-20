@@ -1,5 +1,6 @@
 import {
   getIssuesFromSprintWithChangelog,
+  getStatusHistory,
   IssueWithChangeLog,
   IssueWithTimeSpent,
 } from '@/lib/issue/issue.service';
@@ -12,21 +13,6 @@ import { formatDuration, intervalToDuration, parseISO } from 'date-fns';
 import { getInProgressStatuses } from '@/lib/project.service';
 import { fr } from 'date-fns/locale';
 import { calculateTotalMinutes, expandRecurringEvents } from '@/lib/issue/test2';
-
-function getStatusHistory(histories: IssueWithChangeLog['changelog']['histories']) {
-  // sort histories by date
-  histories.sort((a, b) => parseISO(a.created).valueOf() - parseISO(b.created).valueOf());
-
-  // remove history that isn't about status
-  const remainingHistories = histories.map((history) => {
-    return {
-      ...history,
-      items: history.items.filter((item) => item.fieldId === 'status'),
-    };
-  });
-
-  return remainingHistories.filter((history) => history.items.length > 0);
-}
 
 function hasMovedToInProgress(
   item: IssueWithChangeLog['changelog']['histories'][0]['items'][0],
@@ -68,19 +54,22 @@ export function getTimeInProgress(
   // console.log(expandedSchedules);
 
   const historiesOfStatus = getStatusHistory(issue.changelog.histories);
+
+  const historiesAsc = historiesOfStatus.sort(
+    (a, b) => parseISO(a.created).valueOf() - parseISO(b.created).valueOf()
+  );
+
   // console.log(JSON.stringify(historiesOfStatus));
   let inProgressStart: Date | null = null;
   let totalTimeSpentInProgressInMilliseconds = 0;
 
-  for (const history of historiesOfStatus) {
+  for (const history of historiesAsc) {
     for (const item of history.items) {
       if (!inProgressStart && hasMovedToInProgress(item, inProgressColumns)) {
         inProgressStart = parseISO(history.created); // start tracking time
-        if (issue.key === 'SCRUM-18') console.log(inProgressStart);
       } else if (inProgressStart && hasLeftInProgress(item, inProgressColumns)) {
         // TODO remove parseISO(toISOString) later
         const inProgressStop = parseISO(history.created);
-        if (issue.key === 'SCRUM-18') console.log(inProgressStop);
         totalTimeSpentInProgressInMilliseconds += calculateTotalMinutes(
           expandedSchedules,
           inProgressStart.toISOString(),

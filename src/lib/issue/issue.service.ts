@@ -130,3 +130,15 @@ export async function getIssuesFromSprintWithChangelog(
 
   return await addEstimationToIssuesWithChangeLog(boardId, issuesPaginated, accessToken, cloudId);
 }
+
+export function getStatusHistory(histories: IssueWithChangeLog['changelog']['histories']) {
+  // remove history that isn't about status
+  const remainingHistories = histories.map((history) => {
+    return {
+      ...history,
+      items: history.items.filter((item) => item.fieldId === 'status'),
+    };
+  });
+
+  return remainingHistories.filter((history) => history.items.length > 0);
+}
