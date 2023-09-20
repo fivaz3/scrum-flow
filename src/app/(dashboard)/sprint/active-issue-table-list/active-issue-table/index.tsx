@@ -42,9 +42,7 @@ export default function ActiveIssueTable({ issues, label }: IssueTableProps) {
                         {issue.key} - {issue.fields.summary}
                       </td>
                       <td className="w-3/12 px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                        {issue.estimation || (
-                          <span className={'text-red-500'}>sans estimation</span>
-                        )}
+                        {issue.estimation || <span className={'text-red-500'}>non estimé</span>}
                       </td>
                       <td className="w-3/12 px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
                         {convertToDuration(issue.timeSpent)}

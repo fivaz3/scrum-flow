@@ -1,14 +1,11 @@
-import { ClosedSprint, Sprint } from '@/lib/sprint.service';
+import { ClosedSprint } from '@/lib/sprint.service';
 import {
   getIssuesFromSprintWithChangelog,
   getStatusHistory,
   IssueWithChangeLog,
   IssueWithTimeSpent,
 } from '@/lib/issue/issue.service';
-import {
-  getIssuesFromBeforeSprintStart,
-  getSumOfEstimations,
-} from '@/app/(dashboard)/report/sprint-effort';
+import { getIssuesFromBeforeSprintStart } from '@/app/(dashboard)/report/sprint-effort';
 import { isBefore, parseISO } from 'date-fns';
 import { addTimeSpentToIssues } from '@/lib/issue/issue-time-spent.service';
 
@@ -17,7 +14,7 @@ export type SprintBreakThrough = ClosedSprint & {
   actualIssues: IssueWithTimeSpent[];
 };
 
-function wasIssueDoneBeforeSprintEnd(sprint: Sprint, issue: IssueWithChangeLog): boolean {
+function wasIssueDoneBeforeSprintEnd(sprint: ClosedSprint, issue: IssueWithChangeLog): boolean {
   if (issue.fields.status.statusCategory.name !== 'Done') {
     return false;
   }
@@ -28,7 +25,7 @@ function wasIssueDoneBeforeSprintEnd(sprint: Sprint, issue: IssueWithChangeLog):
     (a, b) => parseISO(b.created).valueOf() - parseISO(a.created).valueOf()
   );
 
-  const sprintEnd = parseISO(sprint.endDate);
+  const sprintEnd = parseISO(sprint.completeDate);
 
   for (const history of historiesDesc) {
     for (const item of history.items) {
@@ -45,7 +42,7 @@ function wasIssueDoneBeforeSprintEnd(sprint: Sprint, issue: IssueWithChangeLog):
 
 async function getActualIssuesFromClosedSprint(
   boardId: number,
-  sprint: Sprint,
+  sprint: ClosedSprint,
   accessToken: string,
   cloudId: string
 ) {
@@ -101,16 +98,4 @@ export async function getClosedSprintsBreakThrough(
   return Promise.all(
     sprints.map((sprint) => getClosedSprintBreakThrough(sprint, boardId, accessToken, cloudId))
   );
-}
-
-//TODO check if I should move this function later
-export async function getActualEffort(
-  boardId: number,
-  sprint: Sprint,
-  accessToken: string,
-  cloudId: string
-): Promise<number> {
-  const issues = await getActualIssuesFromClosedSprint(boardId, sprint, accessToken, cloudId);
-
-  return getSumOfEstimations(issues);
 }

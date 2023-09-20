@@ -4,7 +4,7 @@ interface SprintAccuracyChartSkeletonProps {}
 
 export default function SprintAccuracyChartSkeleton({}: SprintAccuracyChartSkeletonProps) {
   return (
-    <div className="">
+    <div>
       <div className="p-6 border border-gray-200 rounded-lg shadow">
         <h3 className="text-lg leading-6 font-medium text-gray-900">
           Évolution de la précision des estimations lors des sprints

@@ -18,6 +18,7 @@ export default function ClosedSprintHeaderStats({ sprint }: ClosedSprintHeaderSt
         </span>
       </div>
       <div>précision: {calculateAccuracy(estimatedEffort, actualEffort)} %</div>
+      {/*TODO add this later*/}
       {/*<div>temps par points {getTimeByPoints(actualEffort, sprint)}</div>*/}
     </div>
   );

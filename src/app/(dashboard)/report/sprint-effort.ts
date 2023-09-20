@@ -152,7 +152,7 @@ export function calculateAccuracy(estimated: number, actual: number): number {
   }
   const difference = Math.abs(estimated - actual);
   const accuracy = 1 - difference / Math.max(estimated, actual);
-  const formattedAccuracy = parseFloat(accuracy.toFixed(2));
-  // Return the percentage of accuracy
-  return formattedAccuracy * 100;
+  // get percentage of accuracy
+  const accuracyPercentage = accuracy * 100;
+  return parseFloat(accuracyPercentage.toFixed(2));
 }
