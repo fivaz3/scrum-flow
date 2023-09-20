@@ -5,14 +5,26 @@ import {
   IssueWithTimeSpent,
 } from '@/lib/issue/issue.service';
 import {
+  expandRecurringEvents,
   getMemberSchedule,
   getSchedules,
   Schedule,
+  SingleSchedule,
 } from '@/app/(dashboard)/schedules/calendar/schedule.service';
-import { formatDuration, intervalToDuration, parseISO } from 'date-fns';
+import {
+  differenceInMilliseconds,
+  formatDuration,
+  intervalToDuration,
+  isAfter,
+  isBefore,
+  isEqual,
+  max,
+  min,
+  parseISO,
+} from 'date-fns';
 import { getInProgressStatuses } from '@/lib/project.service';
 import { fr } from 'date-fns/locale';
-import { calculateTotalMinutes, expandRecurringEvents } from '@/lib/issue/test2';
+import { Sprint } from '@/lib/sprint.service';
 
 function hasMovedToInProgress(
   item: IssueWithChangeLog['changelog']['histories'][0]['items'][0],
@@ -38,19 +50,31 @@ function hasLeftInProgress(
   );
 }
 
+export function getTimeInProgressInSprint(
+  sprint: Sprint,
+  issue: IssueWithChangeLog,
+  workingSchedules: Schedule[],
+  inProgressColumns: string[]
+) {
+  if (workingSchedules.length === 0) {
+    return -1;
+  }
+}
+
 export function getTimeInProgress(
   issue: IssueWithChangeLog,
   workingSchedules: Schedule[],
   inProgressColumns: string[]
 ): number {
   if (workingSchedules.length === 0) {
+    // TODO handle this use case in the front
     return -1;
   }
 
   const memberSchedule = getMemberSchedule(issue, workingSchedules);
   // console.log(memberSchedule);
 
-  const expandedSchedules = expandRecurringEvents(memberSchedule);
+  const workingShifts = expandRecurringEvents(memberSchedule);
   // console.log(expandedSchedules);
 
   const historiesOfStatus = getStatusHistory(issue.changelog.histories);
@@ -68,12 +92,11 @@ export function getTimeInProgress(
       if (!inProgressStart && hasMovedToInProgress(item, inProgressColumns)) {
         inProgressStart = parseISO(history.created); // start tracking time
       } else if (inProgressStart && hasLeftInProgress(item, inProgressColumns)) {
-        // TODO remove parseISO(toISOString) later
         const inProgressStop = parseISO(history.created);
         totalTimeSpentInProgressInMilliseconds += calculateTotalMinutes(
-          expandedSchedules,
-          inProgressStart.toISOString(),
-          inProgressStop.toISOString()
+          workingShifts,
+          inProgressStart,
+          inProgressStop
         );
         inProgressStart = null; // stop tracking time
       }
@@ -83,9 +106,9 @@ export function getTimeInProgress(
   if (inProgressStart && issue.fields.status.statusCategory.name === 'In Progress') {
     // issue is still in progress
     totalTimeSpentInProgressInMilliseconds += calculateTotalMinutes(
-      expandedSchedules,
-      inProgressStart.toISOString(),
-      new Date().toISOString()
+      workingShifts,
+      inProgressStart,
+      new Date()
     );
   }
 
@@ -105,6 +128,10 @@ export async function getIssuesFromSprintWithTimeSpent(
     cloudId
   );
 
+  // const issue = issuesWithChangeLog.find((issue) => issue.key === 'SCRUM-38');
+
+  // if (issue) console.log(JSON.stringify(issue));
+
   const schedules = await getSchedules(accessToken, cloudId);
 
   const inProgressColumns = await getInProgressStatuses(accessToken, cloudId);
@@ -115,7 +142,9 @@ export async function getIssuesFromSprintWithTimeSpent(
   }));
 }
 
-export function convertToDuration(milliseconds: number): string {
+export function convertToDuration(milliseconds: number, debug = false): string {
+  if (debug) console.log('milliseconds1', milliseconds);
+
   if (milliseconds < 1) {
     return '0 minutes';
   }
@@ -123,4 +152,46 @@ export function convertToDuration(milliseconds: number): string {
   const duration = intervalToDuration({ start: 0, end: milliseconds });
 
   return formatDuration(duration, { format: ['hours', 'minutes'], locale: fr });
+}
+
+// Function to check if two events overlap
+export function doEventsOverlap(schedule: SingleSchedule, startDate: Date, endDate: Date): boolean {
+  const event1Start = parseISO(schedule.start);
+  const event1End = parseISO(schedule.end);
+  const rangeStart = startDate;
+  const rangeEnd = endDate;
+
+  return (
+    (isBefore(event1Start, rangeEnd) || isEqual(event1Start, rangeEnd)) &&
+    (isAfter(event1End, rangeStart) || isEqual(event1End, rangeStart))
+  );
+}
+
+function calculateMinutesInSchedule(
+  schedule: SingleSchedule,
+  startDate: Date,
+  endDate: Date
+): number {
+  const scheduleStart = parseISO(schedule.start);
+  const scheduleEnd = parseISO(schedule.end);
+  const overlapStart = max([scheduleStart, startDate]);
+  const overlapEnd = min([scheduleEnd, endDate]);
+
+  return differenceInMilliseconds(overlapEnd, overlapStart);
+}
+
+export function calculateTotalMinutes(
+  schedules: SingleSchedule[],
+  startDate: Date,
+  endDate: Date
+): number {
+  let totalMinutes = 0;
+
+  for (const schedule of schedules) {
+    if (doEventsOverlap(schedule, startDate, endDate)) {
+      totalMinutes += calculateMinutesInSchedule(schedule, startDate, endDate);
+    }
+  }
+
+  return totalMinutes;
 }

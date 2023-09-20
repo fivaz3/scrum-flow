@@ -2,6 +2,8 @@ import { deleteBackEnd, getBackEnd, postBackEnd, putBackEnd } from '@/lib/backen
 import { validateData } from '@/lib/jira.service';
 import { z } from 'zod';
 import { Issue } from '@/lib/issue/issue.service';
+import { RRule } from 'rrule';
+import { parseISO } from 'date-fns';
 
 export const SingleScheduleSchema = z.object({
   id: z.string(),
@@ -81,4 +83,53 @@ export function getMemberSchedule(issue: Issue, schedules: Schedule[]): Schedule
   const memberId = issue.fields.assignee?.accountId || schedules[0].memberId;
 
   return schedules.filter((schedule) => schedule.memberId === memberId);
+}
+
+function convertScheduleToRRule(schedule: RecurringSchedule): RRule {
+  // TODO later const DaySchema = z.enum(['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su']); in zod Schema
+  const dayToNumber: any = { mo: 0, tu: 1, we: 2, th: 3, fr: 4, sa: 5, su: 6 } as const;
+  const numbers: number[] = schedule.rrule.byweekday.map((day) => dayToNumber[day]);
+
+  return new RRule({
+    freq: RRule.WEEKLY,
+    byweekday: numbers,
+    // dtstart: datetime(2023, 9, 5, 10, 0),
+    dtstart: parseISO(schedule.rrule.dtstart),
+    // until: datetime(2023, 9, 30),
+    until: parseISO(schedule.rrule.until),
+  });
+}
+
+export function parseDuration(duration: string): number {
+  const [hours, minutes] = duration.split(':').map(Number);
+  return (hours * 60 * 60 + minutes * 60) * 1000;
+}
+
+export function convertRecurringEventIntoSingle(recurring: RecurringSchedule): SingleSchedule[] {
+  const rrule = convertScheduleToRRule(recurring);
+  const occurrences = rrule.all();
+  // console.log(occurrences);
+  return occurrences.map((occurrence, index) => ({
+    id: (Number(recurring.id) + index).toString(),
+    memberId: recurring.memberId,
+    start: occurrence.toISOString(),
+    end: new Date(occurrence.getTime() + parseDuration(recurring.duration)).toISOString(),
+    duration: null,
+    rrule: null,
+  }));
+}
+
+export function expandRecurringEvents(schedules: Schedule[]): SingleSchedule[] {
+  const expandedEvents: SingleSchedule[] = [];
+
+  for (const schedule of schedules) {
+    if (schedule.start === null) {
+      const singleEvents = convertRecurringEventIntoSingle(schedule);
+      expandedEvents.push(...singleEvents);
+    } else {
+      expandedEvents.push(schedule);
+    }
+  }
+
+  return expandedEvents;
 }
