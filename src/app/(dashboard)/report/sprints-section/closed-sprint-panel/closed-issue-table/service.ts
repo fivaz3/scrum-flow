@@ -1,8 +1,8 @@
 import { Issue, IssueWithTimeSpent } from '@/lib/issue/issue.service';
 import { Sprint } from '@/lib/sprint.service';
 import { calculateAccuracy, getSumOfEstimations } from '@/app/(dashboard)/report/sprint-effort';
-import { differenceInMilliseconds, formatDuration, intervalToDuration, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { differenceInMilliseconds, parseISO } from 'date-fns';
+import { formatMilliseconds } from '@/lib/issue/issue-time-spent.service';
 
 function getEstimationInTime(
   issues: Issue[],
@@ -14,6 +14,10 @@ function getEstimationInTime(
   }
 
   const points = getSumOfEstimations(issues);
+
+  if (points === 0) {
+    return 0;
+  }
 
   const sprintDurationInMilliseconds = differenceInMilliseconds(
     parseISO(sprint.endDate),
@@ -31,13 +35,7 @@ export function getEstimationInTimeFormatted(
   sprint: Sprint
 ): string {
   const estimationInTime = getEstimationInTime(issues, estimationInPoints, sprint);
-  return formatEstimationInTime(estimationInTime);
-}
-
-function formatEstimationInTime(estimationInMilliseconds: number): string {
-  const pointDuration = intervalToDuration({ start: 0, end: estimationInMilliseconds });
-
-  return formatDuration(pointDuration, { format: ['days', 'hours', 'minutes'], locale: fr });
+  return formatMilliseconds(estimationInTime);
 }
 
 export function getIssueAccuracy(

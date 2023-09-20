@@ -1,6 +1,6 @@
 import ClosedSprintHeaderSkeleton from '@/app/(dashboard)/report/sprints-section/closed-sprint-panel/closed-sprint-header/closed-sprint-header-skeleton';
+import SprintAccuracyChartSkeleton from './sprint-accuracy-chart-skeleton';
 import ClosedIssueTableSkeleton from '@/app/(dashboard)/report/sprints-section/sprints-section-skeleton/closed-issue-table-skeleton';
-import SprintAccuracyChartSkeleton from '@/app/(dashboard)/report/sprints-section/sprints-section-skeleton/sprint-accuracy-chart-skeleton';
 
 interface SprintsSectionSkeletonProps {}
 

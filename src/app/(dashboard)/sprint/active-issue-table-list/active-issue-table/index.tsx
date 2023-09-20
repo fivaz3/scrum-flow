@@ -1,5 +1,5 @@
 import { IssueWithTimeSpent } from '@/lib/issue/issue.service';
-import { convertToDuration } from '@/lib/issue/issue-time-spent.service';
+import { formatMilliseconds } from '@/lib/issue/issue-time-spent.service';
 import React from 'react';
 
 interface IssueTableProps {
@@ -45,7 +45,7 @@ export default function ActiveIssueTable({ issues, label }: IssueTableProps) {
                         {issue.estimation || <span className={'text-red-500'}>non estimé</span>}
                       </td>
                       <td className="w-3/12 px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                        {convertToDuration(issue.timeSpent)}
+                        {formatMilliseconds(issue.timeSpent)}
                       </td>
                     </tr>
                   ))}

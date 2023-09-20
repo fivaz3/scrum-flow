@@ -1,4 +1,4 @@
-import { convertToDuration } from '@/lib/issue/issue-time-spent.service';
+import { formatMilliseconds } from '@/lib/issue/issue-time-spent.service';
 import {
   getEstimationInTimeFormatted,
   getIssueAccuracy,
@@ -48,7 +48,7 @@ export default function ClosedIssueTableBody({ sprint }: ClosedIssueTableBodyPro
     <tbody className="bg-white divide-y divide-gray-200">
       {issues.map((issue) => (
         <tr key={issue.id}>
-          <td className="w-1/12 px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+          <td className="w-[5%] ps-3 pe-2 py-3 whitespace-nowrap text-sm text-gray-500 text-center">
             <div
               className={classNames(
                 issue.isEstimated ? 'bg-indigo-500' : 'bg-gray-500',
@@ -57,7 +57,7 @@ export default function ClosedIssueTableBody({ sprint }: ClosedIssueTableBodyPro
               <CalendarIcon className="text-white h-5 w-5" />
             </div>
           </td>
-          <td className="w-1/12 px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+          <td className="w-[5%] ps-2 pe-3 py-3 whitespace-nowrap text-sm text-gray-500 text-center">
             <div
               className={classNames(
                 issue.isActual ? 'bg-indigo-500' : 'bg-gray-500',
@@ -66,19 +66,19 @@ export default function ClosedIssueTableBody({ sprint }: ClosedIssueTableBodyPro
               <CheckIcon className="text-white h-5 w-5" />
             </div>
           </td>
-          <td className="w-4/12 max-w-0 px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 capitalize truncate">
+          <td className="w-[45%] max-w-0 px-3 py-3 whitespace-nowrap text-sm font-medium text-gray-900 capitalize truncate">
             {issue.key} - {issue.fields.summary}
           </td>
-          <td className="w-2/12 px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+          <td className="w-[10%] px-3 py-3 whitespace-nowrap text-sm text-gray-500 text-center">
             {issue.estimation || <span className={'text-red-500'}>non estimé</span>}
           </td>
-          <td className="w-2/12 px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+          <td className="w-[15%] px-3 py-3 whitespace-nowrap text-sm text-gray-500 text-center">
             {getEstimationInTimeFormatted(issues, issue.estimation, sprint)}
           </td>
-          <td className="w-2/12 px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-            {convertToDuration(issue.timeSpent)}
+          <td className="w-[15%] px-3 py-3 whitespace-nowrap text-sm text-gray-500 text-center">
+            {formatMilliseconds(issue.timeSpent)}
           </td>
-          <td className="w-1/12 px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+          <td className="w-[5%] px-3 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
             {getIssueAccuracy(issues, issue, sprint)}
           </td>
         </tr>

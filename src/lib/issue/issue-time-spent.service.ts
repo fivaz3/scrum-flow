@@ -14,7 +14,6 @@ import {
 } from '@/app/(dashboard)/schedules/calendar/schedule.service';
 import {
   differenceInMilliseconds,
-  formatDuration,
   intervalToDuration,
   isAfter,
   isBefore,
@@ -24,7 +23,6 @@ import {
   parseISO,
 } from 'date-fns';
 import { getInProgressStatuses } from '@/lib/project.service';
-import { fr } from 'date-fns/locale';
 import { Sprint } from '@/lib/sprint.service';
 
 function hasMovedToInProgress(
@@ -171,21 +169,31 @@ export async function getIssuesFromSprintWithTimeSpent(
 ): Promise<IssueWithTimeSpent[]> {
   const issues = await getIssuesFromSprintWithChangelog(boardId, sprint.id, accessToken, cloudId);
 
-  // const issue = issuesWithChangeLog.find((issue) => issue.key === 'SCRUM-38');
-
-  // if (issue) console.log(JSON.stringify(issue));
-
   return addTimeSpentToIssues(boardId, sprint, issues, accessToken, cloudId);
 }
 
-export function convertToDuration(milliseconds: number): string {
+export function formatMilliseconds(milliseconds: number): string {
   if (milliseconds < 1) {
-    return '0 minutes';
+    return '0 min';
   }
 
   const duration = intervalToDuration({ start: 0, end: milliseconds });
 
-  return formatDuration(duration, { format: ['hours', 'minutes'], locale: fr });
+  let formattedDuration = '';
+
+  if (duration.days) {
+    formattedDuration += `${duration.days} j `;
+  }
+
+  if (duration.hours) {
+    formattedDuration += `${duration.hours} h `;
+  }
+
+  if (duration.minutes) {
+    formattedDuration += `${duration.minutes} min`;
+  }
+
+  return formattedDuration.trim();
 }
 
 export function doEventsOverlap(schedule: SingleSchedule, startDate: Date, endDate: Date): boolean {

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import ClosedIssueTableBody from '.';
+import ClosedIssueTableBody from './index';
 import { seedClosedSprint } from '@/seeds/sprint';
 import { seedDoingIssues, seedDoneIssues } from '@/seeds/issue';
 
