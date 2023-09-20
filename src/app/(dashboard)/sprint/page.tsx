@@ -47,7 +47,7 @@ export default async function ActiveSprintPage({ searchParams }: ActiveSprintPag
       <Suspense fallback={<ActiveIssueTableListSkeleton />}>
         <ActiveIssueTableList
           boardId={board.id}
-          sprintId={sprint.id}
+          sprint={sprint}
           accessToken={accessToken}
           cloudId={cloudId}
         />

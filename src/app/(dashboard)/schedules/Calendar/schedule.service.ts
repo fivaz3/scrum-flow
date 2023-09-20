@@ -93,9 +93,7 @@ function convertScheduleToRRule(schedule: RecurringSchedule): RRule {
   return new RRule({
     freq: RRule.WEEKLY,
     byweekday: numbers,
-    // dtstart: datetime(2023, 9, 5, 10, 0),
     dtstart: parseISO(schedule.rrule.dtstart),
-    // until: datetime(2023, 9, 30),
     until: parseISO(schedule.rrule.until),
   });
 }

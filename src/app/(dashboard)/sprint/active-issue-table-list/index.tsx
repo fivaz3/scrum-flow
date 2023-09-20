@@ -1,21 +1,22 @@
 import ActiveIssueTable from './active-issue-table';
 import { getIssuesFromSprintWithTimeSpent } from '@/lib/issue/issue-time-spent.service';
+import { Sprint } from '@/lib/sprint.service';
 
 interface CurrentIssueListProps {
   boardId: number;
-  sprintId: number;
+  sprint: Sprint;
   accessToken: string;
   cloudId: string;
 }
 
 export default async function ActiveIssueTableList({
   boardId,
-  sprintId,
+  sprint,
   accessToken,
   cloudId,
 }: CurrentIssueListProps) {
   // TODO remove from the time spent concerning the amount of time a ticket spent in In Progress in the previous board
-  const issues = await getIssuesFromSprintWithTimeSpent(boardId, sprintId, accessToken, cloudId);
+  const issues = await getIssuesFromSprintWithTimeSpent(boardId, sprint, accessToken, cloudId);
 
   const toDoIssues = issues.filter((issue) => issue.fields.status.statusCategory.name === 'To Do');
 

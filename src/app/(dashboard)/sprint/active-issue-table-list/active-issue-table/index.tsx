@@ -47,7 +47,7 @@ export default function ActiveIssueTable({ issues, label }: IssueTableProps) {
                         )}
                       </td>
                       <td className="w-3/12 px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                        {convertToDuration(issue.timeSpent, issue.key === 'SCRUM-38')}
+                        {convertToDuration(issue.timeSpent)}
                       </td>
                     </tr>
                   ))}

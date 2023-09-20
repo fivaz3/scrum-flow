@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { MemberSchema } from '@/app/(dashboard)/schedules/calendar/member.service';
 import { callApi, validateData } from '@/lib/jira.service';
 import { getBoardConfiguration } from '@/lib/board.service';
+import { Sprint } from '@/lib/sprint.service';
+import { isAfter, isBefore, parseISO } from 'date-fns';
 
 // TODO add a eslint plugin that will fix my imports merging them possible
 // // TODO add  pagination
@@ -131,7 +133,9 @@ export async function getIssuesFromSprintWithChangelog(
   return await addEstimationToIssuesWithChangeLog(boardId, issuesPaginated, accessToken, cloudId);
 }
 
-export function getStatusHistory(histories: IssueWithChangeLog['changelog']['histories']) {
+export function getStatusHistory(
+  histories: IssueWithChangeLog['changelog']['histories']
+): IssueWithChangeLog['changelog']['histories'] {
   // remove history that isn't about status
   const remainingHistories = histories.map((history) => {
     return {
@@ -141,4 +145,16 @@ export function getStatusHistory(histories: IssueWithChangeLog['changelog']['his
   });
 
   return remainingHistories.filter((history) => history.items.length > 0);
+}
+
+export function getHistoryFromSprint(
+  sprint: Sprint,
+  histories: IssueWithChangeLog['changelog']['histories']
+): IssueWithChangeLog['changelog']['histories'] {
+  const sprintStart = parseISO(sprint.startDate);
+  const sprintEnd = parseISO(sprint?.completeDate || sprint.endDate);
+  return histories.filter((history) => {
+    const historyCreated = parseISO(history.created);
+    return !(isBefore(historyCreated, sprintStart) || isAfter(historyCreated, sprintEnd));
+  });
 }

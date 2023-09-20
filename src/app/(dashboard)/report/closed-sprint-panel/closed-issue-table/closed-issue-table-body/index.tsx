@@ -21,7 +21,7 @@ export default async function ClosedIssueTableBody({
   accessToken,
   cloudId,
 }: ClosedIssueTableBodyProps) {
-  const issues = await getIssuesFromSprintWithTimeSpent(boardId, sprint.id, accessToken, cloudId);
+  const issues = await getIssuesFromSprintWithTimeSpent(boardId, sprint, accessToken, cloudId);
 
   return (
     <tbody className="bg-white divide-y divide-gray-200">
