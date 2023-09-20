@@ -1,8 +1,6 @@
 import { parseISO, format } from 'date-fns';
 import { formatSprintDuration } from '@/app/(dashboard)/report/sprints-section/closed-sprint-panel/closed-sprint-header/closed-sprint-header-stats/service';
 import ClosedSprintHeaderStats from '@/app/(dashboard)/report/sprints-section/closed-sprint-panel/closed-sprint-header/closed-sprint-header-stats';
-import { Suspense } from 'react';
-import ClosedSprintHeaderSkeleton from '@/app/(dashboard)/report/sprints-section/closed-sprint-panel/closed-sprint-header/closed-sprint-header-skeleton';
 import { SprintBreakThrough } from '@/app/(dashboard)/report/sprints-section/service';
 
 interface ClosedSprintHeaderProps {
@@ -22,9 +20,7 @@ export default async function ClosedSprintHeader({ sprint }: ClosedSprintHeaderP
           <div>Duration: {formatSprintDuration(sprint)}</div>
         </div>
       </div>
-      <Suspense fallback={<ClosedSprintHeaderSkeleton />}>
-        <ClosedSprintHeaderStats sprint={sprint} />
-      </Suspense>
+      <ClosedSprintHeaderStats sprint={sprint} />
     </div>
   );
 }

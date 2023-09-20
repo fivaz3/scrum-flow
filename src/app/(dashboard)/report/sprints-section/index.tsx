@@ -23,10 +23,6 @@ export default async function SprintsSection({
     cloudId
   );
 
-  // console.log('-------------------');
-  // console.log(JSON.stringify(sprintsBreakThrough));
-  // console.log('-------------------');
-
   return (
     <>
       <SprintAccuracyChart sprints={sprintsBreakThrough} />

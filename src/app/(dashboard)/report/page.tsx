@@ -3,10 +3,10 @@ import { Suspense } from 'react';
 import BoardSelector from '../../../components/board-selector';
 import { getClosedSprints } from '@/lib/sprint.service';
 import { getAuthData } from '@/lib/jira.service';
-import Loading from '@/components/loading';
 import EmptyState from '@/components/empty-state';
 import AlertForSchedules from '../../../components/alert-for-schedules';
 import SprintsSection from '@/app/(dashboard)/report/sprints-section';
+import SprintsSectionSkeleton from '@/app/(dashboard)/report/sprints-section/sprints-section-skeleton';
 
 interface PreviousSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
@@ -36,8 +36,7 @@ export default async function SprintReportPage({ searchParams }: PreviousSprintP
         </Suspense>
       </div>
 
-      {/*<Suspense fallback={<ClosedIssueTableBodySkeleton />}></Suspense>*/}
-      <Suspense fallback={<Loading title="changement..."></Loading>}>
+      <Suspense fallback={<SprintsSectionSkeleton />}>
         <SprintsSection
           boardId={board.id}
           sprints={sprints}

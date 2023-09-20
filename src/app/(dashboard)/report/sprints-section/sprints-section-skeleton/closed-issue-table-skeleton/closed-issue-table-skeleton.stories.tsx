@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import SprintsSectionSkeleton from './index';
+import ClosedIssueTableSkeleton from './index';
 
 const meta = {
-  component: SprintsSectionSkeleton,
+  component: ClosedIssueTableSkeleton,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
   argTypes: {},
-} satisfies Meta<typeof SprintsSectionSkeleton>;
+} satisfies Meta<typeof ClosedIssueTableSkeleton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
