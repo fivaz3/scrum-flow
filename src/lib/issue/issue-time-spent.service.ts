@@ -73,11 +73,6 @@ export function getTimeInProgressInSprint(
     (a, b) => parseISO(a.created).valueOf() - parseISO(b.created).valueOf()
   );
 
-  if (issue.key === 'SCRUM-38') {
-    console.log(sprint);
-    console.log(JSON.stringify(historiesAsc));
-  }
-
   return getTimeInProgressFromStatusHistories(
     historiesAsc,
     workingShifts,
@@ -151,31 +146,36 @@ export function getTimeInProgress(
   );
 }
 
+export async function addTimeSpentToIssues(
+  boardId: number,
+  sprint: Sprint,
+  issues: IssueWithChangeLog[],
+  accessToken: string,
+  cloudId: string
+) {
+  const schedules = await getSchedules(accessToken, cloudId);
+
+  const inProgressColumns = await getInProgressStatuses(accessToken, cloudId);
+
+  return issues.map((issue) => ({
+    ...issue,
+    timeSpent: getTimeInProgressInSprint(sprint, issue, schedules, inProgressColumns),
+  }));
+}
+
 export async function getIssuesFromSprintWithTimeSpent(
   boardId: number,
   sprint: Sprint,
   accessToken: string,
   cloudId: string
 ): Promise<IssueWithTimeSpent[]> {
-  const issuesWithChangeLog = await getIssuesFromSprintWithChangelog(
-    boardId,
-    sprint.id,
-    accessToken,
-    cloudId
-  );
+  const issues = await getIssuesFromSprintWithChangelog(boardId, sprint.id, accessToken, cloudId);
 
   // const issue = issuesWithChangeLog.find((issue) => issue.key === 'SCRUM-38');
 
   // if (issue) console.log(JSON.stringify(issue));
 
-  const schedules = await getSchedules(accessToken, cloudId);
-
-  const inProgressColumns = await getInProgressStatuses(accessToken, cloudId);
-
-  return issuesWithChangeLog.map((issue) => ({
-    ...issue,
-    timeSpent: getTimeInProgressInSprint(sprint, issue, schedules, inProgressColumns),
-  }));
+  return addTimeSpentToIssues(boardId, sprint, issues, accessToken, cloudId);
 }
 
 export function convertToDuration(milliseconds: number): string {

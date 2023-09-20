@@ -1,25 +1,22 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import ClosedSprintPanel from './index';
-import { seedClosedSprint } from '@/seeds/sprint';
+import SprintAccuracyChart from '.';
+import { seedClosedSprintsBreakThrough } from '@/seeds/sprint';
 
 const meta = {
-  component: ClosedSprintPanel,
+  component: SprintAccuracyChart,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
   argTypes: {},
-} satisfies Meta<typeof ClosedSprintPanel>;
+} satisfies Meta<typeof SprintAccuracyChart>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    boardId: 1,
-    sprint: seedClosedSprint,
-    accessToken: '',
-    cloudId: '',
+    sprints: seedClosedSprintsBreakThrough,
   },
 };

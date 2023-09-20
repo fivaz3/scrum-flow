@@ -5,9 +5,8 @@ import { getClosedSprints } from '@/lib/sprint.service';
 import { getAuthData } from '@/lib/jira.service';
 import Loading from '@/components/loading';
 import EmptyState from '@/components/empty-state';
-import AlertForSchedules from '@/components/AlertForSchedules';
-import ClosedSprintPanel from '@/app/(dashboard)/report/closed-sprint-panel';
-import SprintAccuracyChart from '@/app/(dashboard)/report/sprint-accuracy-chart';
+import AlertForSchedules from '../../../components/alert-for-schedules';
+import SprintsSection from '@/app/(dashboard)/report/sprints-section';
 
 interface PreviousSprintPageProps {
   searchParams: { [key: string]: string | string[] | undefined; boardId: string | undefined };
@@ -36,23 +35,16 @@ export default async function SprintReportPage({ searchParams }: PreviousSprintP
           <BoardSelector currentBoard={board} boards={boards} />
         </Suspense>
       </div>
-      <Suspense fallback={<Loading title="chargement du graphique..."></Loading>}>
-        <SprintAccuracyChart
+
+      {/*<Suspense fallback={<ClosedIssueTableBodySkeleton />}></Suspense>*/}
+      <Suspense fallback={<Loading title="changement..."></Loading>}>
+        <SprintsSection
           boardId={board.id}
           sprints={sprints}
           accessToken={accessToken}
           cloudId={cloudId}
         />
       </Suspense>
-      {sprints.map((sprint) => (
-        <ClosedSprintPanel
-          key={sprint.id}
-          boardId={board.id}
-          sprint={sprint}
-          accessToken={accessToken}
-          cloudId={cloudId}
-        />
-      ))}
 
       <Suspense fallback={<></>}>
         <AlertForSchedules accessToken={accessToken} cloudId={cloudId} />

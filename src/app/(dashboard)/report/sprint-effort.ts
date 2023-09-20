@@ -4,10 +4,10 @@ import { isAfter, isBefore, parseISO } from 'date-fns';
 import {
   getIssuesFromSprintWithChangelog,
   getIssuesWithChangelog,
-  getStatusHistory,
   Issue,
   IssueWithChangeLog,
 } from '@/lib/issue/issue.service';
+import { SprintBreakThrough } from '@/app/(dashboard)/report/sprints-section/service';
 
 function getSprintHistory(histories: IssueWithChangeLog['changelog']['histories']) {
   // sort histories by date
@@ -128,81 +128,18 @@ export function getSumOfEstimations(issues: Issue[]) {
   return issues.reduce((total, issue) => total + (issue.estimation || 0), 0);
 }
 
-export async function getEstimatedEffort(
-  boardId: number,
-  sprint: Sprint,
-  accessToken: string,
-  cloudId: string
-): Promise<number> {
-  const issues = await getIssuesFromBeforeSprintStart(boardId, sprint, accessToken, cloudId);
+export type SprintAccuracyChartData = Array<{ accuracy: number; sprintName: string }>;
 
-  return getSumOfEstimations(issues);
-}
-
-function wasIssueDoneBeforeSprintEnd(sprint: Sprint, issue: IssueWithChangeLog): boolean {
-  if (issue.fields.status.statusCategory.name !== 'Done') {
-    return false;
-  }
-
-  const historiesOfStatus = getStatusHistory(issue.changelog.histories);
-
-  const historiesDesc = historiesOfStatus.sort(
-    (a, b) => parseISO(b.created).valueOf() - parseISO(a.created).valueOf()
-  );
-
-  const sprintEnd = parseISO(sprint.endDate);
-
-  for (const history of historiesDesc) {
-    for (const item of history.items) {
-      if (item.toString === 'Done') {
-        const issueWasComplete = parseISO(history.created);
-        return isBefore(issueWasComplete, sprintEnd);
-      }
-    }
-  }
-
-  // fallback, the code shouldn't ever need to come here
-  return true;
-}
-
-export async function getActualEffort(
-  boardId: number,
-  sprint: Sprint,
-  accessToken: string,
-  cloudId: string
-): Promise<number> {
-  const issues = await getIssuesFromSprintWithChangelog(boardId, sprint.id, accessToken, cloudId);
-
-  const issuesDone = issues.filter((issue) => wasIssueDoneBeforeSprintEnd(sprint, issue));
-
-  return getSumOfEstimations(issuesDone);
-}
-
-export type SprintAccuracyChartData = Array<{ precision: number; sprintName: string }>;
-
-async function getSprintAccuracy(
-  boardId: number,
-  sprint: Sprint,
-  accessToken: string,
-  cloudId: string
-): Promise<number> {
-  const estimatedEffort = await getEstimatedEffort(boardId, sprint, accessToken, cloudId);
-  const actualEffort = await getActualEffort(boardId, sprint, accessToken, cloudId);
+function getSprintAccuracy(sprint: SprintBreakThrough): number {
+  const estimatedEffort = getSumOfEstimations(sprint.estimatedIssues);
+  const actualEffort = getSumOfEstimations(sprint.actualIssues);
   return calculateAccuracy(estimatedEffort, actualEffort);
 }
 
-export async function getDataForLineChart(
-  boardId: number,
-  sprints: Sprint[],
-  accessToken: string,
-  cloudId: string
-): Promise<SprintAccuracyChartData> {
-  const accuracyPromises = sprints.map(async (sprint) => {
-    const precision = await getSprintAccuracy(boardId, sprint, accessToken, cloudId);
-    return { precision: precision, sprintName: sprint.name };
+export function getDataForLineChart(sprints: SprintBreakThrough[]): SprintAccuracyChartData {
+  return sprints.map((sprint) => {
+    return { accuracy: getSprintAccuracy(sprint), sprintName: sprint.name };
   });
-
-  return Promise.all(accuracyPromises);
 }
 
 // A function that takes the estimated effort and the actual effort as parameters and returns the percentage of accuracy

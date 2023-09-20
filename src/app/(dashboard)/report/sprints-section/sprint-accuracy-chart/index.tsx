@@ -1,5 +1,6 @@
 'use client';
-import { SprintAccuracyChartData } from '@/app/(dashboard)/report/sprint-effort';
+import { getDataForLineChart } from '@/app/(dashboard)/report/sprint-effort';
+import { SprintBreakThrough } from '@/app/(dashboard)/report/sprints-section/service';
 import {
   Chart as ChartJS,
   LinearScale,
@@ -12,17 +13,19 @@ import { Line } from 'react-chartjs-2';
 
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip);
 
-interface SprintAccuracyChartClientProps {
-  data: SprintAccuracyChartData;
+interface SprintAccuracyChartProps {
+  sprints: SprintBreakThrough[];
 }
 
-export default function SprintAccuracyChartClient({ data }: SprintAccuracyChartClientProps) {
+export default function SprintAccuracyChart({ sprints }: SprintAccuracyChartProps) {
+  const data = getDataForLineChart(sprints);
+
   const chartData = {
     labels: data.map((item) => item.sprintName),
     datasets: [
       {
         label: 'Précision',
-        data: data.map((item) => item.precision),
+        data: data.map((item) => item.accuracy),
         fill: false,
         backgroundColor: '#0fb981',
         borderColor: '#0fb981',

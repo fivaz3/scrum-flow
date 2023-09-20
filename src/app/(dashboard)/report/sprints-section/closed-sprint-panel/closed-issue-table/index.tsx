@@ -1,21 +1,11 @@
-import { Sprint } from '@/lib/sprint.service';
-import ClosedIssueTableBody from '@/app/(dashboard)/report/closed-sprint-panel/closed-issue-table/closed-issue-table-body';
-import { Suspense } from 'react';
-import ClosedIssueTableBodySkeleton from '@/app/(dashboard)/report/closed-sprint-panel/closed-issue-table/closed-issue-table-body-skeleton';
+import ClosedIssueTableBody from '@/app/(dashboard)/report/sprints-section/closed-sprint-panel/closed-issue-table/closed-issue-table-body';
+import { SprintBreakThrough } from '@/app/(dashboard)/report/sprints-section/service';
 
 interface IssueTableProps {
-  boardId: number;
-  sprint: Sprint;
-  accessToken: string;
-  cloudId: string;
+  sprint: SprintBreakThrough;
 }
 
-export default async function ClosedIssueTable({
-  boardId,
-  sprint,
-  accessToken,
-  cloudId,
-}: IssueTableProps) {
+export default function ClosedIssueTable({ sprint }: IssueTableProps) {
   return (
     <div className="flex flex-col">
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -26,17 +16,23 @@ export default async function ClosedIssueTable({
                 <tr>
                   <th
                     scope="col"
-                    className="w-5/12 px-6 py-3 font-medium text-xs tracking-wider text-left">
+                    className="w-1/12 px-6 py-3 font-medium text-xs tracking-wider text-left"></th>
+                  <th
+                    scope="col"
+                    className="w-1/12 px-6 py-3 font-medium text-xs tracking-wider text-left"></th>
+                  <th
+                    scope="col"
+                    className="w-4/12 px-6 py-3 font-medium text-xs tracking-wider text-left">
                     Name
                   </th>
                   <th
                     scope="col"
-                    className="w-1/12 px-6 py-3 font-medium text-xs tracking-wider text-center">
+                    className="w-2/12 px-6 py-3 font-medium text-xs tracking-wider text-center">
                     Estimation (s. points)
                   </th>
                   <th
                     scope="col"
-                    className="w-3/12 px-6 py-3 font-medium text-xs tracking-wider text-center">
+                    className="w-2/12 px-6 py-3 font-medium text-xs tracking-wider text-center">
                     Estimation (temps)
                   </th>
                   <th
@@ -51,14 +47,8 @@ export default async function ClosedIssueTable({
                   </th>
                 </tr>
               </thead>
-              <Suspense fallback={<ClosedIssueTableBodySkeleton />}>
-                <ClosedIssueTableBody
-                  boardId={boardId}
-                  sprint={sprint}
-                  accessToken={accessToken}
-                  cloudId={cloudId}
-                />
-              </Suspense>
+
+              <ClosedIssueTableBody sprint={sprint} />
             </table>
           </div>
         </div>

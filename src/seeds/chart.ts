@@ -2,27 +2,27 @@ import { SprintAccuracyChartData } from '@/app/(dashboard)/report/sprint-effort'
 
 export const seedSprintAccuracyData: SprintAccuracyChartData = [
   {
-    precision: 10,
+    accuracy: 10,
     sprintName: 'sprintName 1',
   },
   {
-    precision: 20,
+    accuracy: 20,
     sprintName: 'sprintName 2',
   },
   {
-    precision: 50,
+    accuracy: 50,
     sprintName: 'sprintName 3',
   },
   {
-    precision: 30,
+    accuracy: 30,
     sprintName: 'sprintName 4',
   },
   {
-    precision: 40,
+    accuracy: 40,
     sprintName: 'sprintName 5',
   },
   {
-    precision: 100,
+    accuracy: 100,
     sprintName: 'sprintName 6',
   },
 ];

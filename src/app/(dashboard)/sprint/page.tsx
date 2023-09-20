@@ -1,6 +1,6 @@
 import { getBoards, getCurrentBoard } from '@/lib/board.service';
 import { Suspense } from 'react';
-import AlertForSchedules from '@/components/AlertForSchedules';
+import AlertForSchedules from '../../../components/alert-for-schedules';
 import { getAuthData } from '@/lib/jira.service';
 import EmptyState from '@/components/empty-state';
 import { getActiveSprint } from '@/lib/sprint.service';

@@ -2,122 +2,238 @@ import { IssueWithTimeSpent } from '@/lib/issue/issue.service';
 
 export const seedToDoIssues: IssueWithTimeSpent[] = [
   {
-    id: '2',
-    key: 'SCRUM-1',
+    id: '10054',
+    key: 'SCRUM-52',
     fields: {
-      summary: 'issue 2',
-      assignee: null,
+      summary: 'corriger le problème du SCRUM-15',
+      assignee: {
+        accountId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
+        displayName: 'Stefane Fivaz',
+        emailAddress: 'stefan.fivaz@gmail.com',
+        avatarUrls: {
+          '48x48':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '24x24':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '16x16':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '32x32':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+        },
+      },
       status: {
-        id: '1',
-        name: 'To Do',
+        id: '10004',
+        name: 'Done',
         statusCategory: {
-          id: 1,
-          name: 'To Do',
+          id: 3,
+          name: 'Done',
         },
       },
     },
-    estimation: 3,
-    timeSpent: 500000,
+    estimation: 2,
+    timeSpent: 4428451,
   },
   {
-    id: '2',
-    key: 'SCRUM-1',
+    id: '10055',
+    key: 'SCRUM-53',
     fields: {
-      summary: 'issue 2',
-      assignee: null,
+      summary: 'séparer les tickets réalisés des non réalisées lors des sprints précedents',
+      assignee: {
+        accountId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
+        displayName: 'Stefane Fivaz',
+        emailAddress: 'stefan.fivaz@gmail.com',
+        avatarUrls: {
+          '48x48':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '24x24':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '16x16':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '32x32':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+        },
+      },
       status: {
-        id: '1',
-        name: 'To Do',
+        id: '10004',
+        name: 'Done',
         statusCategory: {
-          id: 1,
-          name: 'To Do',
+          id: 3,
+          name: 'Done',
         },
       },
     },
-    estimation: 3,
-    timeSpent: 500000,
+    estimation: 2,
+    timeSpent: 4888483,
   },
   {
-    id: '2',
-    key: 'SCRUM-1',
+    id: '10041',
+    key: 'SCRUM-39',
     fields: {
-      summary: 'issue 2',
-      assignee: null,
+      summary:
+        'supprimer du temps passé le temps passé par un ticket en En cours dans le sprint précédent',
+      assignee: {
+        accountId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
+        displayName: 'Stefane Fivaz',
+        emailAddress: 'stefan.fivaz@gmail.com',
+        avatarUrls: {
+          '48x48':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '24x24':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '16x16':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '32x32':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+        },
+      },
       status: {
-        id: '1',
-        name: 'To Do',
+        id: '10004',
+        name: 'Done',
         statusCategory: {
-          id: 1,
-          name: 'To Do',
+          id: 3,
+          name: 'Done',
         },
       },
     },
     estimation: 3,
-    timeSpent: 500000,
+    timeSpent: 6718939,
+  },
+  {
+    id: '10040',
+    key: 'SCRUM-38',
+    fields: {
+      summary: 'Faire la comparaison entre S. P et temps',
+      assignee: {
+        accountId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
+        displayName: 'Stefane Fivaz',
+        emailAddress: 'stefan.fivaz@gmail.com',
+        avatarUrls: {
+          '48x48':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '24x24':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '16x16':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '32x32':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+        },
+      },
+      status: {
+        id: '10004',
+        name: 'Done',
+        statusCategory: {
+          id: 3,
+          name: 'Done',
+        },
+      },
+    },
+    estimation: 3,
+    timeSpent: 6765450,
   },
 ];
 
 export const seedDoingIssues: IssueWithTimeSpent[] = [
   {
-    id: '3',
-    key: 'SCRUM-1',
+    id: '10054',
+    key: 'SCRUM-52',
     fields: {
-      summary: 'issue 3',
-      assignee: null,
-      status: {
-        id: '1',
-        name: 'In Progress',
-        statusCategory: {
-          id: 1,
-          name: 'In Progress',
+      summary: 'corriger le problème du SCRUM-15',
+      assignee: {
+        accountId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
+        displayName: 'Stefane Fivaz',
+        emailAddress: 'stefan.fivaz@gmail.com',
+        avatarUrls: {
+          '48x48':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '24x24':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '16x16':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '32x32':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
         },
       },
-    },
-    estimation: 8,
-    timeSpent: 500000,
-  },
-  {
-    id: '1',
-    key: 'SCRUM-1',
-    fields: {
-      summary: 'issue 1',
-      assignee: null,
       status: {
-        id: '1',
+        id: '10004',
         name: 'Done',
         statusCategory: {
-          id: 1,
+          id: 3,
           name: 'Done',
         },
       },
     },
-    estimation: 5,
-    timeSpent: 500000,
+    estimation: 2,
+    timeSpent: 4428451,
   },
-
   {
-    id: '1',
-    key: 'SCRUM-1',
+    id: '10055',
+    key: 'SCRUM-53',
     fields: {
-      summary: 'issue 1',
-      assignee: null,
+      summary: 'séparer les tickets réalisés des non réalisées lors des sprints précedents',
+      assignee: {
+        accountId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
+        displayName: 'Stefane Fivaz',
+        emailAddress: 'stefan.fivaz@gmail.com',
+        avatarUrls: {
+          '48x48':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '24x24':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '16x16':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '32x32':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+        },
+      },
       status: {
-        id: '1',
+        id: '10004',
         name: 'Done',
         statusCategory: {
-          id: 1,
+          id: 3,
           name: 'Done',
         },
       },
     },
-    estimation: 5,
-    timeSpent: 500000,
+    estimation: 2,
+    timeSpent: 4888483,
+  },
+  {
+    id: '10040',
+    key: 'SCRUM-38',
+    fields: {
+      summary: 'Faire la comparaison entre S. P et temps',
+      assignee: {
+        accountId: '712020:48ca8fc9-3d65-4956-9051-acf82cd28f26',
+        displayName: 'Stefane Fivaz',
+        emailAddress: 'stefan.fivaz@gmail.com',
+        avatarUrls: {
+          '48x48':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '24x24':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '16x16':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+          '32x32':
+            'https://secure.gravatar.com/avatar/b849ec8b33cee3be64f5d9abee4b4845?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FSF-6.png',
+        },
+      },
+      status: {
+        id: '10004',
+        name: 'Done',
+        statusCategory: {
+          id: 3,
+          name: 'Done',
+        },
+      },
+    },
+    estimation: 3,
+    timeSpent: 6765450,
   },
 ];
 
 export const seedDoneIssues: IssueWithTimeSpent[] = [
   {
-    id: '4',
+    id: '21',
     key: 'SCRUM-1',
     fields: {
       summary: 'issue 4',
@@ -135,7 +251,7 @@ export const seedDoneIssues: IssueWithTimeSpent[] = [
     timeSpent: 500000,
   },
   {
-    id: '4',
+    id: '22',
     key: 'SCRUM-1',
     fields: {
       summary: 'issue 4',
@@ -153,7 +269,7 @@ export const seedDoneIssues: IssueWithTimeSpent[] = [
     timeSpent: 500000,
   },
   {
-    id: '4',
+    id: '23',
     key: 'SCRUM-1',
     fields: {
       summary: 'issue 4',

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import Banner from '.';
+import Banner from './index';
 import { navigation } from '@/components/layout/dashboard-layout-server/dashboard-layout-client/nav-bar.service';
 
 const meta = {
