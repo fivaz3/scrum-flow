@@ -37,8 +37,7 @@ export default async function ClosedIssueTableBody({
             {getEstimationInTimeFormatted(issues, issue.estimation, sprint)}
           </td>
           <td className="w-2/12 px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-            {issue.key === 'SCRUM-15' && `-${issue.timeSpent}-`}
-            {convertToDuration(issue.timeSpent, issue.key === 'SCRUM-15')}
+            {convertToDuration(issue.timeSpent)}
           </td>
           <td className="w-1/12 px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
             {getIssueAccuracy(issues, issue, sprint)}

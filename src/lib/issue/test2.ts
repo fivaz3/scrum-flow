@@ -38,19 +38,16 @@ function calculateMinutesInEvent(
   return differenceInMilliseconds(overlapEnd, overlapStart);
 }
 
-// Function to expand recurring events into multiple single events
-
-// Function to calculate total minutes spent in events within the specified range
-export function calculateTotalMinutesInEvents(
-  events: SingleSchedule[],
+export function calculateTotalMinutes(
+  schedules: SingleSchedule[],
   startDate: string,
   endDate: string
 ): number {
   let totalMinutes = 0;
 
-  for (const event of events) {
-    if (doEventsOverlap(event, startDate, endDate)) {
-      totalMinutes += calculateMinutesInEvent(event, startDate, endDate);
+  for (const schedule of schedules) {
+    if (doEventsOverlap(schedule, startDate, endDate)) {
+      totalMinutes += calculateMinutesInEvent(schedule, startDate, endDate);
     }
   }
 

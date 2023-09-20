@@ -1,63 +1,63 @@
-// replace 'your-file' with the actual file name where calculateMinutes is defined
-
-// Example usage
-
-// test('calculates total minutes spent on events between two dates', () => {
-//   const events: Schedule[] = [
-//     {
-//       id: '1',
-//       memberId: seedMembers[0].accountId,
-//       start: '2023-09-19T11:00:00.000Z',
-//       end: '2023-09-19T12:00:00.000Z',
-//       duration: null,
-//       rrule: null,
-//     },
-//     {
-//       id: '2',
-//       memberId: seedMembers[0].accountId,
-//       start: null,
-//       end: null,
-//       duration: '01:00',
-//       rrule: {
-//         freq: 'weekly',
-//         byweekday: ['mo', 'tu', 'we', 'th', 'fr'],
-//         dtstart: '2023-09-05T10:00:00.000Z',
-//         until: '2023-09-30',
-//       },
-//     },
-//     // Add more events to the list, including recurring events
-//   ];
-//
-//   const startDate = '2023-09-19T09:00:00.000Z';
-//   const endDate = '2023-09-19T11:30:00.000Z';
-//
-//   const expandedEvents = expandRecurringEvents(events);
-//
-//   const totalMinutesSpent = calculateTotalMinutesInEvents(expandedEvents, startDate, endDate);
-//
-//   expect(totalMinutesSpent).toBe(90 * 60 * 1000);
-// });
-//
-// test('doEventsOverlap', () => {
-//   const schedule = {
-//     id: '1',
-//     memberId: seedMembers[0].accountId,
-//     start: '2023-09-19T11:30:00.000Z',
-//     end: '2023-09-19T11:45:00.000Z',
-//     duration: null,
-//     rrule: null,
-//   };
-//
-//   const startDate = '2023-09-19T11:00:00.000Z';
-//   const endDate = '2023-09-19T11:40:00.000Z';
-//
-//   const result = doEventsOverlap(schedule, startDate, endDate);
-//
-//   expect(result).toBe(true);
-// });
-//
 import { test, expect } from 'vitest';
 import { getTimeInProgress } from '@/lib/issue/issue-time-spent.service';
+
+import { Schedule } from '@/app/(dashboard)/schedules/calendar/schedule.service';
+import { seedMembers } from '@/seeds/member';
+import { calculateTotalMinutes, doEventsOverlap, expandRecurringEvents } from '@/lib/issue/test2';
+
+test('calculates total minutes spent on events between two dates', () => {
+  const events: Schedule[] = [
+    {
+      id: '1',
+      memberId: seedMembers[0].accountId,
+      start: '2023-09-19T11:00:00.000Z',
+      end: '2023-09-19T12:00:00.000Z',
+      duration: null,
+      rrule: null,
+    },
+    {
+      id: '2',
+      memberId: seedMembers[0].accountId,
+      start: null,
+      end: null,
+      duration: '01:00',
+      rrule: {
+        freq: 'weekly',
+        byweekday: ['mo', 'tu', 'we', 'th', 'fr'],
+        dtstart: '2023-09-05T10:00:00.000Z',
+        until: '2023-09-30',
+      },
+    },
+    // Add more events to the list, including recurring events
+  ];
+
+  const startDate = '2023-09-19T09:00:00.000Z';
+  const endDate = '2023-09-19T11:30:00.000Z';
+
+  const expandedEvents = expandRecurringEvents(events);
+
+  const totalMinutesSpent = calculateTotalMinutes(expandedEvents, startDate, endDate);
+
+  expect(totalMinutesSpent).toBe(90 * 60 * 1000);
+});
+
+test('doEventsOverlap', () => {
+  const schedule = {
+    id: '1',
+    memberId: seedMembers[0].accountId,
+    start: '2023-09-19T11:30:00.000Z',
+    end: '2023-09-19T11:45:00.000Z',
+    duration: null,
+    rrule: null,
+  };
+
+  const startDate = '2023-09-19T11:00:00.000Z';
+  const endDate = '2023-09-19T11:40:00.000Z';
+
+  const result = doEventsOverlap(schedule, startDate, endDate);
+
+  expect(result).toBe(true);
+});
 
 test('getTimeInProgress', async () => {
   const issue = {
