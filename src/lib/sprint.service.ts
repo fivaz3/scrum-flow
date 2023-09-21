@@ -17,7 +17,7 @@ const ActiveSprintSchema = SprintSchema.omit({ completeDate: true });
 
 export type ActiveSprint = z.infer<typeof ActiveSprintSchema>;
 
-const ClosedSprintSchema = SprintSchema.merge(z.object({ completeDate: z.string() }));
+export const ClosedSprintSchema = SprintSchema.merge(z.object({ completeDate: z.string() }));
 
 export type ClosedSprint = z.infer<typeof ClosedSprintSchema>;
 
@@ -45,14 +45,20 @@ export async function getActiveSprint(
   return validatedResponse.values[0];
 }
 
+export type Pagination = {
+  maxResults: string;
+  startAt: string;
+};
+
 export async function getClosedSprints(
   boardId: number,
   accessToken: string,
-  cloudId: string
+  cloudId: string,
+  pagination: Pagination
 ): Promise<ClosedSprint[]> {
   const response = await callApi(
     `/rest/agile/1.0/board/${boardId}/sprint`,
-    { state: 'closed' },
+    { state: 'closed', ...pagination },
     accessToken,
     cloudId
   );

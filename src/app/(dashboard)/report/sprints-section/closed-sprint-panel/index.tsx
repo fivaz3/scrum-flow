@@ -7,18 +7,6 @@ interface ClosedSprintPanelProps {
 }
 
 export default function ClosedSprintPanel({ sprint }: ClosedSprintPanelProps) {
-  // if (sprint.id === 20) {
-  //   console.log('-------------------------------------------------------------');
-  //   console.log('\n');
-  //   console.log('\n');
-  //   console.log('\n');
-  //   console.log(JSON.stringify(sprint));
-  //   console.log('\n');
-  //   console.log('\n');
-  //   console.log('\n');
-  //   console.log('\n');
-  //   console.log('-------------------------------------------------------------');
-  // }
   return (
     <div>
       <ClosedSprintHeader sprint={sprint} />

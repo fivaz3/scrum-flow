@@ -1,22 +1,28 @@
 import ClosedSprintPanel from '@/app/(dashboard)/report/sprints-section/closed-sprint-panel';
-import { ClosedSprint } from '@/lib/sprint.service';
+import { getClosedSprints } from '@/lib/sprint.service';
 import { getClosedSprintsBreakThrough } from '@/app/(dashboard)/report/sprints-section/service';
 import SprintAccuracyChart from '@/app/(dashboard)/report/sprints-section/sprint-accuracy-chart';
 import { Board } from '@/lib/board.service';
 
 interface SprintsSectionProps {
-  sprints: ClosedSprint[];
   board: Board;
   accessToken: string;
   cloudId: string;
+  maxResults: string;
 }
 
 export default async function SprintsSection({
   board,
-  sprints,
+  maxResults,
   accessToken,
   cloudId,
 }: SprintsSectionProps) {
+  console.log('maxResults', maxResults);
+  const sprints = await getClosedSprints(board.id, accessToken, cloudId, {
+    startAt: '0',
+    maxResults,
+  });
+
   const sprintsBreakThrough = await getClosedSprintsBreakThrough(
     sprints,
     board,
