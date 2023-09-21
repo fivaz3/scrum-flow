@@ -7,7 +7,7 @@ import {
   Schedule,
 } from '@/app/(dashboard)/schedules/calendar/schedule.service';
 import Modal from '../../../../components/modal';
-import MembersList from '../dev-list';
+import MembersList from '../members-list';
 import { Member } from '@/app/(dashboard)/schedules/calendar/member.service';
 import CalendarCore from '@/app/(dashboard)/schedules/calendar/calendar-core';
 import ScheduleForm from '../schedule-form';
@@ -111,7 +111,7 @@ export default function Calendar({
 
   return (
     <>
-      <div className="flex">
+      <div className="flex gap-5">
         <div className="w-1/5">
           <MembersList
             members={members}

@@ -1,22 +1,20 @@
 'use client';
-import MembersList from '@/app/(dashboard)/schedules/dev-list';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import React from 'react';
+import MembersList from '@/app/(dashboard)/schedules/members-list';
 
-function doNothing() {}
-
-export default function ScheduleLoading() {
+export default function ScheduleSkeleton() {
   return (
     <div className="flex">
       <div className="w-1/5">
         <MembersList
           members={[]}
           selectedMemberIds={[]}
-          openForm={doNothing}
-          handleMemberSelect={doNothing}
+          openForm={() => {}}
+          handleMemberSelect={() => {}}
           loading={true}
         />
       </div>
@@ -29,8 +27,8 @@ export default function ScheduleLoading() {
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay',
           }}
-          events={doNothing}
-          eventClick={doNothing}
+          events={() => {}}
+          eventClick={() => {}}
         />
       </div>
     </div>

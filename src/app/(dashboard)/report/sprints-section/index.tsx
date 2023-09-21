@@ -8,20 +8,10 @@ interface SprintsSectionProps {
   board: Board;
   accessToken: string;
   cloudId: string;
-  maxResults: string;
 }
 
-export default async function SprintsSection({
-  board,
-  maxResults,
-  accessToken,
-  cloudId,
-}: SprintsSectionProps) {
-  console.log('maxResults', maxResults);
-  const sprints = await getClosedSprints(board.id, accessToken, cloudId, {
-    startAt: '0',
-    maxResults,
-  });
+export default async function SprintsSection({ board, accessToken, cloudId }: SprintsSectionProps) {
+  const sprints = await getClosedSprints(board.id, accessToken, cloudId);
 
   const sprintsBreakThrough = await getClosedSprintsBreakThrough(
     sprints,

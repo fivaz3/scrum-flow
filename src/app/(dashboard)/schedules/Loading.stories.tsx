@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import ScheduleLoading from '@/app/(dashboard)/schedules/loading';
+import ScheduleSkeleton from '@/app/(dashboard)/schedules/loading';
 
 const meta = {
-  component: ScheduleLoading,
+  component: ScheduleSkeleton,
   parameters: {
     layout: 'fullscreen',
   },
   tags: ['autodocs'],
   argTypes: {},
-} satisfies Meta<typeof ScheduleLoading>;
+} satisfies Meta<typeof ScheduleSkeleton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

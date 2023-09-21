@@ -54,7 +54,7 @@ export async function getClosedSprints(
   boardId: number,
   accessToken: string,
   cloudId: string,
-  pagination: Pagination
+  pagination?: Pagination
 ): Promise<ClosedSprint[]> {
   const response = await callApi(
     `/rest/agile/1.0/board/${boardId}/sprint`,
