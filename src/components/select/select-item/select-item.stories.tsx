@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import SelectItem from '.';
+import SelectItem from './index';
 import React from 'react';
 import { Story } from '@storybook/blocks';
 import { seedBoards } from '@/seeds/board';

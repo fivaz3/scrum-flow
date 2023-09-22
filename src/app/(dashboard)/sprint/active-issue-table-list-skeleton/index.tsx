@@ -1,4 +1,4 @@
-import ActiveIssueTableSkeleton from '@/components/active-issue-table-skeleton';
+import ActiveIssueTableSkeleton from '@/app/(dashboard)/sprint/active-issue-table-list-skeleton/active-issue-table-skeleton';
 
 interface ActiveIssueTableSkeletonProps {}
 

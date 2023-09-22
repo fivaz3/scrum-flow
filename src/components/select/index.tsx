@@ -1,8 +1,8 @@
 import { Listbox } from '@headlessui/react';
 import { Children, Fragment, ReactElement, ReactNode } from 'react';
-import { SelectItemProps } from '@/components/select-item';
 import { ChevronUpDownIcon } from '@heroicons/react/24/solid';
 import classNames from 'classnames';
+import { SelectItemProps } from '@/components/select/select-item';
 
 interface SelectProps {
   label: string;

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import ActiveIssueTableSkeleton from '.';
+import ActiveIssueTableSkeleton from './index';
 
 const meta = {
   component: ActiveIssueTableSkeleton,

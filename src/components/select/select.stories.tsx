@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import Select from '.';
 import { seedBoards } from '@/seeds/board';
-import SelectItem from '@/components/select-item';
 import React from 'react';
+import SelectItem from '@/components/select/select-item';
 
 const meta = {
   component: Select,

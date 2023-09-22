@@ -4,7 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { format } from 'date-fns';
 import classNames from 'classnames';
 import Select from '@/components/select';
-import SelectItem from '@/components/select-item';
+import SelectItem from '../../../../components/select/select-item';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Schedule } from '@/app/(dashboard)/schedules/calendar/schedule.service';
 import {

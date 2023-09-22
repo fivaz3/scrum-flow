@@ -7,8 +7,8 @@ import {
 } from '@/lib/issue/issue.service';
 import { getIssuesFromBeforeSprintStart } from '@/app/(dashboard)/report/sprint-effort';
 import { isBefore, parseISO } from 'date-fns';
-import { addTimeSpentToIssues } from '@/lib/issue/issue-time-spent.service';
 import { Board } from '@/lib/board.service';
+import { addTimeSpentToIssues } from '@/lib/issue/issue-time-spent.service';
 
 export type SprintBreakThrough = ClosedSprint & {
   estimatedIssues: IssueWithTimeSpent[];

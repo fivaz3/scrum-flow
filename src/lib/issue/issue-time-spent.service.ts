@@ -48,6 +48,7 @@ export function getTimeInProgressInSprint(
   inProgressColumns: string[]
 ) {
   if (workingSchedules.length === 0) {
+    // TODO handle this use case in the front
     return -1;
   }
 
