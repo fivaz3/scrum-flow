@@ -2,6 +2,27 @@ import { IssueWithTimeSpent } from '@/lib/issue/issue.service';
 
 export const seedToDoIssues: IssueWithTimeSpent[] = [
   {
+    changelog: {
+      maxResults: 1,
+      startAt: 1,
+      total: 1,
+      histories: [
+        {
+          id: '',
+          created: '',
+          items: [
+            {
+              toString: '',
+              field: '',
+              from: 'string',
+              fromString: '',
+              to: '',
+              fieldId: '',
+            },
+          ],
+        },
+      ],
+    },
     id: '10054',
     key: 'SCRUM-52',
     fields: {
@@ -34,6 +55,27 @@ export const seedToDoIssues: IssueWithTimeSpent[] = [
     timeSpent: 4428451,
   },
   {
+    changelog: {
+      maxResults: 1,
+      startAt: 1,
+      total: 1,
+      histories: [
+        {
+          id: '',
+          created: '',
+          items: [
+            {
+              toString: '',
+              field: '',
+              from: 'string',
+              fromString: '',
+              to: '',
+              fieldId: '',
+            },
+          ],
+        },
+      ],
+    },
     id: '10055',
     key: 'SCRUM-53',
     fields: {
@@ -66,6 +108,27 @@ export const seedToDoIssues: IssueWithTimeSpent[] = [
     timeSpent: 4888483,
   },
   {
+    changelog: {
+      maxResults: 1,
+      startAt: 1,
+      total: 1,
+      histories: [
+        {
+          id: '',
+          created: '',
+          items: [
+            {
+              toString: '',
+              field: '',
+              from: 'string',
+              fromString: '',
+              to: '',
+              fieldId: '',
+            },
+          ],
+        },
+      ],
+    },
     id: '10041',
     key: 'SCRUM-39',
     fields: {
@@ -99,6 +162,27 @@ export const seedToDoIssues: IssueWithTimeSpent[] = [
     timeSpent: 6718939,
   },
   {
+    changelog: {
+      maxResults: 1,
+      startAt: 1,
+      total: 1,
+      histories: [
+        {
+          id: '',
+          created: '',
+          items: [
+            {
+              toString: '',
+              field: '',
+              from: 'string',
+              fromString: '',
+              to: '',
+              fieldId: '',
+            },
+          ],
+        },
+      ],
+    },
     id: '10040',
     key: 'SCRUM-38',
     fields: {
@@ -134,6 +218,27 @@ export const seedToDoIssues: IssueWithTimeSpent[] = [
 
 export const seedDoingIssues: IssueWithTimeSpent[] = [
   {
+    changelog: {
+      maxResults: 1,
+      startAt: 1,
+      total: 1,
+      histories: [
+        {
+          id: '',
+          created: '',
+          items: [
+            {
+              toString: '',
+              field: '',
+              from: 'string',
+              fromString: '',
+              to: '',
+              fieldId: '',
+            },
+          ],
+        },
+      ],
+    },
     id: '10054',
     key: 'SCRUM-52',
     fields: {
@@ -166,6 +271,27 @@ export const seedDoingIssues: IssueWithTimeSpent[] = [
     timeSpent: 4428451,
   },
   {
+    changelog: {
+      maxResults: 1,
+      startAt: 1,
+      total: 1,
+      histories: [
+        {
+          id: '',
+          created: '',
+          items: [
+            {
+              toString: '',
+              field: '',
+              from: 'string',
+              fromString: '',
+              to: '',
+              fieldId: '',
+            },
+          ],
+        },
+      ],
+    },
     id: '10055',
     key: 'SCRUM-53',
     fields: {
@@ -198,6 +324,27 @@ export const seedDoingIssues: IssueWithTimeSpent[] = [
     timeSpent: 4888483,
   },
   {
+    changelog: {
+      maxResults: 1,
+      startAt: 1,
+      total: 1,
+      histories: [
+        {
+          id: '',
+          created: '',
+          items: [
+            {
+              toString: '',
+              field: '',
+              from: 'string',
+              fromString: '',
+              to: '',
+              fieldId: '',
+            },
+          ],
+        },
+      ],
+    },
     id: '10040',
     key: 'SCRUM-38',
     fields: {
@@ -233,6 +380,27 @@ export const seedDoingIssues: IssueWithTimeSpent[] = [
 
 export const seedDoneIssues: IssueWithTimeSpent[] = [
   {
+    changelog: {
+      maxResults: 1,
+      startAt: 1,
+      total: 1,
+      histories: [
+        {
+          id: '',
+          created: '',
+          items: [
+            {
+              toString: '',
+              field: '',
+              from: 'string',
+              fromString: '',
+              to: '',
+              fieldId: '',
+            },
+          ],
+        },
+      ],
+    },
     id: '21',
     key: 'SCRUM-1',
     fields: {
@@ -251,6 +419,27 @@ export const seedDoneIssues: IssueWithTimeSpent[] = [
     timeSpent: 500000,
   },
   {
+    changelog: {
+      maxResults: 1,
+      startAt: 1,
+      total: 1,
+      histories: [
+        {
+          id: '',
+          created: '',
+          items: [
+            {
+              toString: '',
+              field: '',
+              from: 'string',
+              fromString: '',
+              to: '',
+              fieldId: '',
+            },
+          ],
+        },
+      ],
+    },
     id: '22',
     key: 'SCRUM-1',
     fields: {
@@ -269,6 +458,27 @@ export const seedDoneIssues: IssueWithTimeSpent[] = [
     timeSpent: 500000,
   },
   {
+    changelog: {
+      maxResults: 1,
+      startAt: 1,
+      total: 1,
+      histories: [
+        {
+          id: '',
+          created: '',
+          items: [
+            {
+              toString: '',
+              field: '',
+              from: 'string',
+              fromString: '',
+              to: '',
+              fieldId: '',
+            },
+          ],
+        },
+      ],
+    },
     id: '23',
     key: 'SCRUM-1',
     fields: {

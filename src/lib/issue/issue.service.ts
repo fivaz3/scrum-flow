@@ -27,10 +27,6 @@ export const IssueSchema = z.object({
 
 export type Issue = z.infer<typeof IssueSchema>;
 
-export type IssueWithTimeSpent = Issue & {
-  timeSpent: number;
-};
-
 const IssueWithChangeLogSchema = IssueSchema.merge(
   z.object({
     changelog: z.object({
@@ -58,6 +54,10 @@ const IssueWithChangeLogSchema = IssueSchema.merge(
 );
 
 export type IssueWithChangeLog = z.infer<typeof IssueWithChangeLogSchema>;
+
+export type IssueWithTimeSpent = IssueWithChangeLog & {
+  timeSpent: number;
+};
 
 export async function addEstimationToIssuesWithChangeLog(
   boardId: number,
