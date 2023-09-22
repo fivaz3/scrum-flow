@@ -137,7 +137,7 @@ export function getTimeInProgress(
   );
 }
 
-export async function addTimeSpentToIssues(
+export async function addTimeSpentInSprintToIssues(
   board: Board,
   sprint: Sprint,
   issues: IssueWithChangeLog[],
@@ -166,7 +166,7 @@ export async function getIssuesFromSprintWithTimeSpent(
 ): Promise<IssueWithTimeSpent[]> {
   const issues = await getIssuesFromSprintWithChangelog(board.id, sprint.id, accessToken, cloudId);
 
-  return addTimeSpentToIssues(board, sprint, issues, accessToken, cloudId);
+  return addTimeSpentInSprintToIssues(board, sprint, issues, accessToken, cloudId);
 }
 
 export function doEventsOverlap(schedule: SingleSchedule, startDate: Date, endDate: Date): boolean {

@@ -8,7 +8,7 @@ import {
 import { getIssuesFromBeforeSprintStart } from '@/app/(dashboard)/report/sprint-effort';
 import { isBefore, parseISO } from 'date-fns';
 import { Board } from '@/lib/board.service';
-import { addTimeSpentToIssues } from '@/lib/issue/issue-time-spent.service';
+import { addTimeSpentInSprintToIssues } from '@/lib/issue/issue-time-spent.service';
 
 export type SprintBreakThrough = ClosedSprint & {
   estimatedIssues: IssueWithTimeSpent[];
@@ -65,7 +65,7 @@ async function getClosedSprintBreakThrough(
     cloudId
   );
 
-  const estimatedIssuesWithTimeSpent = await addTimeSpentToIssues(
+  const estimatedIssuesWithTimeSpent = await addTimeSpentInSprintToIssues(
     board,
     sprint,
     estimatedIssues,
@@ -80,7 +80,7 @@ async function getClosedSprintBreakThrough(
     cloudId
   );
 
-  const actualIssuesWithTimeSpent = await addTimeSpentToIssues(
+  const actualIssuesWithTimeSpent = await addTimeSpentInSprintToIssues(
     board,
     sprint,
     actualIssues,
