@@ -39,16 +39,16 @@ async function refreshAccessToken(token: JWT) {
 
     const unknownTokens = await response.json();
 
-    console.log('unknownTokens', unknownTokens);
-
-    const tokens = validateToken(unknownTokens);
-
     if (!response.ok) {
       const message = await response.text();
       console.log(`Error refreshing access token ${message}`);
       console.log('invalid tokens received', unknownTokens);
       throw new Error(`Error refreshing access token ${message}`);
     }
+
+    const tokens = validateToken(unknownTokens);
+
+    console.log('unknownTokens', unknownTokens);
 
     console.log('token refreshed');
 
