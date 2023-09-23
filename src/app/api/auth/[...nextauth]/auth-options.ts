@@ -80,6 +80,9 @@ export default {
       }
 
       if (token.expires_at && Date.now() < token.expires_at * 1000) {
+        console.log(
+          `token is still valid for:${(token.expires_at * 1000 - Date.now()) / (60 * 1000)} minutes`
+        );
         return token;
       } else {
         return await refreshAccessToken(token);
