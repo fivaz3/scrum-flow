@@ -36,7 +36,7 @@ export const ScheduleSchema = RecurringScheduleSchema.or(SingleScheduleSchema);
 
 export type Schedule = z.infer<typeof ScheduleSchema>;
 
-const PATH = '/api/schedules';
+const PATH = '/api/schedules/';
 
 export async function addSchedule(
   data: Omit<Schedule, 'id'>,
@@ -60,7 +60,7 @@ export async function editSchedule(
   accessToken: string,
   cloudId: string
 ): Promise<Schedule> {
-  const response = await putBackEnd(`${PATH}/${id}`, data, accessToken, cloudId);
+  const response = await putBackEnd(`${PATH}${id}`, data, accessToken, cloudId);
 
   return validateData(ScheduleSchema, response);
 }
@@ -70,7 +70,7 @@ export async function deleteSchedule(
   accessToken: string,
   cloudId: string
 ): Promise<void> {
-  const response = await deleteBackEnd(`${PATH}/${id}`, accessToken, cloudId);
+  const response = await deleteBackEnd(`${PATH}${id}`, accessToken, cloudId);
 
   const ResponseSchema = z.object({
     success: z.boolean(),

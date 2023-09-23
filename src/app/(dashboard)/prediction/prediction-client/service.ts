@@ -1,5 +1,6 @@
 import { Board } from '@/lib/board.service';
 import {
+  addEstimationToIssuesWithChangeLog,
   getIssuesWithChangelog,
   getStatusHistory,
   IssueWithChangeLog,
@@ -10,6 +11,7 @@ import { getInProgressStatuses } from '@/lib/project.service';
 import { getTimeInProgress } from '@/lib/issue/issue-time-spent.service';
 import { postBackEnd } from '@/lib/backend.service';
 import { parseISO } from 'date-fns';
+import { callApi } from '@/lib/jira.service';
 
 async function getIssuesWithTimeSpent(
   board: Board,
@@ -110,4 +112,19 @@ export async function sendIssues(board: Board, accessToken: string, cloudId: str
   const response = await postBackEnd(PATH, simpleIssues, accessToken, cloudId);
 
   console.log(response);
+}
+
+// TODO check later if tickets that are in a sprint that wasn't started are returned as belonging to the backlog
+export async function getIssuesFromBacklog(boardId: number, accessToken: string, cloudId: string) {
+  const issues = await callApi(
+    `/rest/agile/1.0/board/${boardId}/backlog`,
+    {
+      expand: 'changelog',
+      jql: 'issuetype=Story',
+    },
+    accessToken,
+    cloudId
+  );
+
+  return await addEstimationToIssuesWithChangeLog(boardId, issues, accessToken, cloudId);
 }
